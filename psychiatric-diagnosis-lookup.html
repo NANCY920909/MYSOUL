@@ -301,7 +301,7 @@
 const DATA = [
   // ---------- 신경발달장애 ----------
   {
-    code:"F90.9", category:"신경발달장애", subtype:"주의력결핍 및 파괴적 행동장애",
+    code:"F90.9", codes:["F90"], category:"신경발달장애", subtype:"주의력결핍 및 파괴적 행동장애",
     nameKo:"주의력결핍 과잉행동장애", nameEn:"Attention-Deficit/Hyperactivity Disorder (ADHD)",
     keywords:["adhd","과잉행동","주의력결핍","산만","충동","집중력저하"],
     meds:"메틸페니데이트(콘서타, 메디키넷 등 중추신경자극제), 아토목세틴(스트라테라), 클로니딘 — 자극제가 1차 치료로 흔히 사용됨.",
@@ -310,7 +310,7 @@ const DATA = [
     caseManagement:"정기적 약물 순응도 확인, 학업·또래관계 변화 추적, 가족 스트레스 지원, 필요시 소아청소년정신건강 전문기관 연계."
   },
   {
-    code:"F84.0", category:"신경발달장애", subtype:"전반적 발달장애",
+    code:"F84.0", codes:["F84"], category:"신경발달장애", subtype:"전반적 발달장애",
     nameKo:"자폐스펙트럼장애", nameEn:"Autism Spectrum Disorder (ASD)",
     keywords:["자폐","asd","사회적의사소통","반복행동","상동행동"],
     meds:"핵심 증상에 대한 치료 약물은 없으며, 공존 문제(과민성·공격성)에 리스페리돈, 아리피프라졸 등을 제한적으로 사용.",
@@ -319,7 +319,7 @@ const DATA = [
     caseManagement:"발달 이정표 지속 관찰, 지역 발달재활서비스·특수교육 연계, 가족 돌봄부담 지원, 성인기 전환(직업재활) 준비."
   },
   {
-    code:"F70–F73", category:"신경발달장애", subtype:"지적장애",
+    code:"F70–F73", codes:["F70","F71","F72","F73"], category:"신경발달장애", subtype:"지적장애",
     nameKo:"지적장애", nameEn:"Intellectual Disability",
     keywords:["지적장애","인지기능저하","적응기능"],
     meds:"지적장애 자체에 대한 약물은 없으며, 공존 정신과적 증상(불안·공격성 등)에 대해 대증적 약물치료.",
@@ -328,7 +328,7 @@ const DATA = [
     caseManagement:"생애주기별(아동기-성인기) 전환지원, 장애인복지시설·주간보호 연계, 후견·복지제도 안내."
   },
   {
-    code:"F91.3", category:"파괴적, 충동조절 및 품행장애", subtype:"적대적 반항장애",
+    code:"F91.3", codes:["F91.3"], category:"파괴적, 충동조절 및 품행장애", subtype:"적대적 반항장애",
     nameKo:"적대적 반항장애", nameEn:"Oppositional Defiant Disorder (ODD)",
     keywords:["반항","분노","규칙위반","떼쓰기"],
     meds:"1차 치료는 비약물적 개입이며, 공존 ADHD·과민성에 한해 자극제 또는 리스페리돈 등을 병행.",
@@ -337,7 +337,7 @@ const DATA = [
     caseManagement:"가족기능 평가 및 정기 상담, 학교생활 적응 모니터링, 필요시 아동청소년 정신건강서비스 연계."
   },
   {
-    code:"F91", category:"파괴적, 충동조절 및 품행장애", subtype:"품행장애",
+    code:"F91", codes:["F91.0","F91.1","F91.2","F91.8","F91.9"], category:"파괴적, 충동조절 및 품행장애", subtype:"품행장애",
     nameKo:"품행장애", nameEn:"Conduct Disorder",
     keywords:["폭력","절도","가출","규범위반","비행"],
     meds:"공격성 조절을 위해 리스페리돈 등 항정신병약물을 제한적으로 병용하기도 함(1차 치료 아님).",
@@ -346,7 +346,7 @@ const DATA = [
     caseManagement:"법적·교육적 자원 연계(청소년상담복지센터, 학교전담경찰관 등), 재범방지 프로그램 연계, 장기 추적관리."
   },
   {
-    code:"F63.81", category:"파괴적, 충동조절 및 품행장애", subtype:"충동조절장애",
+    code:"F63.81", codes:["F63.81"], category:"파괴적, 충동조절 및 품행장애", subtype:"충동조절장애",
     nameKo:"간헐적 폭발장애", nameEn:"Intermittent Explosive Disorder",
     keywords:["분노폭발","충동적공격성"],
     meds:"SSRI(플루옥세틴 등), 기분안정제(발프로산), 필요시 항정신병약물 병용.",
@@ -356,7 +356,7 @@ const DATA = [
   },
   // ---------- 조현병 스펙트럼 및 기타 정신병적 장애 ----------
   {
-    code:"F20.9", category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"조현병",
+    code:"F20.9", codes:["F20"], category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"조현병",
     nameKo:"조현병", nameEn:"Schizophrenia",
     keywords:["조현병","환청","환각","망상","와해된언어","음성증상","정신병"],
     meds:"항정신병약물(리스페리돈, 올란자핀, 아리피프라졸, 클로자핀(치료저항성) 등) — 유지치료로 장기간 지속 필요.",
@@ -365,7 +365,7 @@ const DATA = [
     caseManagement:"약물 순응도 정기 확인, 정신재활시설·주간재활프로그램 연계, 직업재활, 지역사회 통합지원(방문형 사례관리), 재입원 예방을 위한 정기 모니터링."
   },
   {
-    code:"F25", category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"조현정동장애",
+    code:"F25", codes:["F25"], category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"조현정동장애",
     nameKo:"조현정동장애", nameEn:"Schizoaffective Disorder",
     keywords:["조현정동","기분증상","정신병적증상"],
     meds:"항정신병약물 + 기분안정제(리튬, 발프로산) 또는 항우울제 병용.",
@@ -374,7 +374,7 @@ const DATA = [
     caseManagement:"조현병에 준하는 지속적 사례관리, 재발 조기징후 교육, 지역사회 자원 연계."
   },
   {
-    code:"F22", category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"망상장애",
+    code:"F22", codes:["F22"], category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"망상장애",
     nameKo:"망상장애", nameEn:"Delusional Disorder",
     keywords:["망상","피해망상","질투망상"],
     meds:"항정신병약물(치료 순응도가 낮은 경향이 있어 저용량부터 시작).",
@@ -383,7 +383,7 @@ const DATA = [
     caseManagement:"치료 거부 위험 관리, 사회적 고립 예방, 가족지지체계 강화."
   },
   {
-    code:"F23", category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"단기 정신병적 장애",
+    code:"F23", codes:["F23"], category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"단기 정신병적 장애",
     nameKo:"단기 정신병적 장애", nameEn:"Brief Psychotic Disorder",
     keywords:["급성정신병","일시적환각"],
     meds:"단기간 항정신병약물 사용, 증상 호전 시 감량.",
@@ -393,7 +393,7 @@ const DATA = [
   },
   // ---------- 양극성 및 관련 장애 ----------
   {
-    code:"F31.1x", category:"양극성 및 관련 장애", subtype:"양극성장애 제1형",
+    code:"F31.1x", codes:["F31.0","F31.1","F31.2","F31.3","F31.4","F31.5","F31.6","F31.7","F31.9"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형",
     nameKo:"양극성장애 제1형", nameEn:"Bipolar I Disorder",
     keywords:["조증","양극성","기분삽화","들뜬기분"],
     meds:"기분안정제(리튬, 발프로산, 라모트리진), 항정신병약물(퀘티아핀, 올란자핀).",
@@ -402,7 +402,7 @@ const DATA = [
     caseManagement:"약물 혈중농도(리튬 등) 정기 확인 연계, 재발징후 모니터링, 가족 심리교육, 직업·사회기능 회복 지원."
   },
   {
-    code:"F31.81", category:"양극성 및 관련 장애", subtype:"양극성장애 제2형",
+    code:"F31.81", codes:["F31.81"], category:"양극성 및 관련 장애", subtype:"양극성장애 제2형",
     nameKo:"양극성장애 제2형", nameEn:"Bipolar II Disorder",
     keywords:["경조증","우울삽화","기분기복"],
     meds:"기분안정제(라모트리진 등), 필요시 SSRI를 기분안정제와 병용(단독 사용은 조증 유발 위험으로 지양).",
@@ -411,7 +411,7 @@ const DATA = [
     caseManagement:"경조증·우울 삽화 반복 모니터링, 자살위험 평가, 지역정신건강센터 연계."
   },
   {
-    code:"F34.0", category:"양극성 및 관련 장애", subtype:"순환성장애",
+    code:"F34.0", codes:["F34.0"], category:"양극성 및 관련 장애", subtype:"순환성장애",
     nameKo:"순환성장애", nameEn:"Cyclothymic Disorder",
     keywords:["경한기분기복","만성적기분변동"],
     meds:"증상이 뚜렷할 경우 저용량 기분안정제 고려.",
@@ -421,7 +421,7 @@ const DATA = [
   },
   // ---------- 우울장애 ----------
   {
-    code:"F32.x / F33.x", category:"우울장애", subtype:"주요우울장애(단일/재발성)",
+    code:"F32.x / F33.x", codes:["F32","F33"], category:"우울장애", subtype:"주요우울장애(단일/재발성)",
     nameKo:"주요우울장애", nameEn:"Major Depressive Disorder (MDD)",
     keywords:["우울","무기력","의욕저하","죽고싶다","자살사고","불면","식욕저하"],
     meds:"SSRI(에스시탈로프람, 설트랄린), SNRI(둘록세틴, 벤라팍신) 등이 1차 약물로 흔히 사용.",
@@ -430,7 +430,7 @@ const DATA = [
     caseManagement:"자살위험 정기 재평가, 약물 순응도 및 부작용 확인, 위기개입 핫라인 안내, 재발방지 심리교육."
   },
   {
-    code:"F34.1", category:"우울장애", subtype:"지속성우울장애(기분저하증)",
+    code:"F34.1", codes:["F34.1"], category:"우울장애", subtype:"지속성우울장애(기분저하증)",
     nameKo:"지속성우울장애", nameEn:"Persistent Depressive Disorder (Dysthymia)",
     keywords:["만성우울","기분저하","의욕없음"],
     meds:"SSRI/SNRI 계열 항우울제 장기 유지치료.",
@@ -439,7 +439,7 @@ const DATA = [
     caseManagement:"만성경과 특성상 장기 추적관리, 기능저하 및 사회적 고립 예방."
   },
   {
-    code:"F34.81", category:"우울장애", subtype:"파괴적 기분조절부전장애",
+    code:"F34.81", codes:["F34.81"], category:"우울장애", subtype:"파괴적 기분조절부전장애",
     nameKo:"파괴적 기분조절부전장애", nameEn:"Disruptive Mood Dysregulation Disorder (DMDD)",
     keywords:["짜증","분노발작","기분조절부전","아동"],
     meds:"SSRI, 자극제(공존 ADHD 시), 항정신병약물은 제한적으로 사용.",
@@ -449,7 +449,7 @@ const DATA = [
   },
   // ---------- 불안장애 ----------
   {
-    code:"F41.1", category:"불안장애", subtype:"범불안장애",
+    code:"F41.1", codes:["F41.1"], category:"불안장애", subtype:"범불안장애",
     nameKo:"범불안장애", nameEn:"Generalized Anxiety Disorder (GAD)",
     keywords:["불안","걱정","긴장","불면","초조"],
     meds:"SSRI/SNRI가 1차 치료, 단기간 벤조디아제핀 병용 가능(장기사용 지양).",
@@ -458,7 +458,7 @@ const DATA = [
     caseManagement:"기능저하 정도 추적, 벤조디아제핀 의존 위험 모니터링, 스트레스원 관리 지원."
   },
   {
-    code:"F41.0", category:"불안장애", subtype:"공황장애",
+    code:"F41.0", codes:["F41.0"], category:"불안장애", subtype:"공황장애",
     nameKo:"공황장애", nameEn:"Panic Disorder",
     keywords:["공황발작","심장두근거림","호흡곤란","죽을것같은느낌"],
     meds:"SSRI/SNRI 1차, 급성기 벤조디아제핀(알프라졸람 등) 단기 사용.",
@@ -467,7 +467,7 @@ const DATA = [
     caseManagement:"응급실 이용 빈도 추적, 광장공포증 동반 여부 확인, 약물 의존 모니터링."
   },
   {
-    code:"F40.1", category:"불안장애", subtype:"사회불안장애",
+    code:"F40.1", codes:["F40.1"], category:"불안장애", subtype:"사회불안장애",
     nameKo:"사회불안장애(사회공포증)", nameEn:"Social Anxiety Disorder",
     keywords:["대인기피","발표불안","사회공포","얼굴빨개짐"],
     meds:"SSRI/SNRI, 상황적 발표불안에 베타차단제 고려.",
@@ -476,7 +476,7 @@ const DATA = [
     caseManagement:"사회적 위축·고립 정도 모니터링, 학교·직장 복귀 지원."
   },
   {
-    code:"F40.2", category:"불안장애", subtype:"특정공포증",
+    code:"F40.2", codes:["F40.2"], category:"불안장애", subtype:"특정공포증",
     nameKo:"특정공포증", nameEn:"Specific Phobia",
     keywords:["특정공포","고소공포","동물공포","주사공포"],
     meds:"약물치료는 일반적으로 권장되지 않음(급성 상황에 한해 단기 항불안제 고려).",
@@ -485,7 +485,7 @@ const DATA = [
     caseManagement:"일상기능 제한 정도 확인, 치료 지속성 독려."
   },
   {
-    code:"F93.0", category:"불안장애", subtype:"분리불안장애",
+    code:"F93.0", codes:["F93.0"], category:"불안장애", subtype:"분리불안장애",
     nameKo:"분리불안장애", nameEn:"Separation Anxiety Disorder",
     keywords:["등교거부","분리불안","엄마와떨어지기싫어함"],
     meds:"증상이 심한 경우 SSRI 고려.",
@@ -495,7 +495,7 @@ const DATA = [
   },
   // ---------- 강박 및 관련 장애 ----------
   {
-    code:"F42", category:"강박 및 관련 장애", subtype:"강박장애",
+    code:"F42", codes:["F42.0","F42.1","F42.2","F42.8","F42.9"], category:"강박 및 관련 장애", subtype:"강박장애",
     nameKo:"강박장애", nameEn:"Obsessive-Compulsive Disorder (OCD)",
     keywords:["강박","반복행동","확인행동","오염강박","손씻기"],
     meds:"고용량 SSRI가 1차 치료(일반 우울증보다 고용량 필요), 클로미프라민도 사용.",
@@ -504,7 +504,7 @@ const DATA = [
     caseManagement:"일상기능(위생·시간관리) 영향 평가, 치료 지속성 관리, 가족교육."
   },
   {
-    code:"F45.22", category:"강박 및 관련 장애", subtype:"신체이형장애",
+    code:"F45.22", codes:["F45.22"], category:"강박 및 관련 장애", subtype:"신체이형장애",
     nameKo:"신체이형장애", nameEn:"Body Dysmorphic Disorder",
     keywords:["외모집착","신체이형","거울확인"],
     meds:"SSRI 고용량.",
@@ -513,7 +513,7 @@ const DATA = [
     caseManagement:"사회적 기능저하 모니터링, 자살위험 평가(동반율 높음)."
   },
   {
-    code:"F42.3", category:"강박 및 관련 장애", subtype:"저장장애",
+    code:"F42.3", codes:["F42.3"], category:"강박 및 관련 장애", subtype:"저장장애",
     nameKo:"저장장애", nameEn:"Hoarding Disorder",
     keywords:["저장강박","물건버리기어려움","쓰레기집"],
     meds:"SSRI(효과는 제한적).",
@@ -523,7 +523,7 @@ const DATA = [
   },
   // ---------- 외상 및 스트레스 관련 장애 ----------
   {
-    code:"F43.1", category:"외상 및 스트레스 관련 장애", subtype:"외상후스트레스장애",
+    code:"F43.1", codes:["F43.1"], category:"외상 및 스트레스 관련 장애", subtype:"외상후스트레스장애",
     nameKo:"외상후스트레스장애", nameEn:"Post-Traumatic Stress Disorder (PTSD)",
     keywords:["외상","트라우마","플래시백","악몽","과각성"],
     meds:"SSRI(파록세틴, 설트랄린)가 승인된 1차 약물, 악몽에 프라조신 고려.",
@@ -532,7 +532,7 @@ const DATA = [
     caseManagement:"자·타해 위험 평가, 트라우마 반응 심리교육, 지지체계 연계, 장기 추적관찰."
   },
   {
-    code:"F43.0", category:"외상 및 스트레스 관련 장애", subtype:"급성 스트레스장애",
+    code:"F43.0", codes:["F43.0"], category:"외상 및 스트레스 관련 장애", subtype:"급성 스트레스장애",
     nameKo:"급성 스트레스장애", nameEn:"Acute Stress Disorder",
     keywords:["급성외상반응","사고직후증상"],
     meds:"단기 대증치료(수면장애 시 단기 수면제 고려), 벤조디아제핀은 지양.",
@@ -541,7 +541,7 @@ const DATA = [
     caseManagement:"PTSD로의 이행 여부 추적관찰, 재난심리지원센터 연계."
   },
   {
-    code:"F43.2", category:"외상 및 스트레스 관련 장애", subtype:"적응장애",
+    code:"F43.2", codes:["F43.2"], category:"외상 및 스트레스 관련 장애", subtype:"적응장애",
     nameKo:"적응장애", nameEn:"Adjustment Disorder",
     keywords:["스트레스반응","적응곤란","이혼","실직","전학"],
     meds:"필요시 단기 항불안제·항우울제(스트레스 요인 해결이 우선).",
@@ -550,7 +550,7 @@ const DATA = [
     caseManagement:"경과 단기 추적(대개 6개월 이내 호전 여부 확인), 사회적 자원 연계."
   },
   {
-    code:"F94.1", category:"외상 및 스트레스 관련 장애", subtype:"반응성 애착장애",
+    code:"F94.1", codes:["F94.1"], category:"외상 및 스트레스 관련 장애", subtype:"반응성 애착장애",
     nameKo:"반응성 애착장애", nameEn:"Reactive Attachment Disorder",
     keywords:["애착문제","방임","위축된아동"],
     meds:"약물치료는 핵심증상에 효과 없음, 공존질환에 한해 사용.",
@@ -560,7 +560,7 @@ const DATA = [
   },
   // ---------- 급식 및 섭식장애 ----------
   {
-    code:"F50.0", category:"급식 및 섭식장애", subtype:"신경성 식욕부진증",
+    code:"F50.0", codes:["F50.0"], category:"급식 및 섭식장애", subtype:"신경성 식욕부진증",
     nameKo:"신경성 식욕부진증(거식증)", nameEn:"Anorexia Nervosa",
     keywords:["거식증","체중감소","저체중","살찌는것에대한두려움"],
     meds:"핵심증상에 승인된 약물 없음, 공존 우울·불안에 SSRI 고려(저체중 상태에서는 신중히 사용).",
@@ -569,7 +569,7 @@ const DATA = [
     caseManagement:"체중·활력징후 정기 확인, 입원 필요성 평가, 가족교육 및 지지."
   },
   {
-    code:"F50.2", category:"급식 및 섭식장애", subtype:"신경성 폭식증",
+    code:"F50.2", codes:["F50.2"], category:"급식 및 섭식장애", subtype:"신경성 폭식증",
     nameKo:"신경성 폭식증", nameEn:"Bulimia Nervosa",
     keywords:["폭식","구토","보상행동","제거행동"],
     meds:"플루옥세틴(고용량)이 승인된 유일한 약물.",
@@ -578,7 +578,7 @@ const DATA = [
     caseManagement:"전해질 이상 등 신체합병증 확인, 자살위험 평가, 정기 추적."
   },
   {
-    code:"F50.81", category:"급식 및 섭식장애", subtype:"폭식장애",
+    code:"F50.81", codes:["F50.81"], category:"급식 및 섭식장애", subtype:"폭식장애",
     nameKo:"폭식장애", nameEn:"Binge Eating Disorder",
     keywords:["폭식","과식","조절불가능한섭식"],
     meds:"리스덱스암페타민, SSRI 고려.",
@@ -588,7 +588,7 @@ const DATA = [
   },
   // ---------- 수면-각성장애 ----------
   {
-    code:"F51.01", category:"수면-각성장애", subtype:"불면장애",
+    code:"F51.01", codes:["F51.01"], category:"수면-각성장애", subtype:"불면장애",
     nameKo:"불면장애", nameEn:"Insomnia Disorder",
     keywords:["불면","잠들기어려움","수면유지어려움"],
     meds:"단기간 Z-약물(졸피뎀), 멜라토닌수용체작용제; 장기적으로는 비약물 치료 권장.",
@@ -598,7 +598,7 @@ const DATA = [
   },
   // ---------- 물질관련 및 중독장애 ----------
   {
-    code:"F10.2", category:"물질관련 및 중독장애", subtype:"알코올사용장애",
+    code:"F10.2", codes:["F10.2"], category:"물질관련 및 중독장애", subtype:"알코올사용장애",
     nameKo:"알코올사용장애", nameEn:"Alcohol Use Disorder",
     keywords:["알코올중독","음주문제","금단","술"],
     meds:"금단 시 벤조디아제핀, 재발방지에 날트렉손, 아캄프로세이트, 디설피람.",
@@ -607,7 +607,7 @@ const DATA = [
     caseManagement:"단주 유지 정기 확인, 가족기능 회복 지원, 중독관리통합지원센터 연계, 재발 시 위기개입."
   },
   {
-    code:"F63.0", category:"물질관련 및 중독장애", subtype:"도박장애",
+    code:"F63.0", codes:["F63.0"], category:"물질관련 및 중독장애", subtype:"도박장애",
     nameKo:"도박장애", nameEn:"Gambling Disorder",
     keywords:["도박중독","베팅","빚"],
     meds:"승인된 약물 없음, 공존 우울·충동조절 문제에 SSRI·날트렉손 고려.",
@@ -617,7 +617,7 @@ const DATA = [
   },
   // ---------- 신경인지장애 ----------
   {
-    code:"F03", category:"신경인지장애", subtype:"주요 신경인지장애(치매)",
+    code:"F03", codes:["F03","F00","F01","F02"], category:"신경인지장애", subtype:"주요 신경인지장애(치매)",
     nameKo:"주요 신경인지장애(치매)", nameEn:"Major Neurocognitive Disorder (Dementia)",
     keywords:["치매","기억력저하","인지저하","길잃음"],
     meds:"콜린에스테라제억제제(도네페질), NMDA수용체길항제(메만틴); 행동증상에 항정신병약물은 신중히 제한적 사용.",
@@ -626,7 +626,7 @@ const DATA = [
     caseManagement:"장기요양등급 신청 연계, 보호자 소진 예방 지원, 주간보호·요양시설 연계, 정기 인지기능 추적."
   },
   {
-    code:"F05", category:"신경인지장애", subtype:"섬망",
+    code:"F05", codes:["F05"], category:"신경인지장애", subtype:"섬망",
     nameKo:"섬망", nameEn:"Delirium",
     keywords:["섬망","의식혼탁","급성혼란"],
     meds:"원인 치료가 최우선, 필요시 저용량 항정신병약물(할로페리돌) 단기 사용.",
@@ -636,7 +636,7 @@ const DATA = [
   },
   // ---------- 성격장애 ----------
   {
-    code:"F60.3", category:"성격장애", subtype:"군집 B(극적/감정적)",
+    code:"F60.3", codes:["F60.3"], category:"성격장애", subtype:"군집 B(극적/감정적)",
     nameKo:"경계성 성격장애", nameEn:"Borderline Personality Disorder",
     keywords:["경계성","자해","버림받음에대한두려움","불안정한대인관계"],
     meds:"핵심증상에 승인된 약물 없음, 충동성·정서불안정에 기분안정제·SSRI 제한적 병용.",
@@ -645,7 +645,7 @@ const DATA = [
     caseManagement:"자·타해 위험 정기 재평가, 위기시 대응체계 마련, 장기 치료관계 유지 지원."
   },
   {
-    code:"F60.2", category:"성격장애", subtype:"군집 B(극적/감정적)",
+    code:"F60.2", codes:["F60.2"], category:"성격장애", subtype:"군집 B(극적/감정적)",
     nameKo:"반사회성 성격장애", nameEn:"Antisocial Personality Disorder",
     keywords:["반사회성","공감결여","규범위반","범죄"],
     meds:"공존 충동성·공격성에 기분안정제 고려(핵심증상 치료약물 없음).",
@@ -654,7 +654,7 @@ const DATA = [
     caseManagement:"재범 위험 관리, 보호관찰 등 사법체계와의 협력, 공존 물질사용장애 확인."
   },
   {
-    code:"F60.6", category:"성격장애", subtype:"군집 C(불안/두려움)",
+    code:"F60.6", codes:["F60.6"], category:"성격장애", subtype:"군집 C(불안/두려움)",
     nameKo:"회피성 성격장애", nameEn:"Avoidant Personality Disorder",
     keywords:["회피","거절에대한두려움","대인관계회피"],
     meds:"공존 사회불안·우울에 SSRI 고려.",
@@ -664,7 +664,7 @@ const DATA = [
   },
   // ---------- 신체증상 및 관련 장애 ----------
   {
-    code:"F45.1", category:"신체증상 및 관련 장애", subtype:"신체증상장애",
+    code:"F45.1", codes:["F45.1"], category:"신체증상 및 관련 장애", subtype:"신체증상장애",
     nameKo:"신체증상장애", nameEn:"Somatic Symptom Disorder",
     keywords:["신체화","원인불명통증","병원쇼핑"],
     meds:"공존 우울·불안에 SSRI/SNRI 고려.",
@@ -704,8 +704,24 @@ function buildChips(){
 
 function norm(s){ return (s || '').toLowerCase().trim(); }
 
+function normCode(s){ return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+
+function looksLikeCode(term){ return /^[a-z]\d{2}(\.\d+)?$/i.test(term); }
+
+// ICD-10 코드 검색: 두 코드 중 짧은 쪽이 긴 쪽의 접두어면 매치.
+// 예: 입력 "F31.9" -> 정규화 "F319", 등록코드 "F31.9" -> "F319" => 일치
+//     입력 "F31" -> "F31", 등록코드 "F31.81" -> "F3181" => "F3181".startsWith("F31") 이므로 일치
+function codeMatches(d, term){
+  const q = normCode(term);
+  return (d.codes || []).some(c => {
+    const cc = normCode(c);
+    return cc.startsWith(q) || q.startsWith(cc);
+  });
+}
+
 function matches(d, term){
   if (!term) return true;
+  if (looksLikeCode(term)) return codeMatches(d, term);
   const hay = [d.code, d.nameKo, d.nameEn, d.category, d.subtype, ...(d.keywords||[])]
     .join(' ').toLowerCase();
   return term.split(/\s+/).filter(Boolean).every(t => hay.includes(t));
