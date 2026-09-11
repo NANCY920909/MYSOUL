@@ -706,13 +706,17 @@ function norm(s){ return (s || '').toLowerCase().trim(); }
 
 function normCode(s){ return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
 
-function looksLikeCode(term){ return /^[a-z]\d{2}(\.\d+)?$/i.test(term); }
+// 코드처럼 생긴 입력인지 판단: 문자 1개(선택) + 숫자/점 2자 이상.
+// "F31.9", "f31.9", "F319", "319", "31.9", "31" 등을 모두 코드 검색으로 인식.
+function looksLikeCode(term){ return /^[a-z]?[\d.]{2,}$/i.test(term); }
 
-// ICD-10 코드 검색: 두 코드 중 짧은 쪽이 긴 쪽의 접두어면 매치.
-// 예: 입력 "F31.9" -> 정규화 "F319", 등록코드 "F31.9" -> "F319" => 일치
-//     입력 "F31" -> "F31", 등록코드 "F31.81" -> "F3181" => "F3181".startsWith("F31") 이므로 일치
+// ICD-10 코드 검색: F 유무, 대소문자, 점 유무 관계없이 정규화 후
+// 두 코드 중 짧은 쪽이 긴 쪽의 접두어면 매치.
+// 예: 입력 "319"/"31.9"/"F31.9" -> 모두 "F319"로 정규화, 등록코드 "F31.9" -> "F319" => 일치
+//     입력 "31"/"F31" -> "F31", 등록코드 "F31.81" -> "F3181" => "F3181".startsWith("F31") 이므로 일치
 function codeMatches(d, term){
-  const q = normCode(term);
+  let q = normCode(term);
+  if (q && !/^[A-Z]/.test(q)) q = 'F' + q; // F를 생략해도 매칭되도록 보정
   return (d.codes || []).some(c => {
     const cc = normCode(c);
     return cc.startsWith(q) || q.startsWith(cc);
