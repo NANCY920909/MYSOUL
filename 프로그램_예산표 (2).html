@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>프로그램 예산표</title>
+<style>
+  :root{
+    --ink:#1C2541;
+    --muted:#5B6478;
+    --bg:#F1F4FA;
+    --card:#FFFFFF;
+    --line:#E3E7F1;
+    --chip-bg:#EEF1F9;
+    --chip-border:#D7DEEE;
+    --chip-text:#33405E;
+    --accent:#26417D;
+    --accent-dark:#1B2F5C;
+    --total-bg:#FBECE8;
+    --total-border:#E3B7A9;
+    --total-text:#9C3B26;
+    --danger:#C0392B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+    color:var(--ink);
+    padding:32px 16px;
+  }
+  .app{
+    max-width:720px;
+    margin:0 auto;
+    background:var(--card);
+    border-radius:18px;
+    box-shadow:0 1px 3px rgba(20,30,60,.08), 0 12px 28px rgba(20,30,60,.06);
+    padding:30px 32px 26px;
+  }
+  h1{
+    font-size:23px;
+    font-weight:800;
+    letter-spacing:-.2px;
+    margin:0 0 8px;
+  }
+  .sub{
+    font-size:13.5px;
+    color:var(--muted);
+    line-height:1.6;
+    margin:0 0 22px;
+  }
+  .section-label{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .section-label .hint{
+    font-weight:400;
+    color:#9096A8;
+    margin-left:2px;
+  }
+  .tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:22px;
+  }
+  .tag{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:var(--chip-bg);
+    border:1px solid var(--chip-border);
+    color:var(--chip-text);
+    font-size:13px;
+    font-weight:600;
+    padding:7px 12px 7px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .15s, transform .1s;
+  }
+  .tag:hover{background:#E3E8F6;}
+  .tag:active{transform:scale(.97);}
+  .tag .info{
+    color:#A8AEC0;
+    font-size:11px;
+    border:1px solid #C9CFE0;
+    border-radius:50%;
+    width:14px;height:14px;
+    display:inline-flex;align-items:center;justify-content:center;
+    cursor:help;
+  }
+  .tag .rm{
+    margin-left:2px;
+    color:#B7BDD0;
+    font-size:12px;
+    line-height:1;
+    padding:1px 3px;
+    border-radius:50%;
+  }
+  .tag .rm:hover{color:var(--danger); background:#FBE6E4;}
+  .tag.add{
+    background:transparent;
+    border-style:dashed;
+    color:var(--muted);
+  }
+
+  table.budget{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:18px;
+    font-size:14px;
+  }
+  table.budget thead th{
+    background:#EEF1F9;
+    color:var(--accent-dark);
+    font-size:13px;
+    font-weight:700;
+    text-align:center;
+    padding:12px 10px;
+    border-bottom:2px solid #D9DFEF;
+  }
+  table.budget tbody td{
+    padding:11px 10px;
+    border-bottom:1px solid var(--line);
+    text-align:center;
+    vertical-align:middle;
+  }
+  table.budget tbody tr:hover{background:#FAFBFD;}
+  td .cell{
+    outline:none;
+    min-height:20px;
+    padding:2px 4px;
+    border-radius:6px;
+  }
+  td .cell:focus{
+    background:#F3F6FF;
+    box-shadow:0 0 0 2px #C9D6F5 inset;
+  }
+  td .cell.placeholder-empty:empty:before{
+    content:attr(data-placeholder);
+    color:#B7BDD0;
+  }
+  col.col-item{width:16%;}
+  col.col-detail{width:38%;}
+  col.col-amount{width:22%;}
+  col.col-note{width:20%;}
+  col.col-del{width:6%;}
+  td.amount-cell{font-variant-numeric:tabular-nums; font-weight:600;}
+  .del-btn{
+    border:none;background:transparent;color:#C7CCDB;font-size:15px;cursor:pointer;
+    width:24px;height:24px;border-radius:50%;
+  }
+  .del-btn:hover{color:var(--danger); background:#FBE6E4;}
+
+  tr.total-row td{
+    background:var(--total-bg);
+    border-top:1px solid var(--total-border);
+    border-bottom:none;
+    font-weight:800;
+    color:var(--total-text);
+    padding:14px 10px;
+  }
+  tr.total-row .total-label{
+    text-align:left;
+    padding-left:16px;
+    font-size:15px;
+  }
+  tr.total-row .total-amount{
+    font-size:18px;
+  }
+
+  .calc-card{
+    background:#F8F9FD;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 20px;
+    margin-bottom:20px;
+  }
+  .calc-title{font-size:14px; font-weight:700; margin-bottom:4px;}
+  .calc-desc{font-size:12.5px; color:var(--muted); line-height:1.6; margin:0 0 10px;}
+  .calc-target{
+    font-size:13px;
+    color:var(--accent-dark);
+    background:#EFF2FA;
+    border:1px dashed #C9D2EA;
+    border-radius:8px;
+    padding:8px 12px;
+    margin-bottom:14px;
+  }
+  .calc-target.active{
+    background:#E6EDFF;
+    border-style:solid;
+    border-color:#AFC0EE;
+  }
+  .calc-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+  }
+  .calc-btn{
+    padding:12px 0;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:#fff;
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .calc-btn:hover{background:#F0F3FC;}
+  .calc-btn.op{color:var(--accent-dark);}
+  .calc-btn.wide{grid-column:span 4;}
+  .calc-btn.clear{color:#C0392B; border-color:#F2CFC9; background:#FDF3F1;}
+  .calc-btn.clear:hover{background:#FBE6E2;}
+
+  .actions{
+    display:flex;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .btn{
+    flex:1;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:#fff;
+    font-size:14px;
+    font-weight:700;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .btn:hover{background:#F5F7FC;}
+  .btn.primary{
+    flex:1.4;
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .btn.primary:hover{background:var(--accent-dark);}
+
+  .tip{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.7;
+    background:#F8F9FD;
+    border-radius:10px;
+    padding:12px 14px;
+    margin:0;
+  }
+  .tip b{color:var(--ink);}
+
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(20,26,46,.45);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:#fff;
+    border-radius:16px;
+    max-width:640px;
+    width:100%;
+    max-height:82vh;
+    overflow-y:auto;
+    padding:22px 24px 20px;
+    box-shadow:0 20px 50px rgba(20,30,60,.25);
+  }
+  .modal-head{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    margin-bottom:4px;
+  }
+  .modal-head h2{font-size:17px; margin:0; font-weight:800;}
+  .modal-source{font-size:11.5px; color:var(--muted); margin:0 0 14px;}
+  .modal-close{
+    border:none; background:transparent; font-size:20px; color:#9096A8; cursor:pointer;
+    line-height:1; padding:2px 6px;
+  }
+  .modal-close:hover{color:var(--danger);}
+  table.fee-table{width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:12px;}
+  table.fee-table th{
+    background:#EEF1F9; color:var(--accent-dark); font-weight:700;
+    padding:8px 6px; border:1px solid #DCE2F0; text-align:center;
+  }
+  table.fee-table td{
+    padding:8px 6px; border:1px solid #E5E8F1; text-align:center; vertical-align:middle;
+  }
+  table.fee-table td.grade{font-weight:700; color:var(--ink); white-space:nowrap;}
+  table.fee-table td.desc{text-align:left; font-size:12px; color:#3B4560; line-height:1.5;}
+  .modal-foot{font-size:11.5px; color:var(--muted); line-height:1.6;}
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform:translateX(-50%) translateY(10px);
+    background:#1C2541;
+    color:#fff;
+    font-size:13px;
+    padding:10px 18px;
+    border-radius:999px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .18s, transform .18s;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>프로그램 예산표</h1>
+  <p class="sub">세목·산출내역·금액을 채우면 총계가 자동 계산됩니다. 완성되면 <b>[표 복사하기]</b>를 눌러 한글(HWP) 문서에 그대로 붙여넣으세요.</p>
+
+  <div class="section-label">자주 쓰는 세목 <span class="hint">(클릭하면 행 추가 · ×로 목록 편집 · 직접 추가 가능)</span></div>
+  <div class="tags" id="tagList"></div>
+
+  <table class="budget" id="budgetTable">
+    <colgroup>
+      <col class="col-item"><col class="col-detail"><col class="col-amount"><col class="col-note"><col class="col-del">
+    </colgroup>
+    <thead>
+      <tr><th>세목</th><th>산출내역</th><th>금액(원)</th><th>비고</th><th></th></tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+    <tfoot>
+      <tr class="total-row">
+        <td colspan="2" class="total-label">총계</td>
+        <td class="total-amount" id="totalAmount">0</td>
+        <td colspan="2"></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="actions">
+    <button class="btn" id="addRowBtn">+ 세목 추가</button>
+    <button class="btn" id="clearBtn">비우기</button>
+    <button class="btn primary" id="copyBtn">▤ 표 복사하기</button>
+  </div>
+
+  <div class="calc-card">
+    <div class="calc-title">🧮 미니 계산기</div>
+    <p class="calc-desc">숫자·기호를 클릭하면 선택된 산출내역 칸에 그대로 입력돼요. 숫자가 2개 이상 모이면 금액이 자동으로 계산됩니다.</p>
+    <div class="calc-target" id="calcTarget">→ 아직 선택된 칸 없음 (칸을 먼저 클릭하세요)</div>
+    <div class="calc-grid" id="calcGrid"></div>
+  </div>
+
+  <p class="tip"><b>Tip.</b> 산출내역에 숫자를 2개 이상 적으면(예: "100,000×2", "5000원 3회 20명") 금액이 자동으로 계산됩니다. 예비비처럼 계산식이 없는 항목은 금액 칸을 직접 눌러 입력하세요. <b>[표 복사하기]</b>를 누르면 돋움 11pt · 가운데 정렬로 한글(HWP)에 바로 붙여넣기 좋은 표가 복사됩니다.</p>
+</div>
+
+<div class="modal-overlay" id="feeModalOverlay">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>강사수당(강사비) 지급기준 — 일반강의</h2>
+      <button class="modal-close" id="feeModalClose">×</button>
+    </div>
+    <p class="modal-source">출처: 지방자치인재개발원 강사수당 및 원고료 등 지급기준 (단위: 만원)</p>
+    <table class="fee-table">
+      <thead>
+        <tr><th>등급</th><th>최초 1시간</th><th>초과 매시간</th><th>이동시간<br>보상</th><th>주요 적용대상</th></tr>
+      </thead>
+      <tbody id="feeTableBody"></tbody>
+    </table>
+    <p class="modal-foot">※ 이 기준은 예시이며, 실제 지급 시에는 소속·주관 기관의 자체 강사료 규정을 따르세요. 청탁금지법상 공직자 등에 해당하는 강사는 상한액 및 소속기관별 행동강령이 별도로 적용될 수 있습니다.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const tbody = document.getElementById('tbody');
+  const tagList = document.getElementById('tagList');
+  const totalAmountEl = document.getElementById('totalAmount');
+  const calcTarget = document.getElementById('calcTarget');
+  const calcGrid = document.getElementById('calcGrid');
+  const toast = document.getElementById('toast');
+
+  let rowSeq = 1;
+  let rows = [
+    {id: rowSeq++, category:'강사비', detail:'100,000원 × 2회', amount:200000, note:'1인 1회 기준'},
+    {id: rowSeq++, category:'재료비', detail:'5,000원 × 20명', amount:100000, note:'-'},
+    {id: rowSeq++, category:'다과비', detail:'3,000원 × 20명 × 2회', amount:120000, note:'-'},
+    {id: rowSeq++, category:'인쇄비', detail:'500원 × 50부', amount:25000, note:'-'},
+    {id: rowSeq++, category:'예비비', detail:'총계의 5% 내외', amount:22000, note:'불가피한 지출 대비'}
+  ];
+
+  let tags = ['강사비','재료비','다과비','인쇄비','상품비','진행비','홍보비','장소대관료','교통비','식비','보험료','예비비'];
+
+  let activeDetailEl = null; // currently focused 산출내역 cell
+
+  function fmt(n){
+    if(n===null || n===undefined || isNaN(n)) return '0';
+    return Math.round(n).toLocaleString('ko-KR');
+  }
+
+  function calcFromDetail(text){
+    const nums = (text.match(/[\d,]+(?:\.\d+)?/g) || [])
+      .map(s => parseFloat(s.replace(/,/g,'')))
+      .filter(n => !isNaN(n) && n > 0);
+    if(nums.length < 2) return null;
+    return Math.round(nums.reduce((a,b)=>a*b, 1));
+  }
+
+  function renderTags(){
+    tagList.innerHTML = '';
+    tags.forEach((t, idx) => {
+      const chip = document.createElement('div');
+      chip.className = 'tag';
+      chip.innerHTML = (t === '강사비' ? '<span class="info" title="강사료 지급기준 보기">ⓘ</span> ' : '') +
+        '<span class="label">+ ' + t + '</span>' +
+        '<span class="rm" title="목록에서 제거">×</span>';
+      chip.querySelector('.label').addEventListener('click', () => addRow(t));
+      const infoEl = chip.querySelector('.info');
+      if(infoEl){
+        infoEl.addEventListener('click', (e) => { e.stopPropagation(); openFeeModal(); });
+      }
+      chip.querySelector('.rm').addEventListener('click', (e) => {
+        e.stopPropagation();
+        tags.splice(idx,1);
+        renderTags();
+      });
+      tagList.appendChild(chip);
+    });
+    const addChip = document.createElement('div');
+    addChip.className = 'tag add';
+    addChip.textContent = '+ 직접 추가';
+    addChip.addEventListener('click', () => {
+      const name = window.prompt('추가할 세목 이름을 입력하세요');
+      if(name && name.trim()){
+        tags.push(name.trim());
+        renderTags();
+        addRow(name.trim());
+      }
+    });
+    tagList.appendChild(addChip);
+  }
+
+  function addRow(category){
+    rows.push({id: rowSeq++, category: category || '', detail:'', amount:0, note:''});
+    renderRows();
+  }
+
+  function removeRow(id){
+    rows = rows.filter(r => r.id !== id);
+    renderRows();
+  }
+
+  function updateTotal(){
+    const total = rows.reduce((s,r) => s + (Number(r.amount)||0), 0);
+    totalAmountEl.textContent = fmt(total) + '원';
+  }
+
+  function makeCell(row, field, placeholder){
+    const td = document.createElement('td');
+    const div = document.createElement('div');
+    div.className = 'cell';
+    div.contentEditable = 'true';
+    div.dataset.placeholder = placeholder || '';
+    div.textContent = row[field] || '';
+    div.classList.toggle('placeholder-empty', !row[field]);
+
+    div.addEventListener('focus', () => {
+      div.classList.remove('placeholder-empty');
+      if(field === 'detail'){
+        activeDetailEl = div;
+        calcTarget.textContent = '→ 선택됨: "' + (row.category || '세목 미정') + '" 행의 산출내역 칸';
+        calcTarget.classList.add('active');
+      }
+    });
+    div.addEventListener('blur', () => {
+      if(!div.textContent) div.classList.add('placeholder-empty');
+      row[field] = div.textContent.trim();
+      if(field === 'amount'){
+        const n = parseFloat(row[field].replace(/[^\d.]/g,''));
+        row.amount = isNaN(n) ? 0 : n;
+        div.textContent = fmt(row.amount);
+        updateTotal();
+      }
+    });
+    div.addEventListener('input', () => {
+      row[field] = div.textContent.trim();
+      if(field === 'detail'){
+        const auto = calcFromDetail(row.detail);
+        if(auto !== null){
+          row.amount = auto;
+          const amountEl = td.parentElement.querySelector('.amount-cell .cell');
+          if(amountEl) amountEl.textContent = fmt(row.amount);
+          updateTotal();
+        }
+      }
+    });
+    td.appendChild(div);
+    if(field === 'amount') td.classList.add('amount-cell');
+    return td;
+  }
+
+  function renderRows(){
+    tbody.innerHTML = '';
+    rows.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.appendChild(makeCell(row, 'category', '세목'));
+      tr.appendChild(makeCell(row, 'detail', '예: 5,000원 × 20명'));
+      const amountTd = makeCell(row, 'amount', '0');
+      amountTd.querySelector('.cell').textContent = fmt(row.amount);
+      tr.appendChild(amountTd);
+      tr.appendChild(makeCell(row, 'note', '-'));
+      const delTd = document.createElement('td');
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del-btn';
+      delBtn.textContent = '×';
+      delBtn.title = '행 삭제';
+      delBtn.addEventListener('click', () => removeRow(row.id));
+      delTd.appendChild(delBtn);
+      tr.appendChild(delTd);
+      tbody.appendChild(tr);
+    });
+    updateTotal();
+  }
+
+  // Mini calculator
+  const calcKeys = [
+    {label:'7'},{label:'8'},{label:'9'},{label:'÷', op:true},
+    {label:'4'},{label:'5'},{label:'6'},{label:'×', op:true},
+    {label:'1'},{label:'2'},{label:'3'},{label:'−', op:true},
+    {label:'0'},{label:'.'},{label:'←', action:'back'},{label:'+', op:true},
+    {label:'C 지우기', action:'clear', wide:true}
+  ];
+  calcKeys.forEach(k => {
+    const btn = document.createElement('button');
+    btn.className = 'calc-btn' + (k.op ? ' op' : '') + (k.action==='clear' ? ' clear' : '') + (k.wide ? ' wide' : '');
+    btn.textContent = k.label;
+    btn.addEventListener('click', () => {
+      if(!activeDetailEl){
+        calcTarget.textContent = '→ 먼저 산출내역 칸을 클릭한 뒤 사용하세요';
+        return;
+      }
+      if(k.action === 'clear'){
+        activeDetailEl.textContent = '';
+      } else if(k.action === 'back'){
+        activeDetailEl.textContent = activeDetailEl.textContent.slice(0, -1);
+      } else {
+        activeDetailEl.textContent += k.label;
+      }
+      activeDetailEl.dispatchEvent(new Event('input'));
+    });
+    calcGrid.appendChild(btn);
+  });
+
+  document.getElementById('addRowBtn').addEventListener('click', () => addRow(''));
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    if(rows.length && !window.confirm('모든 행을 삭제할까요?')) return;
+    rows = [];
+    renderRows();
+  });
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function buildHwpHtml(){
+    const cellStyle = 'font-family:돋움,Dotum,sans-serif;font-size:11pt;text-align:center;vertical-align:middle;border-style:solid;border-width:1pt;border-color:#000000;padding:6px 8px;';
+    const headStyle = cellStyle + 'font-weight:bold;background-color:#EEF1F9;';
+    const totalStyle = cellStyle + 'font-weight:bold;background-color:#FBECE8;';
+    let html = '<table style="border-collapse:collapse;border-style:solid;border-width:1pt;border-color:#000000;width:100%;' + 'font-family:돋움,Dotum,sans-serif;font-size:11pt;">';
+    html += '<tr>' +
+      '<th style="' + headStyle + '">세목</th>' +
+      '<th style="' + headStyle + '">산출내역</th>' +
+      '<th style="' + headStyle + '">금액(원)</th>' +
+      '<th style="' + headStyle + '">비고</th>' +
+      '</tr>';
+    rows.forEach(r => {
+      html += '<tr>' +
+        '<td style="' + cellStyle + '">' + escapeHtml(r.category||'') + '</td>' +
+        '<td style="' + cellStyle + '">' + escapeHtml(r.detail||'') + '</td>' +
+        '<td style="' + cellStyle + '">' + fmt(r.amount) + '</td>' +
+        '<td style="' + cellStyle + '">' + escapeHtml(r.note||'') + '</td>' +
+        '</tr>';
+    });
+    const total = rows.reduce((s,r) => s + (Number(r.amount)||0), 0);
+    html += '<tr>' +
+      '<td colspan="2" style="' + totalStyle + '">총계</td>' +
+      '<td style="' + totalStyle + '">' + fmt(total) + '</td>' +
+      '<td style="' + totalStyle + '"></td>' +
+      '</tr>';
+    html += '</table>';
+    return html;
+  }
+
+  function buildPlainText(){
+    let lines = ['세목\t산출내역\t금액(원)\t비고'];
+    rows.forEach(r => lines.push([r.category, r.detail, fmt(r.amount), r.note].join('\t')));
+    const total = rows.reduce((s,r) => s + (Number(r.amount)||0), 0);
+    lines.push('총계\t\t' + fmt(total) + '\t');
+    return lines.join('\n');
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    const html = buildHwpHtml();
+    const text = buildPlainText();
+    try{
+      if(navigator.clipboard && window.ClipboardItem){
+        const item = new ClipboardItem({
+          'text/html': new Blob([html], {type:'text/html'}),
+          'text/plain': new Blob([text], {type:'text/plain'})
+        });
+        await navigator.clipboard.write([item]);
+        showToast('표를 복사했어요. 한글(HWP) 문서에 붙여넣어 보세요.');
+        return;
+      }
+    }catch(e){ /* fall through */ }
+    try{
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.innerHTML = html;
+      document.body.appendChild(container);
+      const range = document.createRange();
+      range.selectNodeContents(container);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      document.body.removeChild(container);
+      showToast('표를 복사했어요. 한글(HWP) 문서에 붙여넣어 보세요.');
+    }catch(e){
+      showToast('복사에 실패했어요. 표를 드래그해 직접 복사해 주세요.');
+    }
+  });
+
+  // 강사비 기준표 모달
+  const feeData = [
+    {grade:'특1급', first:'40', extra:'30 (공직자 20)', move:'30', desc:'전직 장관급·대학총장·국회의원·광역자치단체장, 대기업 회장급 등'},
+    {grade:'특2급', first:'30', extra:'20', move:'20', desc:'전직 차관급·공기업 대표·기초자치단체장 등'},
+    {grade:'1급', first:'25', extra:'12', move:'12', desc:'전직 4급 이상 공무원, 유명 인사, 기업·기관 임원·중역, 전문자격증 5년 이상 경력자, 박사학위 취득 후 5년 이상 경력자 등'},
+    {grade:'2급', first:'15', extra:'8', move:'8', desc:'전직 5급 이하 공무원, 중소기업 임원·부장급, 전문자격증 3년 이상 경력자, 원어민 어학강사 등'},
+    {grade:'3급', first:'10', extra:'5', move:'5', desc:'외국어·전산 등 강사, 체육·레크리에이션 등 취미소양 강사(5년 이상 경력) 등'},
+    {grade:'4급', first:'8', extra:'4', move:'4', desc:'체육·레크리에이션 등 취미소양 강사'},
+    {grade:'5급', first:'6', extra:'3', move:'3', desc:'각종 교육운영(실기실습 등) 보조자'}
+  ];
+  const feeTableBody = document.getElementById('feeTableBody');
+  feeData.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td class="grade">' + r.grade + '</td>' +
+      '<td>' + r.first + '만원</td>' +
+      '<td>' + r.extra + '만원</td>' +
+      '<td>' + r.move + '만원</td>' +
+      '<td class="desc">' + r.desc + '</td>';
+    feeTableBody.appendChild(tr);
+  });
+
+  const feeModalOverlay = document.getElementById('feeModalOverlay');
+  window.openFeeModal = function(){ feeModalOverlay.classList.add('show'); };
+  function closeFeeModal(){ feeModalOverlay.classList.remove('show'); }
+  document.getElementById('feeModalClose').addEventListener('click', closeFeeModal);
+  feeModalOverlay.addEventListener('click', (e) => { if(e.target === feeModalOverlay) closeFeeModal(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeFeeModal(); });
+
+  renderTags();
+  renderRows();
+})();
+</script>
+</body>
+</html>
