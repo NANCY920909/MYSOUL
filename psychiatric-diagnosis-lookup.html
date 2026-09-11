@@ -1,0 +1,785 @@
+<title>정신과 진단코드 검색기</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --bg:#EEF3F1;
+    --surface:#FFFFFF;
+    --surface-2:#E4ECE9;
+    --ink:#1B2624;
+    --ink-soft:#4B5C58;
+    --ink-faint:#7C8B87;
+    --line:#D3DEDA;
+    --teal:#0F6E63;
+    --teal-soft:#E3F0EC;
+    --amber:#A3661F;
+    --amber-soft:#F7ECDA;
+    --amber-line:#E7CFA0;
+    --warn:#A6432E;
+    --warn-soft:#F7E7E1;
+    --warn-line:#E7BDAE;
+    --violet:#5B4E9C;
+    --violet-soft:#EAE7F5;
+    --on-accent:#FFFFFF;
+    --shadow: 0 1px 2px rgba(15,30,26,.05), 0 8px 20px rgba(15,30,26,.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F1B18;
+      --surface:#16241F;
+      --surface-2:#1C2C27;
+      --ink:#EAF2EF;
+      --ink-soft:#A9BDB7;
+      --ink-faint:#7C948C;
+      --line:#2A3B35;
+      --teal:#5FCDB8;
+      --teal-soft:#1B3630;
+      --amber:#E3A75B;
+      --amber-soft:#332711;
+      --amber-line:#4A3A1E;
+      --warn:#E38A70;
+      --warn-soft:#3A201A;
+      --warn-line:#5A3128;
+      --violet:#B4A8E8;
+      --violet-soft:#292453;
+      --on-accent:#0F1B18;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F1B18;
+    --surface:#16241F;
+    --surface-2:#1C2C27;
+    --ink:#EAF2EF;
+    --ink-soft:#A9BDB7;
+    --ink-faint:#7C948C;
+    --line:#2A3B35;
+    --teal:#5FCDB8;
+    --teal-soft:#1B3630;
+    --amber:#E3A75B;
+    --amber-soft:#332711;
+    --amber-line:#4A3A1E;
+    --warn:#E38A70;
+    --warn-soft:#3A201A;
+    --warn-line:#5A3128;
+    --violet:#B4A8E8;
+    --violet-soft:#292453;
+    --on-accent:#0F1B18;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.35);
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Noto Sans KR', -apple-system, sans-serif;
+    line-height:1.7;
+  }
+  .wrap{ max-width:900px; margin:0 auto; padding:48px 20px 96px; }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--teal);
+  }
+  h1{
+    font-family:'Gowun Batang', serif;
+    font-size:clamp(28px, 5vw, 40px);
+    font-weight:700;
+    margin:10px 0 12px;
+    text-wrap:balance;
+  }
+  .lede{
+    font-size:16px;
+    color:var(--ink-soft);
+    max-width:64ch;
+    margin:0 0 20px;
+  }
+
+  .disclaimer{
+    display:flex;
+    gap:10px;
+    background:var(--warn-soft);
+    border:1px solid var(--warn-line);
+    color:var(--ink);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:13.5px;
+    margin:0 0 28px;
+  }
+  .disclaimer b{ color:var(--warn); }
+
+  /* search */
+  .search-box{
+    position:sticky;
+    top:0;
+    z-index:5;
+    background:var(--bg);
+    padding:12px 0 14px;
+  }
+  .search-input-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--surface);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:12px 16px;
+    box-shadow:var(--shadow);
+  }
+  .search-input-row:focus-within{ border-color:var(--teal); }
+  .search-input-row svg{ flex:none; color:var(--ink-faint); }
+  #q{
+    flex:1;
+    border:none;
+    outline:none;
+    background:transparent;
+    color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    font-size:16px;
+  }
+  #q::placeholder{ color:var(--ink-faint); }
+  .clear-btn{
+    border:none;
+    background:var(--surface-2);
+    color:var(--ink-soft);
+    border-radius:8px;
+    padding:6px 10px;
+    font-size:12.5px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .clear-btn:hover{ background:var(--line); }
+
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:12px;
+  }
+  .chip{
+    font-family:'Noto Sans KR', sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink-soft);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .chip:hover{ background:var(--surface-2); color:var(--ink); }
+  .chip.active{ background:var(--teal); border-color:var(--teal); color:var(--on-accent); }
+
+  .result-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-faint);
+    margin:18px 2px 12px;
+  }
+
+  .cards{ display:flex; flex-direction:column; gap:14px; }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .card-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+    padding:18px 20px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .card-head:hover{ background:var(--surface-2); }
+  .card-titles{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .code-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .code-pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+    background:var(--teal-soft);
+    color:var(--teal);
+    padding:3px 9px;
+    border-radius:7px;
+    letter-spacing:.02em;
+  }
+  .cat-pill{
+    font-size:11.5px;
+    font-weight:600;
+    background:var(--violet-soft);
+    color:var(--violet);
+    padding:3px 9px;
+    border-radius:7px;
+  }
+  .name-ko{ font-family:'Gowun Batang', serif; font-size:19px; font-weight:700; }
+  .name-en{ font-size:13px; color:var(--ink-faint); font-style:italic; }
+  .chevron{ flex:none; color:var(--ink-faint); transition:transform .15s ease; margin-top:4px; }
+  .card.open .chevron{ transform:rotate(180deg); }
+
+  .card-body{
+    display:none;
+    padding:0 20px 22px;
+    border-top:1px solid var(--line);
+  }
+  .card.open .card-body{ display:block; }
+
+  .field{ padding-top:18px; }
+  .field-label{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--amber);
+    margin-bottom:6px;
+    letter-spacing:.01em;
+  }
+  .field-label .dot{ width:6px; height:6px; border-radius:50%; background:var(--amber); flex:none; }
+  .field-body{ font-size:14.5px; color:var(--ink); }
+  .field-body ul{ margin:4px 0 0; padding-left:20px; }
+  .field-body li{ margin:3px 0; }
+  .subtype{ color:var(--ink-soft); font-size:13.5px; margin-top:2px; }
+
+  .no-result{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-faint);
+  }
+  .no-result .big{ font-size:34px; margin-bottom:8px; }
+
+  footer{
+    margin-top:48px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    font-size:12.5px;
+    color:var(--ink-faint);
+  }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Reference Tool for Case Managers</div>
+  <h1>정신과 진단코드 검색기</h1>
+  <p class="lede">증상이나 진단명을 입력하면 진단코드(ICD-10 / DSM-5-TR), 한글·영문 명칭, 분류체계, 흔히 쓰이는 약물, 치료법·개입방법·사례관리방법을 한 번에 확인할 수 있습니다.</p>
+
+  <div class="disclaimer">
+    <span>⚠️</span>
+    <div><b>참고용 정보입니다.</b> 실제 진단은 반드시 정신건강의학과 전문의의 평가를 통해 이루어져야 하며, 약물·치료 정보는 임상 현장에서 일반적으로 활용되는 예시로 개별 처방·치료 계획은 담당 의료진의 판단을 따릅니다.</div>
+  </div>
+
+  <div class="search-box">
+    <div class="search-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="q" type="text" placeholder="예: 환청, 불면, 조현병, 우울, F32, ADHD ..." autocomplete="off">
+      <button class="clear-btn" id="clearBtn" type="button">지우기</button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="result-meta" id="resultMeta"></div>
+  <div class="cards" id="cards"></div>
+  <div class="no-result" id="noResult" style="display:none;">
+    <div class="big">🔎</div>
+    검색 결과가 없습니다. 다른 증상이나 진단명으로 다시 시도해 보세요.
+  </div>
+
+  <footer>
+    분류체계: DSM-5-TR / ICD-10(F코드) 기준 · 국내 임상 현장에서 통용되는 한글 진단명 병기 · 총 <span id="totalCount">0</span>개 진단 수록
+  </footer>
+</div>
+
+<script>
+const DATA = [
+  // ---------- 신경발달장애 ----------
+  {
+    code:"F90.9", category:"신경발달장애", subtype:"주의력결핍 및 파괴적 행동장애",
+    nameKo:"주의력결핍 과잉행동장애", nameEn:"Attention-Deficit/Hyperactivity Disorder (ADHD)",
+    keywords:["adhd","과잉행동","주의력결핍","산만","충동","집중력저하"],
+    meds:"메틸페니데이트(콘서타, 메디키넷 등 중추신경자극제), 아토목세틴(스트라테라), 클로니딘 — 자극제가 1차 치료로 흔히 사용됨.",
+    treatment:"약물치료 + 행동치료(부모훈련, 행동수정), 사회기술훈련, 학교와의 협력(개별화교육계획).",
+    intervention:"부모교육 및 양육코칭, 학교 담임·특수교사 연계, 규칙적 생활습관 구조화, 증상 모니터링.",
+    caseManagement:"정기적 약물 순응도 확인, 학업·또래관계 변화 추적, 가족 스트레스 지원, 필요시 소아청소년정신건강 전문기관 연계."
+  },
+  {
+    code:"F84.0", category:"신경발달장애", subtype:"전반적 발달장애",
+    nameKo:"자폐스펙트럼장애", nameEn:"Autism Spectrum Disorder (ASD)",
+    keywords:["자폐","asd","사회적의사소통","반복행동","상동행동"],
+    meds:"핵심 증상에 대한 치료 약물은 없으며, 공존 문제(과민성·공격성)에 리스페리돈, 아리피프라졸 등을 제한적으로 사용.",
+    treatment:"응용행동분석(ABA), 언어치료, 감각통합치료, 사회기술훈련, 특수교육.",
+    intervention:"조기집중개입, 부모훈련 프로그램, 개별화교육계획(IEP) 수립, 감각환경 조정.",
+    caseManagement:"발달 이정표 지속 관찰, 지역 발달재활서비스·특수교육 연계, 가족 돌봄부담 지원, 성인기 전환(직업재활) 준비."
+  },
+  {
+    code:"F70–F73", category:"신경발달장애", subtype:"지적장애",
+    nameKo:"지적장애", nameEn:"Intellectual Disability",
+    keywords:["지적장애","인지기능저하","적응기능"],
+    meds:"지적장애 자체에 대한 약물은 없으며, 공존 정신과적 증상(불안·공격성 등)에 대해 대증적 약물치료.",
+    treatment:"특수교육, 적응행동훈련, 직업재활, 의사소통훈련.",
+    intervention:"개별화 지원계획 수립, 가족지원 및 양육상담, 지역사회 자원 연계.",
+    caseManagement:"생애주기별(아동기-성인기) 전환지원, 장애인복지시설·주간보호 연계, 후견·복지제도 안내."
+  },
+  {
+    code:"F91.3", category:"파괴적, 충동조절 및 품행장애", subtype:"적대적 반항장애",
+    nameKo:"적대적 반항장애", nameEn:"Oppositional Defiant Disorder (ODD)",
+    keywords:["반항","분노","규칙위반","떼쓰기"],
+    meds:"1차 치료는 비약물적 개입이며, 공존 ADHD·과민성에 한해 자극제 또는 리스페리돈 등을 병행.",
+    treatment:"부모관리훈련(PMT), 문제해결기술훈련, 가족치료.",
+    intervention:"긍정적 행동지원, 일관된 훈육전략 코칭, 학교와의 행동계약.",
+    caseManagement:"가족기능 평가 및 정기 상담, 학교생활 적응 모니터링, 필요시 아동청소년 정신건강서비스 연계."
+  },
+  {
+    code:"F91", category:"파괴적, 충동조절 및 품행장애", subtype:"품행장애",
+    nameKo:"품행장애", nameEn:"Conduct Disorder",
+    keywords:["폭력","절도","가출","규범위반","비행"],
+    meds:"공격성 조절을 위해 리스페리돈 등 항정신병약물을 제한적으로 병용하기도 함(1차 치료 아님).",
+    treatment:"다중체계치료(MST), 부모훈련, 사회기술훈련, 학교기반 개입.",
+    intervention:"위기개입 및 안전계획 수립, 보호관찰·소년보호기관 연계, 가족치료.",
+    caseManagement:"법적·교육적 자원 연계(청소년상담복지센터, 학교전담경찰관 등), 재범방지 프로그램 연계, 장기 추적관리."
+  },
+  {
+    code:"F63.81", category:"파괴적, 충동조절 및 품행장애", subtype:"충동조절장애",
+    nameKo:"간헐적 폭발장애", nameEn:"Intermittent Explosive Disorder",
+    keywords:["분노폭발","충동적공격성"],
+    meds:"SSRI(플루옥세틴 등), 기분안정제(발프로산), 필요시 항정신병약물 병용.",
+    treatment:"인지행동치료(분노조절훈련), 이완훈련.",
+    intervention:"촉발요인 식별 및 대처기술 코칭, 스트레스 관리 교육.",
+    caseManagement:"폭발 삽화 빈도·강도 기록, 가족·직장 내 갈등 중재, 안전계획 수립."
+  },
+  // ---------- 조현병 스펙트럼 및 기타 정신병적 장애 ----------
+  {
+    code:"F20.9", category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"조현병",
+    nameKo:"조현병", nameEn:"Schizophrenia",
+    keywords:["조현병","환청","환각","망상","와해된언어","음성증상","정신병"],
+    meds:"항정신병약물(리스페리돈, 올란자핀, 아리피프라졸, 클로자핀(치료저항성) 등) — 유지치료로 장기간 지속 필요.",
+    treatment:"약물치료 + 정신사회재활(사회기술훈련, 인지행동치료), 가족교육.",
+    intervention:"조기 개입 및 재발 징후 교육, 위기개입계획, 가족 심리교육.",
+    caseManagement:"약물 순응도 정기 확인, 정신재활시설·주간재활프로그램 연계, 직업재활, 지역사회 통합지원(방문형 사례관리), 재입원 예방을 위한 정기 모니터링."
+  },
+  {
+    code:"F25", category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"조현정동장애",
+    nameKo:"조현정동장애", nameEn:"Schizoaffective Disorder",
+    keywords:["조현정동","기분증상","정신병적증상"],
+    meds:"항정신병약물 + 기분안정제(리튬, 발프로산) 또는 항우울제 병용.",
+    treatment:"약물치료, 정신사회재활, 인지행동치료.",
+    intervention:"기분 및 정신병적 증상 동시 모니터링, 가족교육.",
+    caseManagement:"조현병에 준하는 지속적 사례관리, 재발 조기징후 교육, 지역사회 자원 연계."
+  },
+  {
+    code:"F22", category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"망상장애",
+    nameKo:"망상장애", nameEn:"Delusional Disorder",
+    keywords:["망상","피해망상","질투망상"],
+    meds:"항정신병약물(치료 순응도가 낮은 경향이 있어 저용량부터 시작).",
+    treatment:"치료적 동맹 형성 중심의 개인정신치료, 인지행동치료.",
+    intervention:"신뢰관계 형성 우선, 강제적 대면보다 점진적 접근.",
+    caseManagement:"치료 거부 위험 관리, 사회적 고립 예방, 가족지지체계 강화."
+  },
+  {
+    code:"F23", category:"조현병 스펙트럼 및 기타 정신병적 장애", subtype:"단기 정신병적 장애",
+    nameKo:"단기 정신병적 장애", nameEn:"Brief Psychotic Disorder",
+    keywords:["급성정신병","일시적환각"],
+    meds:"단기간 항정신병약물 사용, 증상 호전 시 감량.",
+    treatment:"입원치료(급성기), 스트레스 요인 해결을 위한 지지치료.",
+    intervention:"안전 확보 및 위기개입, 스트레스원 평가.",
+    caseManagement:"관해 후 재발 감시, 스트레스 관리 교육, 정기 추적관찰."
+  },
+  // ---------- 양극성 및 관련 장애 ----------
+  {
+    code:"F31.1x", category:"양극성 및 관련 장애", subtype:"양극성장애 제1형",
+    nameKo:"양극성장애 제1형", nameEn:"Bipolar I Disorder",
+    keywords:["조증","양극성","기분삽화","들뜬기분"],
+    meds:"기분안정제(리튬, 발프로산, 라모트리진), 항정신병약물(퀘티아핀, 올란자핀).",
+    treatment:"약물치료 + 대인관계 및 사회리듬치료(IPSRT), 가족중심치료.",
+    intervention:"수면·생활리듬 관리 교육, 조증 조기징후 식별 훈련.",
+    caseManagement:"약물 혈중농도(리튬 등) 정기 확인 연계, 재발징후 모니터링, 가족 심리교육, 직업·사회기능 회복 지원."
+  },
+  {
+    code:"F31.81", category:"양극성 및 관련 장애", subtype:"양극성장애 제2형",
+    nameKo:"양극성장애 제2형", nameEn:"Bipolar II Disorder",
+    keywords:["경조증","우울삽화","기분기복"],
+    meds:"기분안정제(라모트리진 등), 필요시 SSRI를 기분안정제와 병용(단독 사용은 조증 유발 위험으로 지양).",
+    treatment:"인지행동치료, 대인관계 및 사회리듬치료.",
+    intervention:"기분 변화 기록(무드차트) 교육, 스트레스 관리.",
+    caseManagement:"경조증·우울 삽화 반복 모니터링, 자살위험 평가, 지역정신건강센터 연계."
+  },
+  {
+    code:"F34.0", category:"양극성 및 관련 장애", subtype:"순환성장애",
+    nameKo:"순환성장애", nameEn:"Cyclothymic Disorder",
+    keywords:["경한기분기복","만성적기분변동"],
+    meds:"증상이 뚜렷할 경우 저용량 기분안정제 고려.",
+    treatment:"심리교육, 인지행동치료.",
+    intervention:"생활리듬 안정화 교육.",
+    caseManagement:"장기적 경과 관찰, 주요 기분장애로의 이행 여부 추적."
+  },
+  // ---------- 우울장애 ----------
+  {
+    code:"F32.x / F33.x", category:"우울장애", subtype:"주요우울장애(단일/재발성)",
+    nameKo:"주요우울장애", nameEn:"Major Depressive Disorder (MDD)",
+    keywords:["우울","무기력","의욕저하","죽고싶다","자살사고","불면","식욕저하"],
+    meds:"SSRI(에스시탈로프람, 설트랄린), SNRI(둘록세틴, 벤라팍신) 등이 1차 약물로 흔히 사용.",
+    treatment:"약물치료 + 인지행동치료(CBT), 대인관계치료, 중증의 경우 전기경련치료(ECT) 고려.",
+    intervention:"자살위험 평가 필수, 활동계획 세우기, 사회적 지지 연결.",
+    caseManagement:"자살위험 정기 재평가, 약물 순응도 및 부작용 확인, 위기개입 핫라인 안내, 재발방지 심리교육."
+  },
+  {
+    code:"F34.1", category:"우울장애", subtype:"지속성우울장애(기분저하증)",
+    nameKo:"지속성우울장애", nameEn:"Persistent Depressive Disorder (Dysthymia)",
+    keywords:["만성우울","기분저하","의욕없음"],
+    meds:"SSRI/SNRI 계열 항우울제 장기 유지치료.",
+    treatment:"인지행동치료, 정신역동치료.",
+    intervention:"장기적 목표설정과 작은 성취경험 강화.",
+    caseManagement:"만성경과 특성상 장기 추적관리, 기능저하 및 사회적 고립 예방."
+  },
+  {
+    code:"F34.81", category:"우울장애", subtype:"파괴적 기분조절부전장애",
+    nameKo:"파괴적 기분조절부전장애", nameEn:"Disruptive Mood Dysregulation Disorder (DMDD)",
+    keywords:["짜증","분노발작","기분조절부전","아동"],
+    meds:"SSRI, 자극제(공존 ADHD 시), 항정신병약물은 제한적으로 사용.",
+    treatment:"부모관리훈련, 인지행동치료, 가족치료.",
+    intervention:"감정조절기술 훈련, 학교와의 협력.",
+    caseManagement:"가족기능 평가, 학교적응 모니터링, 아동청소년 정신건강서비스 연계."
+  },
+  // ---------- 불안장애 ----------
+  {
+    code:"F41.1", category:"불안장애", subtype:"범불안장애",
+    nameKo:"범불안장애", nameEn:"Generalized Anxiety Disorder (GAD)",
+    keywords:["불안","걱정","긴장","불면","초조"],
+    meds:"SSRI/SNRI가 1차 치료, 단기간 벤조디아제핀 병용 가능(장기사용 지양).",
+    treatment:"인지행동치료, 이완훈련, 마음챙김기반 스트레스 감소(MBSR).",
+    intervention:"걱정 관리 기법 교육, 신체이완훈련.",
+    caseManagement:"기능저하 정도 추적, 벤조디아제핀 의존 위험 모니터링, 스트레스원 관리 지원."
+  },
+  {
+    code:"F41.0", category:"불안장애", subtype:"공황장애",
+    nameKo:"공황장애", nameEn:"Panic Disorder",
+    keywords:["공황발작","심장두근거림","호흡곤란","죽을것같은느낌"],
+    meds:"SSRI/SNRI 1차, 급성기 벤조디아제핀(알프라졸람 등) 단기 사용.",
+    treatment:"인지행동치료(공황조절훈련), 호흡훈련.",
+    intervention:"발작 시 대처기술 코칭, 회피행동 완화(노출치료).",
+    caseManagement:"응급실 이용 빈도 추적, 광장공포증 동반 여부 확인, 약물 의존 모니터링."
+  },
+  {
+    code:"F40.1", category:"불안장애", subtype:"사회불안장애",
+    nameKo:"사회불안장애(사회공포증)", nameEn:"Social Anxiety Disorder",
+    keywords:["대인기피","발표불안","사회공포","얼굴빨개짐"],
+    meds:"SSRI/SNRI, 상황적 발표불안에 베타차단제 고려.",
+    treatment:"인지행동치료(노출 및 사회기술훈련).",
+    intervention:"단계적 노출연습, 자기주장훈련.",
+    caseManagement:"사회적 위축·고립 정도 모니터링, 학교·직장 복귀 지원."
+  },
+  {
+    code:"F40.2", category:"불안장애", subtype:"특정공포증",
+    nameKo:"특정공포증", nameEn:"Specific Phobia",
+    keywords:["특정공포","고소공포","동물공포","주사공포"],
+    meds:"약물치료는 일반적으로 권장되지 않음(급성 상황에 한해 단기 항불안제 고려).",
+    treatment:"노출치료(체계적 둔감법)가 가장 효과적.",
+    intervention:"단계적 노출 계획 수립.",
+    caseManagement:"일상기능 제한 정도 확인, 치료 지속성 독려."
+  },
+  {
+    code:"F93.0", category:"불안장애", subtype:"분리불안장애",
+    nameKo:"분리불안장애", nameEn:"Separation Anxiety Disorder",
+    keywords:["등교거부","분리불안","엄마와떨어지기싫어함"],
+    meds:"증상이 심한 경우 SSRI 고려.",
+    treatment:"인지행동치료, 부모-자녀 상호작용치료.",
+    intervention:"점진적 분리연습, 부모교육.",
+    caseManagement:"등교 거부 여부 확인, 학교 및 담임교사와 협력, 가족상담 연계."
+  },
+  // ---------- 강박 및 관련 장애 ----------
+  {
+    code:"F42", category:"강박 및 관련 장애", subtype:"강박장애",
+    nameKo:"강박장애", nameEn:"Obsessive-Compulsive Disorder (OCD)",
+    keywords:["강박","반복행동","확인행동","오염강박","손씻기"],
+    meds:"고용량 SSRI가 1차 치료(일반 우울증보다 고용량 필요), 클로미프라민도 사용.",
+    treatment:"노출 및 반응방지법(ERP), 인지행동치료.",
+    intervention:"강박행동 감소 목표의 단계적 훈련, 가족의 강박행동 동조(accommodation) 줄이기 교육.",
+    caseManagement:"일상기능(위생·시간관리) 영향 평가, 치료 지속성 관리, 가족교육."
+  },
+  {
+    code:"F45.22", category:"강박 및 관련 장애", subtype:"신체이형장애",
+    nameKo:"신체이형장애", nameEn:"Body Dysmorphic Disorder",
+    keywords:["외모집착","신체이형","거울확인"],
+    meds:"SSRI 고용량.",
+    treatment:"인지행동치료(ERP 포함).",
+    intervention:"미용시술 반복 요구에 대한 심리교육.",
+    caseManagement:"사회적 기능저하 모니터링, 자살위험 평가(동반율 높음)."
+  },
+  {
+    code:"F42.3", category:"강박 및 관련 장애", subtype:"저장장애",
+    nameKo:"저장장애", nameEn:"Hoarding Disorder",
+    keywords:["저장강박","물건버리기어려움","쓰레기집"],
+    meds:"SSRI(효과는 제한적).",
+    treatment:"인지행동치료(정리기술훈련 포함).",
+    intervention:"환경정리 지원, 동기강화면담.",
+    caseManagement:"주거환경 안전점검(화재·위생 위험), 지역복지자원 연계, 정기 방문관리."
+  },
+  // ---------- 외상 및 스트레스 관련 장애 ----------
+  {
+    code:"F43.1", category:"외상 및 스트레스 관련 장애", subtype:"외상후스트레스장애",
+    nameKo:"외상후스트레스장애", nameEn:"Post-Traumatic Stress Disorder (PTSD)",
+    keywords:["외상","트라우마","플래시백","악몽","과각성"],
+    meds:"SSRI(파록세틴, 설트랄린)가 승인된 1차 약물, 악몽에 프라조신 고려.",
+    treatment:"지속노출치료(PE), 인지처리치료(CPT), EMDR.",
+    intervention:"안전감 확립 우선, 재외상화 방지, 점진적 노출.",
+    caseManagement:"자·타해 위험 평가, 트라우마 반응 심리교육, 지지체계 연계, 장기 추적관찰."
+  },
+  {
+    code:"F43.0", category:"외상 및 스트레스 관련 장애", subtype:"급성 스트레스장애",
+    nameKo:"급성 스트레스장애", nameEn:"Acute Stress Disorder",
+    keywords:["급성외상반응","사고직후증상"],
+    meds:"단기 대증치료(수면장애 시 단기 수면제 고려), 벤조디아제핀은 지양.",
+    treatment:"위기상담, 심리적 응급처치(Psychological First Aid).",
+    intervention:"안전 확보, 정상화 교육, 사회적 지지 연결.",
+    caseManagement:"PTSD로의 이행 여부 추적관찰, 재난심리지원센터 연계."
+  },
+  {
+    code:"F43.2", category:"외상 및 스트레스 관련 장애", subtype:"적응장애",
+    nameKo:"적응장애", nameEn:"Adjustment Disorder",
+    keywords:["스트레스반응","적응곤란","이혼","실직","전학"],
+    meds:"필요시 단기 항불안제·항우울제(스트레스 요인 해결이 우선).",
+    treatment:"단기 지지적 정신치료, 문제해결치료.",
+    intervention:"스트레스원 평가 및 대처자원 강화.",
+    caseManagement:"경과 단기 추적(대개 6개월 이내 호전 여부 확인), 사회적 자원 연계."
+  },
+  {
+    code:"F94.1", category:"외상 및 스트레스 관련 장애", subtype:"반응성 애착장애",
+    nameKo:"반응성 애착장애", nameEn:"Reactive Attachment Disorder",
+    keywords:["애착문제","방임","위축된아동"],
+    meds:"약물치료는 핵심증상에 효과 없음, 공존질환에 한해 사용.",
+    treatment:"안정적 양육자와의 관계형성 치료, 부모-자녀 상호작용치료.",
+    intervention:"양육환경 안전성 확보가 최우선.",
+    caseManagement:"아동보호체계 연계(방임·학대 여부 확인), 위탁·입양가정 지원, 장기 발달 모니터링."
+  },
+  // ---------- 급식 및 섭식장애 ----------
+  {
+    code:"F50.0", category:"급식 및 섭식장애", subtype:"신경성 식욕부진증",
+    nameKo:"신경성 식욕부진증(거식증)", nameEn:"Anorexia Nervosa",
+    keywords:["거식증","체중감소","저체중","살찌는것에대한두려움"],
+    meds:"핵심증상에 승인된 약물 없음, 공존 우울·불안에 SSRI 고려(저체중 상태에서는 신중히 사용).",
+    treatment:"영양재활(의학적 안정화 우선), 가족기반치료(모즐리기법), 인지행동치료.",
+    intervention:"신체 합병증 모니터링(전해질, 심장기능), 영양팀 연계.",
+    caseManagement:"체중·활력징후 정기 확인, 입원 필요성 평가, 가족교육 및 지지."
+  },
+  {
+    code:"F50.2", category:"급식 및 섭식장애", subtype:"신경성 폭식증",
+    nameKo:"신경성 폭식증", nameEn:"Bulimia Nervosa",
+    keywords:["폭식","구토","보상행동","제거행동"],
+    meds:"플루옥세틴(고용량)이 승인된 유일한 약물.",
+    treatment:"인지행동치료(CBT-E)가 1차 치료.",
+    intervention:"식사일지 작성, 폭식-제거 주기 파악 및 대처기술 훈련.",
+    caseManagement:"전해질 이상 등 신체합병증 확인, 자살위험 평가, 정기 추적."
+  },
+  {
+    code:"F50.81", category:"급식 및 섭식장애", subtype:"폭식장애",
+    nameKo:"폭식장애", nameEn:"Binge Eating Disorder",
+    keywords:["폭식","과식","조절불가능한섭식"],
+    meds:"리스덱스암페타민, SSRI 고려.",
+    treatment:"인지행동치료, 대인관계치료.",
+    intervention:"체중낙인 없이 접근하는 심리교육.",
+    caseManagement:"비만 관련 신체건강 연계, 정서조절 지원."
+  },
+  // ---------- 수면-각성장애 ----------
+  {
+    code:"F51.01", category:"수면-각성장애", subtype:"불면장애",
+    nameKo:"불면장애", nameEn:"Insomnia Disorder",
+    keywords:["불면","잠들기어려움","수면유지어려움"],
+    meds:"단기간 Z-약물(졸피뎀), 멜라토닌수용체작용제; 장기적으로는 비약물 치료 권장.",
+    treatment:"불면증 인지행동치료(CBT-I)가 1차 치료.",
+    intervention:"수면위생 교육, 자극조절요법.",
+    caseManagement:"수면제 의존 위험 모니터링, 기저 정신질환(우울·불안) 동반 여부 확인."
+  },
+  // ---------- 물질관련 및 중독장애 ----------
+  {
+    code:"F10.2", category:"물질관련 및 중독장애", subtype:"알코올사용장애",
+    nameKo:"알코올사용장애", nameEn:"Alcohol Use Disorder",
+    keywords:["알코올중독","음주문제","금단","술"],
+    meds:"금단 시 벤조디아제핀, 재발방지에 날트렉손, 아캄프로세이트, 디설피람.",
+    treatment:"해독치료, 동기강화면담, 인지행동치료, 자조모임(AA).",
+    intervention:"동기강화, 재발방지훈련, 금단증상 응급대응 교육.",
+    caseManagement:"단주 유지 정기 확인, 가족기능 회복 지원, 중독관리통합지원센터 연계, 재발 시 위기개입."
+  },
+  {
+    code:"F63.0", category:"물질관련 및 중독장애", subtype:"도박장애",
+    nameKo:"도박장애", nameEn:"Gambling Disorder",
+    keywords:["도박중독","베팅","빚"],
+    meds:"승인된 약물 없음, 공존 우울·충동조절 문제에 SSRI·날트렉손 고려.",
+    treatment:"인지행동치료, 동기강화면담, 자조모임(단도박모임).",
+    intervention:"재정문제 상담 연계, 충동조절기술 훈련.",
+    caseManagement:"가족갈등·경제적 위기 개입, 도박문제 관리센터 연계, 재발 모니터링."
+  },
+  // ---------- 신경인지장애 ----------
+  {
+    code:"F03", category:"신경인지장애", subtype:"주요 신경인지장애(치매)",
+    nameKo:"주요 신경인지장애(치매)", nameEn:"Major Neurocognitive Disorder (Dementia)",
+    keywords:["치매","기억력저하","인지저하","길잃음"],
+    meds:"콜린에스테라제억제제(도네페질), NMDA수용체길항제(메만틴); 행동증상에 항정신병약물은 신중히 제한적 사용.",
+    treatment:"인지재활, 환경조정, 보호자 교육.",
+    intervention:"안전한 생활환경 조성, 행동심리증상(BPSD) 대응 교육.",
+    caseManagement:"장기요양등급 신청 연계, 보호자 소진 예방 지원, 주간보호·요양시설 연계, 정기 인지기능 추적."
+  },
+  {
+    code:"F05", category:"신경인지장애", subtype:"섬망",
+    nameKo:"섬망", nameEn:"Delirium",
+    keywords:["섬망","의식혼탁","급성혼란"],
+    meds:"원인 치료가 최우선, 필요시 저용량 항정신병약물(할로페리돌) 단기 사용.",
+    treatment:"원인질환 교정(감염, 대사이상 등), 환경자극 조절.",
+    intervention:"지남력 제공, 낙상·안전사고 예방.",
+    caseManagement:"의료기관 즉시 연계 필요(응급 상황), 원인 해결 후 인지기능 추적관찰."
+  },
+  // ---------- 성격장애 ----------
+  {
+    code:"F60.3", category:"성격장애", subtype:"군집 B(극적/감정적)",
+    nameKo:"경계성 성격장애", nameEn:"Borderline Personality Disorder",
+    keywords:["경계성","자해","버림받음에대한두려움","불안정한대인관계"],
+    meds:"핵심증상에 승인된 약물 없음, 충동성·정서불안정에 기분안정제·SSRI 제한적 병용.",
+    treatment:"변증법적 행동치료(DBT)가 1차 치료, 정신화기반치료(MBT).",
+    intervention:"자해·자살위험 안전계획 수립, 감정조절기술 훈련.",
+    caseManagement:"자·타해 위험 정기 재평가, 위기시 대응체계 마련, 장기 치료관계 유지 지원."
+  },
+  {
+    code:"F60.2", category:"성격장애", subtype:"군집 B(극적/감정적)",
+    nameKo:"반사회성 성격장애", nameEn:"Antisocial Personality Disorder",
+    keywords:["반사회성","공감결여","규범위반","범죄"],
+    meds:"공존 충동성·공격성에 기분안정제 고려(핵심증상 치료약물 없음).",
+    treatment:"치료 동기가 낮아 예후가 제한적, 인지행동치료 시도.",
+    intervention:"명확한 한계설정, 법적 문제 병행 관리.",
+    caseManagement:"재범 위험 관리, 보호관찰 등 사법체계와의 협력, 공존 물질사용장애 확인."
+  },
+  {
+    code:"F60.6", category:"성격장애", subtype:"군집 C(불안/두려움)",
+    nameKo:"회피성 성격장애", nameEn:"Avoidant Personality Disorder",
+    keywords:["회피","거절에대한두려움","대인관계회피"],
+    meds:"공존 사회불안·우울에 SSRI 고려.",
+    treatment:"인지행동치료, 사회기술훈련.",
+    intervention:"점진적 대인관계 노출.",
+    caseManagement:"사회적 고립 정도 모니터링, 직업·대인관계 기능 회복 지원."
+  },
+  // ---------- 신체증상 및 관련 장애 ----------
+  {
+    code:"F45.1", category:"신체증상 및 관련 장애", subtype:"신체증상장애",
+    nameKo:"신체증상장애", nameEn:"Somatic Symptom Disorder",
+    keywords:["신체화","원인불명통증","병원쇼핑"],
+    meds:"공존 우울·불안에 SSRI/SNRI 고려.",
+    treatment:"인지행동치료, 정기적 일차의료 방문(불필요한 검사 최소화).",
+    intervention:"증상에 대한 과도한 검사·병원방문 조정, 심신상관성 교육.",
+    caseManagement:"의료이용 패턴 모니터링, 일차의료-정신건강 협진 연계, 가족교육."
+  }
+];
+
+const chipCats = [...new Set(DATA.map(d => d.category))];
+
+const cardsEl = document.getElementById('cards');
+const noResultEl = document.getElementById('noResult');
+const resultMetaEl = document.getElementById('resultMeta');
+const chipsEl = document.getElementById('chips');
+const qEl = document.getElementById('q');
+
+document.getElementById('totalCount').textContent = DATA.length;
+
+let activeChip = null;
+
+function buildChips(){
+  chipsEl.innerHTML = '';
+  chipCats.forEach(cat => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.type = 'button';
+    b.textContent = cat;
+    b.addEventListener('click', () => {
+      activeChip = (activeChip === cat) ? null : cat;
+      qEl.value = '';
+      render();
+    });
+    chipsEl.appendChild(b);
+  });
+}
+
+function norm(s){ return (s || '').toLowerCase().trim(); }
+
+function matches(d, term){
+  if (!term) return true;
+  const hay = [d.code, d.nameKo, d.nameEn, d.category, d.subtype, ...(d.keywords||[])]
+    .join(' ').toLowerCase();
+  return term.split(/\s+/).filter(Boolean).every(t => hay.includes(t));
+}
+
+function render(){
+  const term = norm(qEl.value);
+  chipsEl.querySelectorAll('.chip').forEach(b => {
+    b.classList.toggle('active', b.textContent === activeChip);
+  });
+
+  let list = DATA;
+  if (activeChip) list = list.filter(d => d.category === activeChip);
+  if (term) list = list.filter(d => matches(d, term));
+
+  cardsEl.innerHTML = '';
+  if (list.length === 0){
+    noResultEl.style.display = 'block';
+    resultMetaEl.textContent = '';
+    return;
+  }
+  noResultEl.style.display = 'none';
+  resultMetaEl.textContent = (term || activeChip) ? `${list.length}개 진단 검색됨` : `전체 ${list.length}개 진단`;
+
+  list.forEach((d, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="card-titles">
+          <div class="code-row">
+            <span class="code-pill">${d.code}</span>
+            <span class="cat-pill">${d.category}</span>
+          </div>
+          <div class="name-ko">${d.nameKo}</div>
+          <div class="name-en">${d.nameEn}</div>
+          <div class="subtype">하위분류: ${d.subtype}</div>
+        </div>
+        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <div class="field-label"><span class="dot"></span>주로 사용되는 약물</div>
+          <div class="field-body">${d.meds}</div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot"></span>치료법</div>
+          <div class="field-body">${d.treatment}</div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot"></span>개입방법</div>
+          <div class="field-body">${d.intervention}</div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot"></span>사례관리방법</div>
+          <div class="field-body">${d.caseManagement}</div>
+        </div>
+      </div>
+    `;
+    card.querySelector('.card-head').addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+    if ((term || activeChip) && i === 0) card.classList.add('open');
+    cardsEl.appendChild(card);
+  });
+}
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  qEl.value = '';
+  activeChip = null;
+  render();
+});
+qEl.addEventListener('input', () => { activeChip = null; render(); });
+
+buildChips();
+render();
+</script>
