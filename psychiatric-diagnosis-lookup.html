@@ -279,34 +279,46 @@
     color:var(--ink-faint);
   }
 
+  .drug-taglist{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:10px;
+  }
   .drug-chip{
-    display:inline;
-    font:inherit;
+    font-family:'Noto Sans KR', sans-serif;
+    font-size:13px;
     font-weight:700;
     color:var(--teal);
     background:var(--teal-soft);
-    border:none;
-    border-radius:5px;
-    padding:1px 5px;
-    margin:0 1px;
+    border:1.5px solid transparent;
+    border-radius:999px;
+    padding:5px 12px;
     cursor:pointer;
+    white-space:nowrap;
+    transition:background .1s ease, border-color .1s ease;
   }
+  .drug-chip::before{ content:"💊 "; font-size:11px; }
   .drug-chip:hover{ filter:brightness(0.95); }
   .drug-chip:focus-visible{ outline:2px solid var(--teal); outline-offset:1px; }
+  .drug-chip.active{ background:var(--teal); color:var(--on-accent); border-color:var(--teal); }
+  .drug-chip.active::before{ content:"▾ "; }
   .drug-detail{
     display:block;
-    margin:6px 0 8px;
-    padding:10px 12px;
+    margin:0 0 12px;
+    padding:12px 14px;
     background:var(--amber-soft);
     border:1px solid var(--amber-line);
     border-radius:10px;
-    font-size:13px;
+    font-size:13.5px;
     color:var(--ink);
-    line-height:1.6;
+    line-height:1.65;
   }
   .drug-detail[hidden]{ display:none; }
-  .drug-detail .drug-cls{ color:var(--amber); font-weight:700; }
-  .drug-detail .drug-effect{ display:block; margin-top:4px; color:var(--ink-soft); }
+  .drug-detail .drug-detail-name{ font-family:'Gowun Batang', serif; font-size:15px; font-weight:700; margin-bottom:2px; }
+  .drug-detail .drug-cls{ color:var(--amber); font-weight:700; font-size:12.5px; }
+  .drug-detail .drug-effect{ display:block; margin-top:6px; color:var(--ink-soft); }
+  .meds-prose{ font-size:13.5px; color:var(--ink-soft); }
 
   .glossary{
     background:var(--surface);
@@ -1120,13 +1132,15 @@ const DRUG_KEYS = Object.keys(DRUG_INFO).sort((a, b) => b.length - a.length);
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 const DRUG_PATTERN = new RegExp('(' + DRUG_KEYS.map(escapeRegex).join('|') + ')', 'g');
 
-function linkDrugs(text){
-  return String(text).replace(DRUG_PATTERN, (m) => {
-    const info = DRUG_INFO[m];
-    return `<span class="drug-wrap"><button type="button" class="drug-chip">${m}</button>` +
-      `<span class="drug-detail" hidden><span class="drug-cls">${info.cls}</span><br>${info.mechanism}` +
-      `<span class="drug-effect">효과: ${info.effect}</span></span></span>`;
+// 해당 진단문에 등장하는 약물명을 등장 순서대로 중복없이 뽑아냄(태그 줄에 표시하기 위함).
+function extractDrugs(text){
+  const seen = new Set();
+  const list = [];
+  String(text).replace(DRUG_PATTERN, (m) => {
+    if (!seen.has(m)) { seen.add(m); list.push(m); }
+    return m;
   });
+  return list;
 }
 
 const chipCats = [...new Set(DATA.map(d => d.category))];
@@ -1234,7 +1248,10 @@ function render(){
       <div class="card-body">
         <div class="field">
           <div class="field-label"><span class="dot"></span>주로 사용되는 약물</div>
-          <div class="field-body">${linkDrugs(d.meds)}</div>
+          ${extractDrugs(d.meds).length ? `<div class="drug-taglist">${extractDrugs(d.meds).map(name =>
+            `<button type="button" class="drug-chip" data-drug="${name}">${name}</button>`
+          ).join('')}</div><div class="drug-detail" hidden></div>` : ''}
+          <div class="field-body meds-prose">${d.meds}</div>
         </div>
         <div class="field">
           <div class="field-label"><span class="dot"></span>치료법</div>
@@ -1268,10 +1285,23 @@ qEl.addEventListener('input', () => { activeChip = null; render(); });
 cardsEl.addEventListener('click', (e) => {
   const chip = e.target.closest('.drug-chip');
   if (!chip) return;
-  const detail = chip.nextElementSibling;
-  if (detail && detail.classList.contains('drug-detail')) {
-    detail.hidden = !detail.hidden;
+  const taglist = chip.closest('.drug-taglist');
+  const detail = taglist.nextElementSibling; // .drug-detail
+  const name = chip.dataset.drug;
+  const info = DRUG_INFO[name];
+  const wasActive = chip.classList.contains('active');
+
+  taglist.querySelectorAll('.drug-chip').forEach(c => c.classList.remove('active'));
+
+  if (wasActive) {
+    detail.hidden = true;
+    return;
   }
+  chip.classList.add('active');
+  detail.innerHTML = `<div class="drug-detail-name">${name}</div>` +
+    `<span class="drug-cls">${info.cls}</span><br>${info.mechanism}` +
+    `<span class="drug-effect">효과: ${info.effect}</span>`;
+  detail.hidden = false;
 });
 
 buildChips();
