@@ -319,13 +319,40 @@ const DATA = [
     caseManagement:"발달 이정표 지속 관찰, 지역 발달재활서비스·특수교육 연계, 가족 돌봄부담 지원, 성인기 전환(직업재활) 준비."
   },
   {
-    code:"F70–F73", codes:["F70","F71","F72","F73"], category:"신경발달장애", subtype:"지적장애",
-    nameKo:"지적장애", nameEn:"Intellectual Disability",
-    keywords:["지적장애","인지기능저하","적응기능"],
+    code:"F70", codes:["F70"], category:"신경발달장애", subtype:"지적장애 - 경도",
+    nameKo:"지적장애(경도)", nameEn:"Intellectual Disability, Mild",
+    keywords:["지적장애","경도지적장애","인지기능저하","적응기능"],
     meds:"지적장애 자체에 대한 약물은 없으며, 공존 정신과적 증상(불안·공격성 등)에 대해 대증적 약물치료.",
-    treatment:"특수교육, 적응행동훈련, 직업재활, 의사소통훈련.",
-    intervention:"개별화 지원계획 수립, 가족지원 및 양육상담, 지역사회 자원 연계.",
-    caseManagement:"생애주기별(아동기-성인기) 전환지원, 장애인복지시설·주간보호 연계, 후견·복지제도 안내."
+    treatment:"특수교육(통합교육 가능한 경우 많음), 직업훈련, 사회기술훈련.",
+    intervention:"개별화교육계획(IEP), 자립생활기술 훈련.",
+    caseManagement:"학업·직업 전환 지원, 성인기 자립(취업·주거) 계획 수립, 장애인복지서비스 연계."
+  },
+  {
+    code:"F71", codes:["F71"], category:"신경발달장애", subtype:"지적장애 - 중등도",
+    nameKo:"지적장애(중등도)", nameEn:"Intellectual Disability, Moderate",
+    keywords:["지적장애","중등도지적장애","인지기능저하"],
+    meds:"공존 문제행동(과민성·공격성 등)에 대한 대증적 약물치료 고려.",
+    treatment:"전문적 지원이 필요한 특수교육, 의사소통훈련, 일상생활기술훈련.",
+    intervention:"지속적 감독 및 구조화된 환경 제공, 가족지원.",
+    caseManagement:"주간보호·장애인복지시설 연계, 평생 지속적 지원계획 수립, 보호자 소진 예방."
+  },
+  {
+    code:"F72", codes:["F72"], category:"신경발달장애", subtype:"지적장애 - 중증",
+    nameKo:"지적장애(중증)", nameEn:"Intellectual Disability, Severe",
+    keywords:["지적장애","중증지적장애"],
+    meds:"문제행동·자해행동에 대한 약물치료를 신중히 고려.",
+    treatment:"전면적 지원이 필요한 특수교육, 의사소통 보조기구 활용.",
+    intervention:"일상생활 전반에 대한 지속적 지원 및 안전관리.",
+    caseManagement:"전문 돌봄시설·활동지원서비스 연계, 보호자 돌봄부담 집중 지원."
+  },
+  {
+    code:"F73", codes:["F73"], category:"신경발달장애", subtype:"지적장애 - 최중증",
+    nameKo:"지적장애(최중증)", nameEn:"Intellectual Disability, Profound",
+    keywords:["지적장애","최중증지적장애"],
+    meds:"동반 신경학적 질환(뇌전증 등) 관리를 위한 약물치료가 병행되는 경우가 흔함.",
+    treatment:"전적인 돌봄과 의료적 지원이 필요, 감각·운동재활 병행.",
+    intervention:"24시간 돌봄 및 의료적 모니터링, 보완대체의사소통(AAC) 활용.",
+    caseManagement:"의료-복지 통합 사례관리, 장기요양·시설 연계, 가족 집중 지원."
   },
   {
     code:"F91.3", codes:["F91.3"], category:"파괴적, 충동조절 및 품행장애", subtype:"적대적 반항장애",
@@ -337,13 +364,31 @@ const DATA = [
     caseManagement:"가족기능 평가 및 정기 상담, 학교생활 적응 모니터링, 필요시 아동청소년 정신건강서비스 연계."
   },
   {
-    code:"F91", codes:["F91.0","F91.1","F91.2","F91.8","F91.9"], category:"파괴적, 충동조절 및 품행장애", subtype:"품행장애",
-    nameKo:"품행장애", nameEn:"Conduct Disorder",
+    code:"F91.1", codes:["F91.1"], category:"파괴적, 충동조절 및 품행장애", subtype:"품행장애 - 아동기 발병형",
+    nameKo:"품행장애(아동기 발병형)", nameEn:"Conduct Disorder, Childhood-Onset Type",
+    keywords:["폭력","절도","가출","규범위반","비행","10세이전"],
+    meds:"공격성 조절을 위해 리스페리돈 등 항정신병약물을 제한적으로 병용하기도 함(1차 치료 아님).",
+    treatment:"다중체계치료(MST), 부모훈련, 사회기술훈련 — 조기·집중 개입이 특히 중요.",
+    intervention:"위기개입 및 안전계획 수립, 가족치료, 학교와의 협력.",
+    caseManagement:"반사회성 성격장애로의 이행 위험이 높아 장기·집중 사례관리 필요, 재범방지 프로그램 연계."
+  },
+  {
+    code:"F91.2", codes:["F91.2"], category:"파괴적, 충동조절 및 품행장애", subtype:"품행장애 - 청소년기 발병형",
+    nameKo:"품행장애(청소년기 발병형)", nameEn:"Conduct Disorder, Adolescent-Onset Type",
+    keywords:["폭력","절도","가출","규범위반","비행","10세이후"],
+    meds:"공격성 조절을 위해 리스페리돈 등 항정신병약물을 제한적으로 병용하기도 함(1차 치료 아님).",
+    treatment:"다중체계치료(MST), 또래관계 개입, 학교기반 프로그램.",
+    intervention:"또래집단 영향 관리, 사회기술훈련, 보호관찰·소년보호기관 연계.",
+    caseManagement:"성인기까지 지속될 가능성은 상대적으로 낮으나 재범방지·사회적응 지원 필요, 청소년상담복지센터 연계."
+  },
+  {
+    code:"F91.9", codes:["F91.9"], category:"파괴적, 충동조절 및 품행장애", subtype:"품행장애 - 발병연령 불특정형",
+    nameKo:"품행장애(발병연령 불특정형)", nameEn:"Conduct Disorder, Unspecified Onset",
     keywords:["폭력","절도","가출","규범위반","비행"],
     meds:"공격성 조절을 위해 리스페리돈 등 항정신병약물을 제한적으로 병용하기도 함(1차 치료 아님).",
-    treatment:"다중체계치료(MST), 부모훈련, 사회기술훈련, 학교기반 개입.",
-    intervention:"위기개입 및 안전계획 수립, 보호관찰·소년보호기관 연계, 가족치료.",
-    caseManagement:"법적·교육적 자원 연계(청소년상담복지센터, 학교전담경찰관 등), 재범방지 프로그램 연계, 장기 추적관리."
+    treatment:"정확한 발병시기 평가 후 맞춤 개입계획 수립, 다중체계치료(MST).",
+    intervention:"종합평가를 통한 위험요인 파악, 가족치료.",
+    caseManagement:"평가 결과에 따라 아동기·청소년기 발병형에 준한 관리전략 적용, 장기 추적관리."
   },
   {
     code:"F63.81", codes:["F63.81"], category:"파괴적, 충동조절 및 품행장애", subtype:"충동조절장애",
@@ -393,13 +438,40 @@ const DATA = [
   },
   // ---------- 양극성 및 관련 장애 ----------
   {
-    code:"F31.1x", codes:["F31.0","F31.1","F31.2","F31.3","F31.4","F31.5","F31.6","F31.7","F31.9"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형",
-    nameKo:"양극성장애 제1형", nameEn:"Bipolar I Disorder",
-    keywords:["조증","양극성","기분삽화","들뜬기분"],
-    meds:"기분안정제(리튬, 발프로산, 라모트리진), 항정신병약물(퀘티아핀, 올란자핀).",
-    treatment:"약물치료 + 대인관계 및 사회리듬치료(IPSRT), 가족중심치료.",
-    intervention:"수면·생활리듬 관리 교육, 조증 조기징후 식별 훈련.",
-    caseManagement:"약물 혈중농도(리튬 등) 정기 확인 연계, 재발징후 모니터링, 가족 심리교육, 직업·사회기능 회복 지원."
+    code:"F31.11–F31.2", codes:["F31.11","F31.12","F31.13","F31.2"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형 - 조증 삽화",
+    nameKo:"양극성장애 제1형(조증 삽화)", nameEn:"Bipolar I Disorder, Current/Most Recent Episode Manic",
+    keywords:["조증","양극성","들뜬기분","과대사고","충동구매","수면감소"],
+    meds:"기분안정제(리튬, 발프로산) 및/또는 비정형 항정신병약물(퀘티아핀, 올란자핀, 아리피프라졸)이 1차 치료 — 항우울제는 사용하지 않음.",
+    treatment:"급성기 약물치료가 핵심, 중증·정신병적 증상 동반 시 입원치료 및 항정신병약물 병용.",
+    intervention:"안전 확보(충동적 행동·과소비·위험행동 제한), 수면 회복 우선, 자극 최소화.",
+    caseManagement:"입원 필요성 평가, 약물 순응도 집중 관리, 가족에게 조증 조기징후 교육."
+  },
+  {
+    code:"F31.0", codes:["F31.0"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형 - 경조증 삽화",
+    nameKo:"양극성장애 제1형(경조증 삽화)", nameEn:"Bipolar I Disorder, Current/Most Recent Episode Hypomanic",
+    keywords:["경조증","들뜬기분","활력증가"],
+    meds:"기분안정제 유지, 필요시 저용량 항정신병약물 병용.",
+    treatment:"외래 통원치료로 관리 가능한 경우가 많음, 생활리듬 관리 중심.",
+    intervention:"조증으로의 진행 징후 조기 발견 교육, 수면·활동 기록.",
+    caseManagement:"증상 악화(조증 이행) 여부 정기 확인, 재발징후 모니터링."
+  },
+  {
+    code:"F31.31–F31.5", codes:["F31.31","F31.32","F31.4","F31.5"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형 - 우울 삽화",
+    nameKo:"양극성장애 제1형(우울 삽화)", nameEn:"Bipolar I Disorder, Current/Most Recent Episode Depressed",
+    keywords:["양극성우울","우울삽화","무기력","자살사고"],
+    meds:"기분안정제 기반 치료(퀘티아핀, 루라시돈, 올란자핀-플루옥세틴 병합 등) — 항우울제 단독 사용은 조증 전환 위험으로 지양.",
+    treatment:"기분안정제 중심 약물치료 + 심리치료(대인관계 및 사회리듬치료).",
+    intervention:"자살위험 평가 필수(양극성 우울삽화의 자살위험이 높음), 활동계획 세우기.",
+    caseManagement:"자살위험 정기 재평가, 항우울제 단독처방 여부 확인(주의), 재발징후 모니터링."
+  },
+  {
+    code:"F31.6 / F31.7 / F31.9", codes:["F31.6","F31.7","F31.9"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형 - 혼재성 양상/관해/상세불명",
+    nameKo:"양극성장애 제1형(혼재성 양상·관해·상세불명)", nameEn:"Bipolar I Disorder, Mixed Features / In Remission / Unspecified",
+    keywords:["혼재성","기분기복","관해","상세불명양극성"],
+    meds:"혼재성 삽화는 자살위험이 높아 적극적 약물치료(기분안정제+항정신병약물) 필요, 관해기는 기존 유지치료 지속.",
+    treatment:"혼재성 양상은 급성기에 준한 집중치료, 관해기는 재발방지 유지치료.",
+    intervention:"혼재성 양상 시 자·타해 위험 집중 평가, 관해기는 재발징후 모니터링.",
+    caseManagement:"혼재성 양상은 고위험군으로 집중 사례관리, 관해기는 장기 추적 및 사회기능 회복 지원."
   },
   {
     code:"F31.81", codes:["F31.81"], category:"양극성 및 관련 장애", subtype:"양극성장애 제2형",
@@ -421,13 +493,67 @@ const DATA = [
   },
   // ---------- 우울장애 ----------
   {
-    code:"F32.x / F33.x", codes:["F32","F33"], category:"우울장애", subtype:"주요우울장애(단일/재발성)",
-    nameKo:"주요우울장애", nameEn:"Major Depressive Disorder (MDD)",
-    keywords:["우울","무기력","의욕저하","죽고싶다","자살사고","불면","식욕저하"],
-    meds:"SSRI(에스시탈로프람, 설트랄린), SNRI(둘록세틴, 벤라팍신) 등이 1차 약물로 흔히 사용.",
-    treatment:"약물치료 + 인지행동치료(CBT), 대인관계치료, 중증의 경우 전기경련치료(ECT) 고려.",
-    intervention:"자살위험 평가 필수, 활동계획 세우기, 사회적 지지 연결.",
-    caseManagement:"자살위험 정기 재평가, 약물 순응도 및 부작용 확인, 위기개입 핫라인 안내, 재발방지 심리교육."
+    code:"F32.0 / F33.0", codes:["F32.0","F33.0"], category:"우울장애", subtype:"주요우울장애 - 경도",
+    nameKo:"주요우울장애(경도)", nameEn:"Major Depressive Disorder, Mild",
+    keywords:["우울","무기력","의욕저하","불면","식욕저하","경도우울","가벼운우울"],
+    meds:"경도에서는 심리치료 단독을 우선 고려하는 경우가 많으며, 환자 선호나 반응 부족 시 SSRI 등 항우울제 병행.",
+    treatment:"인지행동치료(CBT)·대인관계치료 등 심리치료를 1차로 고려, 약물치료는 선택적.",
+    intervention:"활동계획 세우기, 문제해결기술 훈련, 생활습관(수면·운동) 교육.",
+    caseManagement:"기능저하 및 증상 악화(중등도 이행) 여부 정기 추적, 반응 부족 시 약물치료 전환 검토."
+  },
+  {
+    code:"F32.1 / F33.1", codes:["F32.1","F33.1"], category:"우울장애", subtype:"주요우울장애 - 중등도",
+    nameKo:"주요우울장애(중등도)", nameEn:"Major Depressive Disorder, Moderate",
+    keywords:["우울","무기력","의욕저하","죽고싶다","자살사고","불면","식욕저하","중등도우울"],
+    meds:"SSRI(에스시탈로프람, 설트랄린), SNRI(둘록세틴, 벤라팍신) 등이 표준 1차 약물.",
+    treatment:"약물치료 + 인지행동치료 병행이 표준적 접근.",
+    intervention:"자살위험 평가, 활동계획 세우기, 사회적 지지 연결.",
+    caseManagement:"자살위험 정기 재평가, 약물 순응도·부작용 확인, 중증 이행 여부 모니터링."
+  },
+  {
+    code:"F32.2 / F33.2", codes:["F32.2","F33.2"], category:"우울장애", subtype:"주요우울장애 - 중증(정신병적 증상 없음)",
+    nameKo:"주요우울장애(중증, 정신병적 증상 없음)", nameEn:"Major Depressive Disorder, Severe Without Psychotic Features",
+    keywords:["중증우울","심한우울","자살위험","기능저하"],
+    meds:"항우울제 충분용량이 필요, 반응 불충분 시 리튬·비정형 항정신병약물 등 증강전략 고려.",
+    treatment:"약물치료가 필수, 심리치료 병행, 중증도에 따라 입원치료 고려.",
+    intervention:"자살위험 집중 평가 및 안전계획 수립, 일상생활 기능 지원.",
+    caseManagement:"자살위험 고빈도 재평가, 입원 필요성 지속 모니터링, 위기개입체계 연계."
+  },
+  {
+    code:"F32.3 / F33.3", codes:["F32.3","F33.3"], category:"우울장애", subtype:"주요우울장애 - 중증(정신병적 증상 동반)",
+    nameKo:"주요우울장애(중증, 정신병적 증상 동반)", nameEn:"Major Depressive Disorder, Severe With Psychotic Features",
+    keywords:["중증우울","망상","환청","정신병적우울"],
+    meds:"항우울제 + 항정신병약물 병용이 표준, 반응 불충분 시 전기경련치료(ECT) 고려.",
+    treatment:"약물치료(항우울제+항정신병약물) 또는 ECT, 입원치료 필요성이 높음.",
+    intervention:"정신병적 증상 동반으로 자·타해 위험이 높아 즉각적 안전 확보 필요.",
+    caseManagement:"응급·입원 연계 최우선, 퇴원 후 집중 사례관리 및 재발 감시."
+  },
+  {
+    code:"F32.4 / F33.41", codes:["F32.4","F33.41"], category:"우울장애", subtype:"주요우울장애 - 부분관해",
+    nameKo:"주요우울장애(부분관해)", nameEn:"Major Depressive Disorder, In Partial Remission",
+    keywords:["부분관해","잔존증상","우울호전중"],
+    meds:"관해 유지를 위한 항우울제 지속 복용(임의 감량·중단 지양).",
+    treatment:"유지치료 지속, 재발방지 심리교육.",
+    intervention:"잔존 증상 모니터링, 스트레스 관리 훈련.",
+    caseManagement:"재발 조기징후 교육, 복약 중단 방지를 위한 정기 추적관찰."
+  },
+  {
+    code:"F32.5 / F33.42", codes:["F32.5","F33.42"], category:"우울장애", subtype:"주요우울장애 - 완전관해",
+    nameKo:"주요우울장애(완전관해)", nameEn:"Major Depressive Disorder, In Full Remission",
+    keywords:["완전관해","우울증회복"],
+    meds:"과거 재발 횟수 등을 고려해 유지치료 지속 기간 결정(재발성인 경우 장기 유지 권장).",
+    treatment:"유지치료 지속 여부를 재발력에 따라 개별화.",
+    intervention:"재발 신호 자가모니터링 교육.",
+    caseManagement:"정기적 안부확인과 재발 조기발견, 사회기능 회복 지원."
+  },
+  {
+    code:"F32.9 / F33.9", codes:["F32.9","F33.9"], category:"우울장애", subtype:"주요우울장애 - 상세불명",
+    nameKo:"주요우울장애(상세불명)", nameEn:"Major Depressive Disorder, Unspecified",
+    keywords:["우울","무기력","의욕저하","우울증상세불명"],
+    meds:"중증도 확정 전이므로 중등도 우울증에 준해 SSRI/SNRI를 우선 고려하는 경우가 많음.",
+    treatment:"정확한 중증도·정신병적 증상 동반 여부 평가 후 치료계획 구체화 필요.",
+    intervention:"초기 스크리닝 및 자살위험 안전성 평가.",
+    caseManagement:"재평가를 통한 세부진단(중증도) 확정 후 해당 중증도별 관리로 전환."
   },
   {
     code:"F34.1", codes:["F34.1"], category:"우울장애", subtype:"지속성우울장애(기분저하증)",
