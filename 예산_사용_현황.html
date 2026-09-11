@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>예산 사용 현황</title>
+<style>
+  :root{
+    --bg:#f4f6f8;
+    --card:#ffffff;
+    --border:#e2e5ea;
+    --text:#222b36;
+    --sub:#6b7280;
+    --accent:#2563eb;
+    --accent-dark:#1e40af;
+    --danger:#dc2626;
+    --danger-bg:#fef2f2;
+    --good:#16a34a;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Malgun Gothic","Apple SD Gothic Neo","Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:24px;
+  }
+  .wrap{max-width:1100px;margin:0 auto;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .subtitle{color:var(--sub);font-size:13px;margin-bottom:20px;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:20px;
+    margin-bottom:18px;
+    box-shadow:var(--shadow);
+  }
+  .balance-row{display:flex;gap:24px;flex-wrap:wrap;align-items:center;}
+  .balance-box{flex:1;min-width:220px;}
+  .balance-label{font-size:13px;color:var(--sub);margin-bottom:4px;}
+  .balance-value{font-size:28px;font-weight:700;}
+  .balance-value.negative{color:var(--danger);}
+  .init-input{display:flex;align-items:center;gap:8px;}
+  input[type=number], input[type=text], input[type=date], select{
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:8px 10px;
+    font-size:14px;
+    background:#fff;
+    color:var(--text);
+    font-family:inherit;
+  }
+  input[type=number]{width:150px;}
+  button{
+    border:none;
+    border-radius:6px;
+    padding:9px 16px;
+    font-size:14px;
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:600;
+  }
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-ghost{background:transparent;color:var(--sub);border:1px solid var(--border);}
+  .btn-ghost:hover{background:#f0f2f5;}
+  .btn-danger{background:var(--danger-bg);color:var(--danger);}
+  .btn-danger:hover{background:#fee2e2;}
+  .btn-small{padding:5px 10px;font-size:12px;}
+  h2{font-size:16px;margin:0 0 14px;}
+  .cat-manage{display:flex;flex-direction:column;gap:10px;}
+  .cat-group{border:1px solid var(--border);border-radius:8px;padding:12px;}
+  .cat-group-head{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+  .cat-group-head input[type=text]{flex:1;font-weight:600;}
+  .sub-list{display:flex;flex-wrap:wrap;gap:8px;margin-left:0;}
+  .sub-chip{display:flex;align-items:center;gap:6px;background:#f4f6f8;border:1px solid var(--border);border-radius:20px;padding:4px 6px 4px 12px;}
+  .sub-chip input{border:none;background:transparent;width:110px;font-size:13px;padding:2px;}
+  .sub-chip button{background:transparent;color:var(--danger);border:none;padding:2px 6px;font-size:13px;border-radius:50%;}
+  .add-sub-btn{border:1px dashed var(--border);background:transparent;color:var(--sub);border-radius:20px;padding:4px 12px;font-size:13px;font-weight:400;}
+  .cat-actions{margin-top:12px;display:flex;gap:8px;}
+  form.entry-form{display:grid;grid-template-columns:130px 1fr 1fr 1.4fr 130px 130px auto;gap:10px;align-items:end;}
+  .field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px;}
+  .field select, .field input{width:100%;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+  th{color:var(--sub);font-weight:600;font-size:12.5px;}
+  td.amount, th.amount{text-align:right;}
+  td.amount.spend{color:var(--danger);}
+  td.balance{text-align:right;font-weight:600;}
+  tr:hover td{background:#fafbfc;}
+  .empty-row td{text-align:center;color:var(--sub);padding:30px;}
+  .table-wrap{overflow-x:auto;}
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+  .summary-item{border:1px solid var(--border);border-radius:8px;padding:12px;}
+  .summary-item .name{font-size:13px;color:var(--sub);margin-bottom:4px;}
+  .summary-item .amt{font-size:17px;font-weight:700;color:var(--danger);}
+  .toolbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;}
+  .hint{font-size:12px;color:var(--sub);margin-top:8px;}
+  @media print{
+    .no-print{display:none !important;}
+    body{background:#fff;padding:0;}
+    .card{box-shadow:none;border:1px solid #ccc;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>예산 사용 현황</h1>
+  <div class="subtitle">세목/명목별 지출 내역과 잔액을 관리합니다. 입력한 내용은 이 브라우저에 자동 저장됩니다.</div>
+
+  <div class="card">
+    <div class="balance-row">
+      <div class="balance-box">
+        <div class="balance-label">초기 잔액</div>
+        <div class="init-input">
+          <input type="number" id="initBalance" value="0" step="1">
+          <span>원</span>
+          <button class="btn-ghost btn-small" id="applyInit">적용</button>
+        </div>
+      </div>
+      <div class="balance-box">
+        <div class="balance-label">현재 잔액</div>
+        <div class="balance-value" id="currentBalance">0원</div>
+      </div>
+      <div class="balance-box">
+        <div class="balance-label">총 지출</div>
+        <div class="balance-value" id="totalSpent" style="color:var(--danger);font-size:22px;">0원</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>목 / 세목 관리</h2>
+    <div class="cat-manage" id="catManage"></div>
+    <div class="cat-actions no-print">
+      <button class="btn-ghost btn-small" id="addCatBtn">+ 목 추가</button>
+    </div>
+    <div class="hint">목(예: 아동청소년프로그램사업비) 안에 세목(예: 수용비, 프로그램사업비, 공공요금비)을 자유롭게 추가·수정·삭제할 수 있습니다.</div>
+  </div>
+
+  <div class="card">
+    <h2>지출 입력</h2>
+    <form class="entry-form" id="entryForm">
+      <div class="field">
+        <label>날짜</label>
+        <input type="date" id="fDate" required>
+      </div>
+      <div class="field">
+        <label>목</label>
+        <select id="fCat" required></select>
+      </div>
+      <div class="field">
+        <label>세목</label>
+        <select id="fSub" required></select>
+      </div>
+      <div class="field">
+        <label>명목(사유)</label>
+        <input type="text" id="fDesc" placeholder="예: 프로그램 재료 구입" required>
+      </div>
+      <div class="field">
+        <label>금액</label>
+        <input type="number" id="fAmount" placeholder="0" step="1" required>
+      </div>
+      <div class="field">
+        <label>담당자</label>
+        <input type="text" id="fWho" placeholder="이름" required>
+      </div>
+      <div class="field">
+        <button type="submit" class="btn-primary" style="width:100%;">추가</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="toolbar no-print">
+      <button class="btn-ghost btn-small" id="exportBtn">백업 내보내기(JSON)</button>
+      <button class="btn-ghost btn-small" id="importBtn">백업 가져오기</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
+      <button class="btn-ghost btn-small" id="printBtn">인쇄</button>
+    </div>
+    <h2>지출 내역</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>날짜</th>
+            <th>목</th>
+            <th>세목</th>
+            <th>명목</th>
+            <th class="amount">금액</th>
+            <th>담당자</th>
+            <th class="amount">잔액</th>
+            <th class="no-print"></th>
+          </tr>
+        </thead>
+        <tbody id="entryTbody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>세목별 지출 합계</h2>
+    <div class="summary-grid" id="summaryGrid"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'budgetTrackerData_v1';
+
+const defaultData = {
+  initBalance: 0,
+  categories: [
+    { id: cid(), name: '아동청소년프로그램사업비', subs: [
+      { id: cid(), name: '수용비' },
+      { id: cid(), name: '프로그램사업비' },
+      { id: cid(), name: '공공요금비' }
+    ]}
+  ],
+  entries: []
+};
+
+function cid(){ return 'c' + Math.random().toString(36).slice(2,10); }
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return structuredClone(defaultData);
+    const data = JSON.parse(raw);
+    if(!data.categories || !Array.isArray(data.categories)) return structuredClone(defaultData);
+    return data;
+  }catch(e){
+    return structuredClone(defaultData);
+  }
+}
+
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = load();
+
+function won(n){
+  const sign = n < 0 ? '-' : '';
+  return sign + Math.abs(Math.round(n)).toLocaleString('ko-KR') + '원';
+}
+
+function findCat(id){ return state.categories.find(c => c.id === id); }
+function findSub(cat, id){ return cat ? cat.subs.find(s => s.id === id) : null; }
+
+function renderCatManage(){
+  const wrap = document.getElementById('catManage');
+  wrap.innerHTML = '';
+  state.categories.forEach(cat => {
+    const group = document.createElement('div');
+    group.className = 'cat-group';
+
+    const head = document.createElement('div');
+    head.className = 'cat-group-head';
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.value = cat.name;
+    nameInput.addEventListener('change', () => { cat.name = nameInput.value.trim() || cat.name; save(); renderAll(); });
+    const delCatBtn = document.createElement('button');
+    delCatBtn.className = 'btn-danger btn-small';
+    delCatBtn.textContent = '목 삭제';
+    delCatBtn.addEventListener('click', () => {
+      if(state.categories.length <= 1){ alert('최소 1개의 목은 있어야 합니다.'); return; }
+      if(!confirm(`"${cat.name}" 목과 하위 세목을 삭제할까요? (기존 지출 내역은 유지되지만 목록에서 선택할 수 없게 됩니다)`)) return;
+      state.categories = state.categories.filter(c => c.id !== cat.id);
+      save(); renderAll();
+    });
+    head.appendChild(nameInput);
+    head.appendChild(delCatBtn);
+    group.appendChild(head);
+
+    const subList = document.createElement('div');
+    subList.className = 'sub-list';
+    cat.subs.forEach(sub => {
+      const chip = document.createElement('div');
+      chip.className = 'sub-chip';
+      const subInput = document.createElement('input');
+      subInput.type = 'text';
+      subInput.value = sub.name;
+      subInput.addEventListener('change', () => { sub.name = subInput.value.trim() || sub.name; save(); renderAll(); });
+      const delSubBtn = document.createElement('button');
+      delSubBtn.textContent = '×';
+      delSubBtn.title = '세목 삭제';
+      delSubBtn.addEventListener('click', () => {
+        if(cat.subs.length <= 1){ alert('최소 1개의 세목은 있어야 합니다.'); return; }
+        cat.subs = cat.subs.filter(s => s.id !== sub.id);
+        save(); renderAll();
+      });
+      chip.appendChild(subInput);
+      chip.appendChild(delSubBtn);
+      subList.appendChild(chip);
+    });
+    const addSubBtn = document.createElement('button');
+    addSubBtn.className = 'add-sub-btn';
+    addSubBtn.textContent = '+ 세목 추가';
+    addSubBtn.addEventListener('click', () => {
+      cat.subs.push({ id: cid(), name: '새 세목' });
+      save(); renderAll();
+    });
+    subList.appendChild(addSubBtn);
+    group.appendChild(subList);
+    wrap.appendChild(group);
+  });
+}
+
+function renderFormSelectors(){
+  const catSel = document.getElementById('fCat');
+  const prevCat = catSel.value;
+  catSel.innerHTML = '';
+  state.categories.forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat.id;
+    opt.textContent = cat.name;
+    catSel.appendChild(opt);
+  });
+  if(state.categories.some(c => c.id === prevCat)) catSel.value = prevCat;
+  renderSubSelector();
+}
+
+function renderSubSelector(){
+  const catSel = document.getElementById('fCat');
+  const subSel = document.getElementById('fSub');
+  const cat = findCat(catSel.value);
+  const prevSub = subSel.value;
+  subSel.innerHTML = '';
+  if(cat){
+    cat.subs.forEach(sub => {
+      const opt = document.createElement('option');
+      opt.value = sub.id;
+      opt.textContent = sub.name;
+      subSel.appendChild(opt);
+    });
+    if(cat.subs.some(s => s.id === prevSub)) subSel.value = prevSub;
+  }
+}
+
+function renderEntries(){
+  const tbody = document.getElementById('entryTbody');
+  tbody.innerHTML = '';
+  let running = Number(state.initBalance) || 0;
+  let totalSpent = 0;
+
+  if(state.entries.length === 0){
+    const tr = document.createElement('tr');
+    tr.className = 'empty-row';
+    tr.innerHTML = '<td colspan="8">아직 입력된 지출 내역이 없습니다.</td>';
+    tbody.appendChild(tr);
+  } else {
+    state.entries.forEach(entry => {
+      running -= Number(entry.amount) || 0;
+      totalSpent += Number(entry.amount) || 0;
+
+      const cat = findCat(entry.catId);
+      const sub = findSub(cat, entry.subId);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${entry.date || ''}</td>
+        <td>${escapeHtml(cat ? cat.name : entry.catName || '(삭제됨)')}</td>
+        <td>${escapeHtml(sub ? sub.name : entry.subName || '(삭제됨)')}</td>
+        <td>${escapeHtml(entry.desc)}</td>
+        <td class="amount spend">-${Number(entry.amount).toLocaleString('ko-KR')}원</td>
+        <td>${escapeHtml(entry.who)}</td>
+        <td class="balance">${won(running)}</td>
+        <td class="no-print"><button class="btn-danger btn-small" data-id="${entry.id}">삭제</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  tbody.querySelectorAll('button[data-id]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.entries = state.entries.filter(e => e.id !== btn.dataset.id);
+      save(); renderAll();
+    });
+  });
+
+  document.getElementById('currentBalance').textContent = won(running);
+  document.getElementById('currentBalance').classList.toggle('negative', running < 0);
+  document.getElementById('totalSpent').textContent = won(totalSpent);
+}
+
+function renderSummary(){
+  const grid = document.getElementById('summaryGrid');
+  grid.innerHTML = '';
+  const totals = {};
+  state.entries.forEach(entry => {
+    const cat = findCat(entry.catId);
+    const sub = findSub(cat, entry.subId);
+    const key = (cat ? cat.name : entry.catName || '(삭제됨)') + ' / ' + (sub ? sub.name : entry.subName || '(삭제됨)');
+    totals[key] = (totals[key] || 0) + (Number(entry.amount) || 0);
+  });
+  const keys = Object.keys(totals);
+  if(keys.length === 0){
+    grid.innerHTML = '<div class="hint">지출 내역이 없습니다.</div>';
+    return;
+  }
+  keys.forEach(key => {
+    const item = document.createElement('div');
+    item.className = 'summary-item';
+    item.innerHTML = `<div class="name">${escapeHtml(key)}</div><div class="amt">${won(totals[key])}</div>`;
+    grid.appendChild(item);
+  });
+}
+
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderAll(){
+  renderCatManage();
+  renderFormSelectors();
+  renderEntries();
+  renderSummary();
+}
+
+document.getElementById('fCat').addEventListener('change', renderSubSelector);
+
+document.getElementById('addCatBtn').addEventListener('click', () => {
+  state.categories.push({ id: cid(), name: '새 목', subs: [{ id: cid(), name: '새 세목' }] });
+  save(); renderAll();
+});
+
+document.getElementById('applyInit').addEventListener('click', () => {
+  const v = Number(document.getElementById('initBalance').value) || 0;
+  state.initBalance = v;
+  save(); renderEntries();
+});
+
+document.getElementById('entryForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const catId = document.getElementById('fCat').value;
+  const subId = document.getElementById('fSub').value;
+  const cat = findCat(catId);
+  const sub = findSub(cat, subId);
+  const entry = {
+    id: cid(),
+    date: document.getElementById('fDate').value,
+    catId, subId,
+    catName: cat ? cat.name : '',
+    subName: sub ? sub.name : '',
+    desc: document.getElementById('fDesc').value.trim(),
+    amount: Number(document.getElementById('fAmount').value) || 0,
+    who: document.getElementById('fWho').value.trim()
+  };
+  state.entries.push(entry);
+  save();
+  document.getElementById('fDesc').value = '';
+  document.getElementById('fAmount').value = '';
+  document.getElementById('fWho').value = '';
+  renderEntries();
+  renderSummary();
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '예산_백업_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if(!data.categories) throw new Error('invalid');
+      state = data;
+      save(); renderAll();
+      document.getElementById('initBalance').value = state.initBalance || 0;
+      alert('백업을 불러왔습니다.');
+    }catch(err){
+      alert('파일을 불러올 수 없습니다. 올바른 백업 파일인지 확인해주세요.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+document.getElementById('initBalance').value = state.initBalance || 0;
+document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
+renderAll();
+</script>
+</body>
+</html>
