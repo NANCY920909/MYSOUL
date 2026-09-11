@@ -636,6 +636,42 @@ const DATA = [
   },
   // ---------- 성격장애 ----------
   {
+    code:"F60.0", codes:["F60.0"], category:"성격장애", subtype:"군집 A(기이한/괴상한)",
+    nameKo:"편집성 성격장애", nameEn:"Paranoid Personality Disorder",
+    keywords:["편집성","불신","의심","피해의식"],
+    meds:"핵심증상에 승인된 약물 없음, 동반 불안·일시적 정신병적 증상에 한해 제한적 사용.",
+    treatment:"신뢰관계 형성 중심의 개인정신치료, 인지행동치료.",
+    intervention:"치료동맹 형성 우선, 직접적 대립·설득 피하고 중립적 태도 유지.",
+    caseManagement:"치료 참여 유지의 어려움 관리, 사회적 고립 및 대인관계 갈등 모니터링."
+  },
+  {
+    code:"F60.1", codes:["F60.1"], category:"성격장애", subtype:"군집 A(기이한/괴상한)",
+    nameKo:"조현성 성격장애", nameEn:"Schizoid Personality Disorder",
+    keywords:["조현성","무관심","고립","정서적냉담","혼자있기선호"],
+    meds:"승인된 약물 없음, 동반 우울·불안에 한해 대증적 사용.",
+    treatment:"느리고 점진적인 관계형성 중심의 개인정신치료, 사회기술훈련.",
+    intervention:"사회화를 강요하지 않는 접근, 최소한의 접촉부터 점진적 확대.",
+    caseManagement:"고립 정도 및 기본 생활기능(위생·경제활동) 모니터링, 과도한 개입 지양."
+  },
+  {
+    code:"F21", codes:["F21"], category:"성격장애", subtype:"군집 A(기이한/괴상한)",
+    nameKo:"조현형 성격장애", nameEn:"Schizotypal Personality Disorder",
+    keywords:["조현형","기이한믿음","마술적사고","심한사회불안","괴상한언행"],
+    meds:"지각왜곡·기이한 사고가 뚜렷할 때 저용량 항정신병약물을 제한적으로 사용.",
+    treatment:"지지적 정신치료, 사회기술훈련.",
+    intervention:"현실검증력 지지, 대인관계 기술 코칭.",
+    caseManagement:"조현병 스펙트럼으로의 이행 위험 정기 모니터링, 사회적 기능저하 추적."
+  },
+  {
+    code:"F60.4", codes:["F60.4"], category:"성격장애", subtype:"군집 B(극적/감정적)",
+    nameKo:"연극성 성격장애", nameEn:"Histrionic Personality Disorder",
+    keywords:["연극성","과도한감정표현","관심추구","피상적대인관계","극적인행동"],
+    meds:"승인된 약물 없음, 동반 우울·불안에 대증적 사용.",
+    treatment:"정신역동치료, 인지행동치료.",
+    intervention:"감정표현의 적절성 다루기, 반복되는 대인관계 패턴 인식 훈련.",
+    caseManagement:"대인관계 갈등 반복 여부 모니터링, 치료관계 안정적 유지 지원."
+  },
+  {
     code:"F60.3", codes:["F60.3"], category:"성격장애", subtype:"군집 B(극적/감정적)",
     nameKo:"경계성 성격장애", nameEn:"Borderline Personality Disorder",
     keywords:["경계성","자해","버림받음에대한두려움","불안정한대인관계"],
@@ -654,6 +690,15 @@ const DATA = [
     caseManagement:"재범 위험 관리, 보호관찰 등 사법체계와의 협력, 공존 물질사용장애 확인."
   },
   {
+    code:"F60.81", codes:["F60.81","F60.8"], category:"성격장애", subtype:"군집 B(극적/감정적)",
+    nameKo:"자기애성 성격장애", nameEn:"Narcissistic Personality Disorder",
+    keywords:["자기애성","과대감","공감결여","특권의식","칭찬욕구"],
+    meds:"승인된 약물 없음, 동반 우울·불안에 대증적 사용.",
+    treatment:"정신역동치료, 장기 개인정신치료.",
+    intervention:"치료동맹 유지의 어려움 관리, 방어적·비판민감 반응 다루기.",
+    caseManagement:"치료 중단 위험 관리, 동반 우울·물질사용장애 여부 확인."
+  },
+  {
     code:"F60.6", codes:["F60.6"], category:"성격장애", subtype:"군집 C(불안/두려움)",
     nameKo:"회피성 성격장애", nameEn:"Avoidant Personality Disorder",
     keywords:["회피","거절에대한두려움","대인관계회피"],
@@ -661,6 +706,24 @@ const DATA = [
     treatment:"인지행동치료, 사회기술훈련.",
     intervention:"점진적 대인관계 노출.",
     caseManagement:"사회적 고립 정도 모니터링, 직업·대인관계 기능 회복 지원."
+  },
+  {
+    code:"F60.7", codes:["F60.7"], category:"성격장애", subtype:"군집 C(불안/두려움)",
+    nameKo:"의존성 성격장애", nameEn:"Dependent Personality Disorder",
+    keywords:["의존성","혼자있기두려움","순종적","의사결정어려움"],
+    meds:"동반 불안·우울에 대증적 사용.",
+    treatment:"인지행동치료, 자기주장훈련.",
+    intervention:"독립적 의사결정 연습, 자율성 강화 코칭.",
+    caseManagement:"학대적·착취적 관계 지속 여부 확인, 사회적 지지체계 다양화 지원."
+  },
+  {
+    code:"F60.5", codes:["F60.5"], category:"성격장애", subtype:"군집 C(불안/두려움)",
+    nameKo:"강박성 성격장애", nameEn:"Obsessive-Compulsive Personality Disorder (OCPD)",
+    keywords:["완벽주의","경직성","통제욕구","강박성격","융통성부족"],
+    meds:"동반 불안·우울에 SSRI 고려.",
+    treatment:"인지행동치료, 정신역동치료.",
+    intervention:"융통성 향상 훈련, 완벽주의 완화 코칭.",
+    caseManagement:"직업·대인관계 기능저하 모니터링, 가족갈등 중재."
   },
   // ---------- 신체증상 및 관련 장애 ----------
   {
