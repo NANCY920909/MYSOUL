@@ -1,0 +1,815 @@
+<title>회의 출석부</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root{
+    --bg:#F5F7F5;
+    --surface:#FFFFFF;
+    --surface-2:#EFF3F0;
+    --border:#DAE3DD;
+    --border-strong:#B9C7BE;
+    --text:#1B2420;
+    --text-muted:#5D6B62;
+    --accent:#2C7A68;
+    --accent-strong:#1E5B4C;
+    --accent-soft:#E1EFE9;
+    --danger:#B84A38;
+    --danger-soft:#F5E4DF;
+    --shadow: 0 1px 2px rgba(27,36,32,0.06), 0 8px 24px rgba(27,36,32,0.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#121815;
+      --surface:#19211D;
+      --surface-2:#202A24;
+      --border:#2C3A32;
+      --border-strong:#3D4F44;
+      --text:#E8ECE9;
+      --text-muted:#9BAAA0;
+      --accent:#4FB49A;
+      --accent-strong:#74CBB3;
+      --accent-soft:#1D3A31;
+      --danger:#E2846C;
+      --danger-soft:#3A2620;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#121815;
+    --surface:#19211D;
+    --surface-2:#202A24;
+    --border:#2C3A32;
+    --border-strong:#3D4F44;
+    --text:#E8ECE9;
+    --text-muted:#9BAAA0;
+    --accent:#4FB49A;
+    --accent-strong:#74CBB3;
+    --accent-soft:#1D3A31;
+    --danger:#E2846C;
+    --danger-soft:#3A2620;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans KR", "Malgun Gothic", sans-serif;
+    padding:0 20px;
+    padding-block:32px;
+  }
+  .page{ max-width:1080px; margin:0 auto; }
+
+  .masthead{
+    display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+    gap:16px; margin-bottom:6px;
+  }
+  .masthead h1{
+    font-family:"Noto Serif KR", serif;
+    font-weight:700;
+    font-size:clamp(24px, 4vw, 32px);
+    margin:0;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
+  }
+  .masthead-right{ display:flex; align-items:center; gap:10px; }
+  .live-count{
+    display:flex; align-items:baseline; gap:6px;
+    background:var(--accent-soft); color:var(--accent-strong);
+    border:1px solid var(--border);
+    border-radius:999px; padding:6px 14px;
+    font-size:13px; font-weight:600;
+  }
+  .live-count b{
+    font-family:"JetBrains Mono", monospace;
+    font-variant-numeric:tabular-nums;
+    font-size:15px;
+  }
+  .edit-toggle{
+    border:1px solid var(--border-strong);
+    background:var(--surface);
+    color:var(--text);
+    border-radius:8px;
+    padding:8px 14px;
+    font-family:inherit; font-size:13px; font-weight:600;
+    cursor:pointer;
+  }
+  .edit-toggle[aria-pressed="true"]{
+    background:var(--accent); border-color:var(--accent); color:#fff;
+  }
+  .edit-toggle:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+
+  .subtitle{ color:var(--text-muted); font-size:14px; margin:0 0 20px; }
+  .hint{
+    color:var(--text-muted); font-size:13px; margin:0 0 22px;
+    border-left:2px solid var(--border-strong); padding-left:10px;
+  }
+  .storage-note{ color:var(--text-muted); font-size:12px; margin-top:24px; }
+
+  .board{
+    display:grid;
+    grid-template-columns:1.55fr 1fr;
+    gap:22px;
+    align-items:start;
+  }
+  @media (max-width:760px){
+    .board{ grid-template-columns:1fr; }
+  }
+
+  .roster{ display:flex; flex-direction:column; gap:22px; }
+  .team{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .team-head{
+    display:flex; align-items:center; gap:10px;
+    padding:12px 16px;
+    border-bottom:1px solid var(--border);
+    background:var(--surface-2);
+  }
+  .team-title{
+    font-family:"Noto Serif KR", serif;
+    font-weight:700; font-size:16px;
+    flex:0 0 auto;
+    padding:2px 4px; border-radius:4px;
+  }
+  .team-title[contenteditable="true"]{
+    outline:1px dashed var(--border-strong);
+  }
+  .team-meta{
+    font-family:"JetBrains Mono", monospace;
+    font-variant-numeric:tabular-nums;
+    color:var(--text-muted); font-size:12px;
+  }
+  .team-head-spacer{ flex:1; }
+  .team-action-btn{
+    border:none; background:none; color:var(--accent-strong);
+    font-size:12px; font-weight:600; cursor:pointer; padding:4px 6px;
+    border-radius:6px;
+  }
+  .team-action-btn:hover{ background:var(--accent-soft); }
+  .team-action-btn.danger{ color:var(--danger); }
+  .team-action-btn.danger:hover{ background:var(--danger-soft); }
+
+  .unit-label{
+    font-size:11.5px; color:var(--text-muted); font-weight:600;
+    letter-spacing:.02em;
+    padding:10px 16px 2px;
+  }
+
+  .roster-list{ list-style:none; margin:0; padding:4px 6px; counter-reset:row; }
+  .member{
+    counter-increment:row;
+    display:flex; align-items:baseline; gap:10px;
+    width:100%; text-align:left;
+    background:none; border:none; border-bottom:1px solid var(--border);
+    color:var(--text); font-family:inherit;
+    padding:9px 10px; cursor:pointer; border-radius:6px;
+  }
+  .roster-list li:last-child .member{ border-bottom:none; }
+  .member::before{
+    content:counter(row);
+    font-family:"JetBrains Mono", monospace;
+    font-variant-numeric:tabular-nums;
+    font-size:11px; color:var(--text-muted);
+    min-width:16px;
+  }
+  .member:hover{ background:var(--surface-2); }
+  .member-name{ font-weight:600; font-size:14.5px; }
+  .member-role{
+    font-size:11px; font-weight:700; color:var(--accent-strong);
+    background:var(--accent-soft); border-radius:4px; padding:1px 6px;
+  }
+  .member-title{ font-size:12.5px; color:var(--text-muted); }
+  .member-note{
+    font-size:11px; color:var(--danger);
+    background:var(--danger-soft); border-radius:4px; padding:1px 6px;
+  }
+  .member [contenteditable="true"]{
+    outline:1px dashed var(--border-strong);
+    border-radius:4px;
+    padding:0 3px;
+    cursor:text;
+  }
+  .member [contenteditable="true"]:focus{ outline-color:var(--accent); }
+  .member .is-empty{ color:var(--text-muted); font-style:italic; }
+  .member-check{
+    margin-left:auto; font-size:12px; color:var(--accent-strong); font-weight:700;
+    opacity:0;
+  }
+  .member.is-selected{ background:var(--accent-soft); }
+  .member.is-selected .member-check{ opacity:1; }
+  .member-remove{
+    margin-left:auto; border:none; background:none; color:var(--danger);
+    font-size:15px; line-height:1; cursor:pointer; padding:2px 6px; border-radius:6px;
+  }
+  .member-remove:hover{ background:var(--danger-soft); }
+
+  .add-row{
+    display:flex; gap:8px; padding:10px 16px 14px;
+  }
+  .add-row input{
+    flex:1; min-width:0;
+    border:1px solid var(--border-strong); border-radius:7px;
+    padding:7px 10px; font-family:inherit; font-size:13px;
+    background:var(--surface); color:var(--text);
+  }
+  .add-row button{
+    border:1px solid var(--accent); background:var(--accent); color:#fff;
+    border-radius:7px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .add-team-btn{
+    align-self:flex-start;
+    border:1px dashed var(--border-strong); background:none; color:var(--text-muted);
+    border-radius:8px; padding:10px 16px; font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .add-team-btn:hover{ color:var(--accent-strong); border-color:var(--accent); }
+
+  .attendance{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:16px;
+    position:sticky; top:20px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  @media (max-width:760px){ .attendance{ position:static; } }
+
+  .attendance-head{ display:flex; align-items:center; justify-content:space-between; }
+  .attendance-head h2{
+    font-family:"Noto Serif KR", serif; font-size:15px; margin:0; font-weight:700;
+  }
+  .count-badge{
+    font-family:"JetBrains Mono", monospace;
+    font-variant-numeric:tabular-nums;
+    font-size:26px; font-weight:700; color:var(--accent-strong);
+    line-height:1;
+  }
+  .count-badge span{ font-size:13px; font-weight:600; color:var(--text-muted); margin-right:2px; }
+
+  .attendance-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; min-height:32px; }
+  .attendance-item{
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface-2); border:1px solid var(--border);
+    border-radius:7px; padding:7px 8px 7px 10px;
+  }
+  .attendance-item .name{ font-weight:600; font-size:14px; flex:1; }
+  .attendance-item .tag{ font-size:11px; color:var(--text-muted); }
+  .attendance-item button{
+    border:none; background:none; color:var(--danger); font-size:14px;
+    cursor:pointer; padding:2px 6px; border-radius:6px; line-height:1;
+  }
+  .attendance-item button:hover{ background:var(--danger-soft); }
+
+  .empty-state{ color:var(--text-muted); font-size:13px; padding:10px 2px; }
+
+  .guest-form{ display:flex; gap:6px; }
+  .guest-form input{
+    flex:1; min-width:0;
+    border:1px solid var(--border-strong); border-radius:7px;
+    padding:7px 10px; font-family:inherit; font-size:13px;
+    background:var(--surface); color:var(--text);
+  }
+  .guest-form button{
+    border:1px solid var(--border-strong); background:var(--surface-2); color:var(--text);
+    border-radius:7px; padding:7px 12px; font-size:13px; font-weight:600; cursor:pointer;
+  }
+
+  .actions{ display:flex; gap:8px; }
+  .actions button{
+    flex:1;
+    border-radius:8px; padding:9px 10px; font-size:13px; font-weight:700; cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-copy{ border:1px solid var(--accent); background:var(--accent); color:#fff; }
+  .btn-clear{ border:1px solid var(--border-strong); background:var(--surface); color:var(--text); }
+
+  .snackbar{
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+    background:var(--text); color:var(--bg);
+    padding:10px 16px; border-radius:8px; font-size:13px;
+    display:flex; align-items:center; gap:12px;
+    box-shadow:var(--shadow);
+  }
+  .snackbar button{
+    border:none; background:none; color:var(--accent); font-weight:700; cursor:pointer; font-size:13px;
+  }
+  .snackbar[hidden]{ display:none; }
+
+  @media (prefers-reduced-motion:no-preference){
+    .member, .team-action-btn, .edit-toggle, .attendance-item, .btn-copy, .btn-clear{
+      transition:background-color .15s ease, border-color .15s ease, opacity .15s ease;
+    }
+  }
+</style>
+
+<div class="page">
+  <div class="masthead">
+    <h1>회의 출석부</h1>
+    <div class="masthead-right">
+      <div class="live-count" aria-live="polite">참석 <b id="liveCount">0</b>명</div>
+      <button class="edit-toggle" id="editToggle" type="button" aria-pressed="false">명단 편집</button>
+    </div>
+  </div>
+  <p class="subtitle">센터 직원 명단에서 이름을 더블클릭하면 오른쪽 참석자 명단에 올라갑니다.</p>
+  <p class="hint" id="hintText">이름을 더블클릭 (또는 선택 후 Enter)하면 참석자로 추가·제외됩니다 · 명단에 없는 참석자는 오른쪽 아래 입력창에서 직접 추가하세요.</p>
+
+  <div class="board">
+    <section class="roster" id="roster" aria-label="직원 명단"></section>
+
+    <aside class="attendance" aria-label="참석자 명단">
+      <div class="attendance-head">
+        <h2>참석자</h2>
+        <div class="count-badge"><span>총</span><span id="countBadge">0</span><span>명</span></div>
+      </div>
+      <ul class="attendance-list" id="attendanceList"></ul>
+      <p class="empty-state" id="emptyState">아직 선택된 참석자가 없습니다.</p>
+
+      <form class="guest-form" id="guestForm">
+        <label for="guestInput" style="position:absolute;left:-9999px;">명단 외 참석자 이름</label>
+        <input id="guestInput" type="text" placeholder="명단 외 참석자 이름" autocomplete="off">
+        <button type="submit">추가</button>
+      </form>
+
+      <div class="actions">
+        <button type="button" class="btn-copy" id="copyBtn">참석자 복사</button>
+        <button type="button" class="btn-clear" id="clearBtn">초기화</button>
+      </div>
+    </aside>
+  </div>
+
+  <p class="storage-note">※ 명단 편집 내용과 참석자 선택은 이 브라우저에만 저장됩니다. 다른 기기·브라우저에서는 공유되지 않습니다.</p>
+</div>
+
+<div class="snackbar" id="snackbar" hidden>
+  <span id="snackbarMsg"></span>
+  <button type="button" id="snackbarUndo">실행취소</button>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORE_KEY = "meeting-ledger.v6";
+
+  // 직급(센터장 > 부센터장 > 상임팀장 > 팀장)은 가나다 순서와 무관하게 각 팀 맨 위에 고정하고,
+  // 나머지 팀원은 이름 가나다 오름차순으로 정렬해 둔 상태입니다 (2026.09.01 조직도 기준).
+  var DEFAULT_ROSTER = [
+    { id:"t0", name:"원주시정신건강복지센터", members:[
+      { id:"m1", name:"민성호", role:"센터장", title:"정신건강의학과 전문의" },
+      { id:"m2", name:"오승은", role:"부센터장", title:"정신건강간호사" },
+      { id:"m50", name:"염미애", role:"상임팀장", title:"정신건강간호사" }
+    ]},
+    { id:"t4", name:"운영회계팀", members:[
+      { id:"m29", name:"염미애", role:"상임팀장(겸직)", title:"정신건강간호사" },
+      { id:"m28", name:"박유정", title:"사회복지사" },
+      { id:"m30", name:"허지혜", title:"사회복지사" }
+    ]},
+    { id:"t1", name:"정신질환자 사회통합팀", members:[
+      { id:"m13", name:"장윤하", role:"팀장", title:"정신건강간호사" },
+      { id:"m3", name:"김영민", title:"정신건강사회복지사" },
+      { id:"m4", name:"김유진", title:"사회복지사" },
+      { id:"m5", name:"김현정", title:"사회복지사" },
+      { id:"m6", name:"박보미", title:"작업치료사" },
+      { id:"m7", name:"박은영", title:"정신건강사회복지사", note:"육아휴직" },
+      { id:"m8", name:"박초이", title:"작업치료사" },
+      { id:"m9", name:"신소민", title:"작업치료사" },
+      { id:"m10", name:"안수진", title:"정신건강간호사" },
+      { id:"m11", name:"이은수", title:"작업치료사" },
+      { id:"m12", name:"이혜수", title:"정신건강간호사", note:"육아휴직" },
+      { id:"m14", name:"채영은", title:"정신건강사회복지사" },
+      { id:"m15", name:"홍주희", title:"정신건강사회복지사" },
+      { id:"m16", name:"황덕환", title:"복지서비스요원" }
+    ]},
+    { id:"t2", name:"아동청소년 정신건강팀", members:[
+      { id:"m19", name:"신수아", role:"팀장", title:"정신건강간호사" },
+      { id:"m17", name:"김보경", title:"정신건강사회복지사" },
+      { id:"m18", name:"김보연", title:"간호사", note:"육아휴직" },
+      { id:"m20", name:"용혜령", title:"사회복지사" }
+    ]},
+    { id:"t3", name:"지역주민 정신건강증진팀", members:[
+      { id:"m22", name:"박연희", role:"팀장", title:"정신건강간호사" },
+      { id:"m21", name:"김유정", title:"작업치료사" },
+      { id:"m23", name:"이현지", title:"작업치료사" },
+      { id:"m24", name:"정혜원", title:"작업치료사" },
+      { id:"m25", name:"박정근", title:"정신건강사회복지사", unit:"응급개입팀(야간)" },
+      { id:"m26", name:"안정현", title:"사회복지사", unit:"응급개입팀(야간)" },
+      { id:"m27", name:"정창영", title:"사회복지사", unit:"응급개입팀(야간)" }
+    ]},
+    { id:"t5", name:"자살예방사업팀", members:[
+      { id:"m33", name:"신수경", role:"팀장", title:"정신건강사회복지사" },
+      { id:"m31", name:"김도이", title:"사회복지사" },
+      { id:"m32", name:"박세미", title:"정신건강사회복지사", note:"육아휴직" },
+      { id:"m34", name:"안은희", title:"정신건강간호사" },
+      { id:"m35", name:"이소연", title:"정신건강사회복지사" },
+      { id:"m36", name:"변일균", title:"사회복지사", unit:"자살유족 원스톱 지원서비스" },
+      { id:"m37", name:"안나연", title:"정신건강간호사", unit:"자살유족 원스톱 지원서비스" },
+      { id:"m38", name:"오희주", title:"사회복지사", unit:"자살유족 원스톱 지원서비스" },
+      { id:"m39", name:"정한정", title:"사회복지사", unit:"자살유족 원스톱 지원서비스" },
+      { id:"m40", name:"정호연", title:"사회복지사", unit:"자살유족 원스톱 지원서비스" }
+    ]},
+    { id:"t6", name:"자살위기지원팀", members:[
+      { id:"m48", name:"정미라", role:"팀장", title:"정신건강간호사" },
+      { id:"m41", name:"고은하", title:"정신건강간호사" },
+      { id:"m42", name:"김명호", title:"사회복지사" },
+      { id:"m43", name:"김수영", title:"정신건강사회복지사" },
+      { id:"m44", name:"변수지", title:"사회복지사" },
+      { id:"m45", name:"안세린", title:"작업치료사", note:"육아휴직" },
+      { id:"m46", name:"이정현", title:"정신건강간호사", note:"육아휴직" },
+      { id:"m47", name:"장다원", title:"사회복지사" },
+      { id:"m49", name:"최동주", title:"사회복지사" }
+    ]},
+    { id:"t7", name:"기타", members:[
+      { id:"m51", name:"임승빈", title:"의사", note:"전공의 · 원주세브란스기독병원" }
+    ]}
+  ];
+
+  var state = {
+    roster: [],
+    selected: [],   // ordered array of member ids (from roster)
+    guests: [],     // array of {id, name}
+    editMode: false,
+    uid: 100
+  };
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && Array.isArray(parsed.roster)){
+          state.roster = parsed.roster;
+          state.selected = Array.isArray(parsed.selected) ? parsed.selected : [];
+          state.guests = Array.isArray(parsed.guests) ? parsed.guests : [];
+          state.uid = typeof parsed.uid === "number" ? parsed.uid : 100;
+          return;
+        }
+      }
+    }catch(e){ /* localStorage unavailable — fall through to defaults */ }
+    state.roster = JSON.parse(JSON.stringify(DEFAULT_ROSTER));
+    state.selected = [];
+    state.guests = [];
+    state.uid = 100;
+  }
+
+  function saveState(){
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify({
+        roster: state.roster, selected: state.selected, guests: state.guests, uid: state.uid
+      }));
+    }catch(e){ /* private mode / storage blocked — state just won't persist */ }
+  }
+
+  function nextId(prefix){ state.uid += 1; return prefix + state.uid; }
+  function findMember(id){
+    for(var i=0;i<state.roster.length;i++){
+      var t = state.roster[i];
+      for(var j=0;j<t.members.length;j++){ if(t.members[j].id === id) return t.members[j]; }
+    }
+    return null;
+  }
+
+  // 참석자 명단 정렬 규칙: 센터장 > 부센터장 > 상임팀장 > 팀장은 가나다 순서와 무관하게
+  // 항상 맨 위, 그 아래는 나머지 전원을 이름 가나다 오름차순으로 배치합니다.
+  function rankOf(role){
+    var r = (role || "").trim();
+    if(r === "센터장") return 0;
+    if(r === "부센터장") return 1;
+    if(r.indexOf("상임팀장") === 0) return 2;
+    if(r.indexOf("팀장") !== -1) return 3;
+    return 4;
+  }
+
+  // Attendee list combines roster picks + manually-added guests into one ranked,
+  // alphabetically-sorted list — this is the single source of truth for both the
+  // on-screen 참석자 panel and the "참석자 복사" text, so they always match.
+  function getSortedAttendees(){
+    var list = [];
+    state.selected.forEach(function(id){
+      var m = findMember(id);
+      if(!m) return;
+      list.push({ kind:"roster", id:id, name:m.name, title:m.title || "", rank:rankOf(m.role) });
+    });
+    state.guests.forEach(function(g){
+      list.push({ kind:"guest", id:g.id, name:g.name, title:"명단 외", rank:4 });
+    });
+    list.sort(function(a, b){
+      if(a.rank !== b.rank) return a.rank - b.rank;
+      if(a.name < b.name) return -1;
+      if(a.name > b.name) return 1;
+      return 0;
+    });
+    return list;
+  }
+
+  // ---------- rendering ----------
+
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  // Renders a member's name/role/title/note as an editable field in edit mode
+  // (click straight into the text to change it — this is what makes team-name
+  // and 직급/직책 corrections possible without deleting and re-adding a person).
+  function memberField(member, key, cls, placeholder){
+    var val = member[key] || "";
+    var span = document.createElement("span");
+    span.className = cls + (!val && state.editMode ? " is-empty" : "");
+    span.textContent = val || (state.editMode ? placeholder : "");
+    if(state.editMode){
+      span.contentEditable = "true";
+      span.spellcheck = false;
+      span.addEventListener("focus", function(){
+        if(!member[key]) span.textContent = "";
+      });
+      span.addEventListener("keydown", function(ev){
+        if(ev.key === "Enter"){ ev.preventDefault(); span.blur(); }
+      });
+      span.addEventListener("blur", function(){
+        var v = span.textContent.trim();
+        if(key === "name" && !v){ renderRoster(); return; } // name is required — revert silently
+        member[key] = v;
+        saveState();
+        renderRoster(); renderAttendance();
+      });
+    }
+    return span;
+  }
+
+  function renderRoster(){
+    var root = document.getElementById("roster");
+    root.innerHTML = "";
+    state.roster.forEach(function(team){
+      root.appendChild(renderTeam(team));
+    });
+    if(state.editMode){
+      var addTeamBtn = el("button", "add-team-btn", "+ 팀 추가");
+      addTeamBtn.type = "button";
+      addTeamBtn.addEventListener("click", function(){
+        var name = window.prompt("추가할 팀 이름을 입력하세요");
+        if(!name) return;
+        state.roster.push({ id: nextId("t"), name: name.trim(), members: [] });
+        saveState(); renderRoster();
+      });
+      root.appendChild(addTeamBtn);
+    }
+  }
+
+  function renderTeam(team){
+    var wrap = el("div", "team");
+
+    var head = el("div", "team-head");
+    var title = el("div", "team-title", team.name);
+    if(state.editMode){
+      title.contentEditable = "true";
+      title.addEventListener("blur", function(){
+        var v = title.textContent.trim();
+        team.name = v || team.name;
+        title.textContent = team.name;
+        saveState();
+      });
+    }
+    head.appendChild(title);
+    head.appendChild(el("div", "team-meta", team.members.length + "명"));
+    head.appendChild(el("div", "team-head-spacer"));
+
+    var addAll = el("button", "team-action-btn", "전체 추가");
+    addAll.type = "button";
+    addAll.addEventListener("click", function(){
+      team.members.forEach(function(m){
+        if(state.selected.indexOf(m.id) === -1) state.selected.push(m.id);
+      });
+      saveState(); renderRoster(); renderAttendance();
+    });
+    head.appendChild(addAll);
+
+    if(state.editMode){
+      var delTeam = el("button", "team-action-btn danger", "팀 삭제");
+      delTeam.type = "button";
+      delTeam.addEventListener("click", function(){ deleteTeam(team.id); });
+      head.appendChild(delTeam);
+    }
+    wrap.appendChild(head);
+
+    var list = el("ul", "roster-list");
+    var lastUnit = null;
+    team.members.forEach(function(m){
+      if(m.unit && m.unit !== lastUnit){
+        var label = el("div", "unit-label", "· " + m.unit);
+        var liLabel = document.createElement("li");
+        liLabel.style.listStyle = "none";
+        liLabel.appendChild(label);
+        list.appendChild(liLabel);
+      }
+      lastUnit = m.unit || null;
+
+      var li = document.createElement("li");
+      li.style.listStyle = "none";
+      var row = el("div", "member");
+      row.setAttribute("role", "button");
+      row.tabIndex = 0;
+      row.dataset.id = m.id;
+      var selected = state.selected.indexOf(m.id) !== -1;
+      if(selected) row.classList.add("is-selected");
+
+      row.appendChild(memberField(m, "name", "member-name", "이름"));
+      if(state.editMode || m.role) row.appendChild(memberField(m, "role", "member-role", "직급(예: 팀장)"));
+      if(state.editMode || m.title) row.appendChild(memberField(m, "title", "member-title", "직무(예: 사회복지사)"));
+      if(state.editMode || m.note) row.appendChild(memberField(m, "note", "member-note", "메모(예: 육아휴직)"));
+
+      if(state.editMode){
+        var rm = el("button", "member-remove", "×");
+        rm.type = "button";
+        rm.title = "명단에서 삭제";
+        rm.addEventListener("click", function(ev){
+          ev.stopPropagation();
+          team.members = team.members.filter(function(x){ return x.id !== m.id; });
+          state.selected = state.selected.filter(function(id){ return id !== m.id; });
+          saveState(); renderRoster(); renderAttendance();
+        });
+        row.appendChild(rm);
+      } else {
+        row.appendChild(el("span", "member-check", "✓ 참석"));
+      }
+
+      // Selecting attendees and editing text share the same row, so the toggle-on-
+      // dblclick/Enter behaviour is only wired up outside edit mode — otherwise
+      // double-clicking a word to edit it would also add/remove that person.
+      if(!state.editMode){
+        row.addEventListener("dblclick", function(){ toggleRosterMember(m.id); });
+        row.addEventListener("keydown", function(ev){
+          if(ev.key === "Enter" || ev.key === " "){
+            ev.preventDefault();
+            toggleRosterMember(m.id);
+          }
+        });
+      }
+
+      li.appendChild(row);
+      list.appendChild(li);
+    });
+    wrap.appendChild(list);
+
+    if(state.editMode){
+      var addRow = el("div", "add-row");
+      var input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "이름 직책 (예: 홍길동 사회복지사)";
+      var addBtn = el("button", "", "추가");
+      addBtn.type = "button";
+      function submitAdd(){
+        var v = input.value.trim();
+        if(!v) return;
+        var parts = v.split(/\s+/);
+        var name = parts.shift();
+        var title = parts.join(" ");
+        team.members.push({ id: nextId("m"), name: name, title: title });
+        input.value = "";
+        saveState(); renderRoster(); renderAttendance();
+      }
+      addBtn.addEventListener("click", submitAdd);
+      input.addEventListener("keydown", function(ev){ if(ev.key === "Enter"){ ev.preventDefault(); submitAdd(); } });
+      addRow.appendChild(input); addRow.appendChild(addBtn);
+      wrap.appendChild(addRow);
+    }
+
+    return wrap;
+  }
+
+  function toggleRosterMember(id){
+    var idx = state.selected.indexOf(id);
+    if(idx === -1) state.selected.push(id); else state.selected.splice(idx, 1);
+    saveState(); renderRoster(); renderAttendance();
+  }
+
+  function renderAttendance(){
+    var list = document.getElementById("attendanceList");
+    var empty = document.getElementById("emptyState");
+    list.innerHTML = "";
+
+    var attendees = getSortedAttendees();
+    var total = attendees.length;
+    document.getElementById("countBadge").textContent = total;
+    document.getElementById("liveCount").textContent = total;
+    empty.style.display = total === 0 ? "block" : "none";
+
+    attendees.forEach(function(a){
+      var li = el("li", "attendance-item");
+      li.appendChild(el("span", "name", a.name));
+      if(a.title) li.appendChild(el("span", "tag", a.title));
+      var rm = el("button", "", "×");
+      rm.type = "button"; rm.title = "참석자에서 제외";
+      var onRemove = a.kind === "guest"
+        ? function(){ removeGuest(a.id); }
+        : function(){ toggleRosterMember(a.id); };
+      rm.addEventListener("click", onRemove);
+      li.addEventListener("dblclick", onRemove);
+      li.appendChild(rm);
+      list.appendChild(li);
+    });
+  }
+
+  function removeGuest(id){
+    state.guests = state.guests.filter(function(g){ return g.id !== id; });
+    saveState(); renderAttendance();
+  }
+
+  // ---------- team delete + undo ----------
+
+  var pendingUndo = null, undoTimer = null;
+
+  function deleteTeam(teamId){
+    var idx = state.roster.findIndex(function(t){ return t.id === teamId; });
+    if(idx === -1) return;
+    var removedTeam = state.roster[idx];
+    var removedIds = removedTeam.members.map(function(m){ return m.id; });
+    state.roster.splice(idx, 1);
+    state.selected = state.selected.filter(function(id){ return removedIds.indexOf(id) === -1; });
+    saveState(); renderRoster(); renderAttendance();
+
+    pendingUndo = { team: removedTeam, index: idx };
+    showSnackbar("\"" + removedTeam.name + "\" 팀을 삭제했습니다.");
+  }
+
+  function showSnackbar(msg){
+    var bar = document.getElementById("snackbar");
+    document.getElementById("snackbarMsg").textContent = msg;
+    bar.hidden = false;
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(function(){ bar.hidden = true; pendingUndo = null; }, 6000);
+  }
+
+  document.getElementById("snackbarUndo").addEventListener("click", function(){
+    if(pendingUndo){
+      state.roster.splice(Math.min(pendingUndo.index, state.roster.length), 0, pendingUndo.team);
+      saveState(); renderRoster(); renderAttendance();
+    }
+    document.getElementById("snackbar").hidden = true;
+    pendingUndo = null;
+    clearTimeout(undoTimer);
+  });
+
+  // ---------- guest form / actions ----------
+
+  document.getElementById("guestForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var input = document.getElementById("guestInput");
+    var name = input.value.trim();
+    if(!name) return;
+    state.guests.push({ id: nextId("g"), name: name });
+    input.value = "";
+    saveState(); renderAttendance();
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    state.selected = [];
+    state.guests = [];
+    saveState(); renderRoster(); renderAttendance();
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    var names = getSortedAttendees().map(function(a){ return a.name; });
+    var total = names.length;
+    var text = "참석자: " + (names.length ? names.join(", ") : "없음") + " (총 " + total + "명)";
+    var btn = document.getElementById("copyBtn");
+    var original = btn.textContent;
+    function flash(msg){ btn.textContent = msg; setTimeout(function(){ btn.textContent = original; }, 1600); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ flash("복사됨 ✓"); }).catch(function(){ flash("복사 실패"); window.prompt("아래 텍스트를 직접 복사하세요", text); });
+    } else {
+      window.prompt("아래 텍스트를 직접 복사하세요", text);
+    }
+  });
+
+  function updateHint(){
+    var hint = document.getElementById("hintText");
+    hint.textContent = state.editMode
+      ? "편집 모드: 이름 · 직급 · 직무 · 메모 · 팀 이름을 클릭하면 바로 고칠 수 있어요. 다 고치셨으면 \"편집 완료\"를 눌러 마치세요."
+      : "이름을 더블클릭 (또는 선택 후 Enter)하면 참석자로 추가·제외됩니다 · 명단에 없는 참석자는 오른쪽 아래 입력창에서 직접 추가하세요.";
+  }
+
+  document.getElementById("editToggle").addEventListener("click", function(){
+    state.editMode = !state.editMode;
+    this.setAttribute("aria-pressed", state.editMode ? "true" : "false");
+    this.textContent = state.editMode ? "편집 완료" : "명단 편집";
+    updateHint();
+    renderRoster();
+  });
+
+  // ---------- boot ----------
+
+  loadState();
+  updateHint();
+  renderRoster();
+  renderAttendance();
+})();
+</script>
