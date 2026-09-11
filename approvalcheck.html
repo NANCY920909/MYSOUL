@@ -1,0 +1,384 @@
+<title>결재 체크판</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F7F5;
+    --surface:#FFFFFF;
+    --surface-2:#EFF3F0;
+    --border:#DAE3DD;
+    --border-strong:#B9C7BE;
+    --text:#1B2420;
+    --text-muted:#5D6B62;
+    --accent:#2C7A68;
+    --accent-strong:#1E5B4C;
+    --accent-soft:#E1EFE9;
+    --danger:#B84A38;
+    --danger-soft:#F5E4DF;
+    --warn:#C98A1F;
+    --warn-soft:#FBF0DC;
+    --shadow: 0 1px 2px rgba(27,36,32,0.06), 0 8px 24px rgba(27,36,32,0.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#121815;
+      --surface:#19211D;
+      --surface-2:#202A24;
+      --border:#2C3A32;
+      --border-strong:#3D4F44;
+      --text:#E8ECE9;
+      --text-muted:#9BAAA0;
+      --accent:#4FB49A;
+      --accent-strong:#74CBB3;
+      --accent-soft:#1D3A31;
+      --danger:#E2846C;
+      --danger-soft:#3A2620;
+      --warn:#E3B15E;
+      --warn-soft:#3A3018;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#121815;
+    --surface:#19211D;
+    --surface-2:#202A24;
+    --border:#2C3A32;
+    --border-strong:#3D4F44;
+    --text:#E8ECE9;
+    --text-muted:#9BAAA0;
+    --accent:#4FB49A;
+    --accent-strong:#74CBB3;
+    --accent-soft:#1D3A31;
+    --danger:#E2846C;
+    --danger-soft:#3A2620;
+    --warn:#E3B15E;
+    --warn-soft:#3A3018;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans KR", "Malgun Gothic", sans-serif;
+    padding:20px 16px 36px;
+    display:flex;
+    justify-content:center;
+  }
+  .page{ width:100%; max-width:460px; display:flex; flex-direction:column; gap:14px; }
+
+  .masthead{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .masthead h1{
+    font-family:"Jua", "Noto Sans KR", sans-serif;
+    font-weight:400;
+    font-size:24px;
+    margin:0 0 2px;
+  }
+  .masthead p{ margin:0; font-size:12.5px; color:var(--text-muted); }
+  .popout-btn{
+    flex:none;
+    border:1px solid var(--border-strong);
+    background:var(--surface);
+    color:var(--text);
+    border-radius:9px;
+    padding:8px 12px;
+    font-family:inherit; font-size:12.5px; font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .popout-btn:hover{ border-color:var(--accent); color:var(--accent-strong); }
+
+  .summary-row{ display:flex; gap:8px; }
+  .summary-pill{
+    flex:1;
+    display:flex; flex-direction:column; gap:2px;
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:10px 12px;
+  }
+  .summary-pill b{
+    font-family:"JetBrains Mono", monospace; font-size:20px; font-variant-numeric:tabular-nums;
+  }
+  .summary-pill span{ font-size:11.5px; color:var(--text-muted); }
+  .summary-pill.pending b{ color:var(--danger); }
+  .summary-pill.done b{ color:var(--accent-strong); }
+
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:14px; box-shadow:var(--shadow);
+  }
+  .card-title{ font-size:12.5px; color:var(--text-muted); margin:0 0 10px; font-weight:600; }
+
+  .chip-row{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .chip{
+    border:1px solid var(--border-strong); background:var(--surface-2); color:var(--text);
+    border-radius:999px; padding:6px 12px; font-size:12.5px; font-family:inherit;
+    cursor:pointer;
+  }
+  .chip[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .add-form{ display:flex; flex-direction:column; gap:8px; }
+  .add-row{ display:flex; gap:8px; }
+  .add-row input[type="text"]{
+    flex:1; min-width:0; padding:9px 11px; border-radius:10px;
+    border:1px solid var(--border); background:var(--bg); color:var(--text);
+    font-family:inherit; font-size:13.5px;
+  }
+  .add-row input[type="date"]{
+    padding:9px 8px; border-radius:10px; border:1px solid var(--border);
+    background:var(--bg); color:var(--text); font-family:inherit; font-size:13px;
+  }
+  .add-row button{
+    flex:none; padding:9px 16px; border-radius:10px; border:none;
+    background:var(--accent); color:#fff; font-weight:600; font-size:13.5px; cursor:pointer;
+  }
+  .add-row button:hover{ background:var(--accent-strong); }
+
+  .list{ display:flex; flex-direction:column; gap:8px; }
+  .empty{ text-align:center; color:var(--text-muted); font-size:13px; padding:14px 0; }
+
+  .item{
+    display:flex; align-items:center; gap:10px;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:10px 10px;
+  }
+  .item.pending{ border-color:var(--danger); background:var(--danger-soft); }
+  .item.done{ opacity:0.6; }
+
+  .switch{
+    flex:none; width:42px; height:24px; border-radius:999px; border:none;
+    background:var(--border-strong); position:relative; cursor:pointer; padding:0;
+  }
+  .switch::after{
+    content:""; position:absolute; top:3px; left:3px; width:18px; height:18px;
+    border-radius:50%; background:#fff; transition:left .15s ease;
+    box-shadow:0 1px 2px rgba(0,0,0,0.25);
+  }
+  .switch[aria-pressed="true"]{ background:var(--danger); }
+  .switch[aria-pressed="true"]::after{ left:21px; }
+  .switch[aria-pressed="false"]{ background:var(--accent); }
+
+  .item-main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .item-top{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .badge{
+    font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:999px;
+    background:var(--accent-soft); color:var(--accent-strong); white-space:nowrap;
+  }
+  .item-title{
+    font-size:13.5px; font-weight:500; word-break:break-word;
+  }
+  .item.done .item-title{ text-decoration:line-through; color:var(--text-muted); }
+  .item-date{ font-size:11px; color:var(--text-muted); font-family:"JetBrains Mono", monospace; }
+
+  .del-btn{
+    flex:none; border:none; background:transparent; color:var(--text-muted);
+    font-size:16px; line-height:1; cursor:pointer; padding:4px 6px; border-radius:8px;
+  }
+  .del-btn:hover{ background:var(--surface); color:var(--danger); }
+
+  details.howto{ font-size:12.5px; color:var(--text-muted); }
+  details.howto summary{ cursor:pointer; font-weight:600; color:var(--text); padding:2px 0; }
+  details.howto .howto-body{ margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+  details.howto code{
+    display:block; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:8px; padding:8px 10px; font-family:"JetBrains Mono", monospace;
+    font-size:11.5px; word-break:break-all; user-select:all;
+  }
+  .storage-note{ text-align:center; font-size:11px; color:var(--text-muted); }
+</style>
+
+<div class="page">
+  <div class="masthead">
+    <div>
+      <h1>결재 체크판</h1>
+      <p>관내외출장 · 회의록 · 결과보고 안 올린 것 모아보기</p>
+    </div>
+    <button class="popout-btn" id="popoutBtn" type="button">팝업으로 열기</button>
+  </div>
+
+  <div class="summary-row">
+    <div class="summary-pill pending">
+      <b id="pendingCount">0</b>
+      <span>아직 안 올림</span>
+    </div>
+    <div class="summary-pill done">
+      <b id="doneCount">0</b>
+      <span>결재 완료</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">새로 등록할 건 추가</p>
+    <form class="add-form" id="addForm">
+      <div class="chip-row" id="categoryChips">
+        <button type="button" class="chip" data-cat="관내출장" aria-pressed="true">관내출장</button>
+        <button type="button" class="chip" data-cat="관외출장" aria-pressed="false">관외출장</button>
+        <button type="button" class="chip" data-cat="회의록" aria-pressed="false">회의록</button>
+        <button type="button" class="chip" data-cat="결과보고" aria-pressed="false">결과보고</button>
+        <button type="button" class="chip" data-cat="기타" aria-pressed="false">기타</button>
+      </div>
+      <div class="add-row">
+        <input type="text" id="titleInput" placeholder="예: 9/5 부모교육 관외출장" maxlength="60" required>
+        <input type="date" id="dateInput">
+      </div>
+      <div class="add-row">
+        <button type="submit">추가</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <p class="card-title">목록 — 스위치를 끄면 결재 완료로 표시돼요</p>
+    <div class="list" id="list"></div>
+  </div>
+
+  <details class="howto">
+    <summary>컴퓨터 바탕화면에 팝업처럼 항상 띄워두는 방법</summary>
+    <div class="howto-body">
+      <div>
+        1) 위의 <b>"팝업으로 열기"</b> 버튼을 누르면 작은 별도 창으로 열려요. 그 창을 바탕화면 구석에 옮겨두고 계속 켜두면 됩니다. (체크 상태는 이 브라우저에 자동 저장돼서 창을 닫았다 열어도 유지돼요.)
+      </div>
+      <div>
+        2) 매번 새로 여는 게 번거롭다면, 이 파일을 <b>"앱 창"</b>으로 여는 바로가기를 만들어두면 브라우저 주소창·탭 없이 딱 이 창만 뜹니다. 바탕화면에 새 바로가기를 만들고 아래 위치에 이 파일 경로를 넣어 실행하면 돼요.
+        <code>chrome.exe --app="이 HTML 파일의 전체 경로" --window-size=380,560</code>
+        (파일 경로가 공백 없이 정확해야 하고, 크롬이 아니라 엣지를 쓴다면 msedge.exe로 바꾸면 동일하게 동작해요.)
+      </div>
+      <div>
+        3) 항상 맨 위에 떠 있게 하고 싶다면, 위 방법으로 띄운 창에서 Windows는 "PowerToys"의 Always on Top(Win+Ctrl+T), Mac은 "Hidden Bar"류 앱이나 사파리의 창 고정 확장 등을 함께 쓰면 편해요.
+      </div>
+    </div>
+  </details>
+
+  <p class="storage-note">이 브라우저(이 컴퓨터)에만 저장돼요 · 다른 기기와 자동으로 공유되지 않아요</p>
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'approvalCheckItems_v1';
+
+  const els = {
+    list: document.getElementById('list'),
+    pendingCount: document.getElementById('pendingCount'),
+    doneCount: document.getElementById('doneCount'),
+    addForm: document.getElementById('addForm'),
+    titleInput: document.getElementById('titleInput'),
+    dateInput: document.getElementById('dateInput'),
+    categoryChips: document.getElementById('categoryChips'),
+    popoutBtn: document.getElementById('popoutBtn'),
+  };
+
+  let items = [];
+  let selectedCat = '관내출장';
+
+  function pad(n) { return n.toString().padStart(2, '0'); }
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+  function genId() {
+    try { return crypto.randomUUID(); } catch (e) {
+      return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  }
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch (e) {}
+  }
+
+  function render() {
+    const pending = items.filter(i => !i.done);
+    const done = items.filter(i => i.done);
+    els.pendingCount.textContent = pending.length;
+    els.doneCount.textContent = done.length;
+
+    const sorted = pending.concat(done);
+    if (!sorted.length) {
+      els.list.innerHTML = '<div class="empty">등록된 건이 없어요. 위에서 추가해보세요.</div>';
+      return;
+    }
+
+    els.list.innerHTML = sorted.map(item => {
+      const stateClass = item.done ? 'done' : 'pending';
+      return '<div class="item ' + stateClass + '" data-id="' + item.id + '">'
+        + '<button type="button" class="switch" aria-pressed="' + (!item.done) + '" data-action="toggle" data-id="' + item.id + '" aria-label="결재 상태 전환"></button>'
+        + '<div class="item-main">'
+        + '<div class="item-top"><span class="badge">' + escapeHtml(item.cat) + '</span>'
+        + (item.date ? '<span class="item-date">' + escapeHtml(item.date) + '</span>' : '')
+        + '</div>'
+        + '<div class="item-title">' + escapeHtml(item.title) + '</div>'
+        + '</div>'
+        + '<button type="button" class="del-btn" data-action="delete" data-id="' + item.id + '" aria-label="삭제">×</button>'
+        + '</div>';
+    }).join('');
+  }
+
+  function addItem(title, cat, date) {
+    items.push({ id: genId(), title: title.trim(), cat, date: date || '', done: false, createdAt: Date.now() });
+    save();
+    render();
+  }
+
+  function toggleItem(id) {
+    const it = items.find(i => i.id === id);
+    if (!it) return;
+    it.done = !it.done;
+    save();
+    render();
+  }
+
+  function deleteItem(id) {
+    items = items.filter(i => i.id !== id);
+    save();
+    render();
+  }
+
+  els.categoryChips.addEventListener('click', (e) => {
+    const btn = e.target.closest('.chip');
+    if (!btn) return;
+    selectedCat = btn.dataset.cat;
+    els.categoryChips.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === btn)));
+  });
+
+  els.addForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = els.titleInput.value.trim();
+    if (!title) return;
+    addItem(title, selectedCat, els.dateInput.value);
+    els.titleInput.value = '';
+    els.titleInput.focus();
+  });
+
+  els.list.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    if (btn.dataset.action === 'toggle') toggleItem(id);
+    else if (btn.dataset.action === 'delete') {
+      if (confirm('이 항목을 삭제할까요?')) deleteItem(id);
+    }
+  });
+
+  els.popoutBtn.addEventListener('click', () => {
+    const w = window.open(location.href, 'approvalCheckPopup', 'width=380,height=620,menubar=no,toolbar=no,location=no,status=no');
+    if (w) w.focus();
+  });
+
+  els.dateInput.value = todayStr();
+  items = load();
+  render();
+})();
+</script>
