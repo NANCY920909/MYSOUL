@@ -250,6 +250,20 @@
   .field-body li{ margin:3px 0; }
   .subtype{ color:var(--ink-soft); font-size:13.5px; margin-top:2px; }
 
+  .code-breakdown{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    margin-top:8px;
+    padding:10px 12px;
+    background:var(--teal-soft);
+    border-radius:10px;
+  }
+  .code-breakdown-row{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .code-breakdown-row .code-pill{ flex:none; }
+  .code-breakdown-ko{ font-size:14px; font-weight:600; color:var(--ink); }
+  .code-breakdown-en{ font-size:12.5px; color:var(--ink-faint); font-style:italic; }
+
   .no-result{
     text-align:center;
     padding:60px 20px;
@@ -439,6 +453,12 @@ const DATA = [
   // ---------- 양극성 및 관련 장애 ----------
   {
     code:"F31.11–F31.2", codes:["F31.11","F31.12","F31.13","F31.2"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형 - 조증 삽화",
+    codeNames:[
+      {code:"F31.11", ko:"양극성장애 제1형, 현재 조증 삽화, 경도", en:"Bipolar I Disorder, Current Episode Manic, Mild"},
+      {code:"F31.12", ko:"양극성장애 제1형, 현재 조증 삽화, 중등도", en:"Bipolar I Disorder, Current Episode Manic, Moderate"},
+      {code:"F31.13", ko:"양극성장애 제1형, 현재 조증 삽화, 중증(정신병적 증상 없음)", en:"Bipolar I Disorder, Current Episode Manic, Severe Without Psychotic Features"},
+      {code:"F31.2", ko:"양극성장애 제1형, 현재 조증 삽화, 중증(정신병적 증상 동반)", en:"Bipolar I Disorder, Current Episode Manic, Severe With Psychotic Features"}
+    ],
     nameKo:"양극성장애 제1형(조증 삽화)", nameEn:"Bipolar I Disorder, Current/Most Recent Episode Manic",
     keywords:["조증","양극성","들뜬기분","과대사고","충동구매","수면감소"],
     meds:"기분안정제(리튬, 발프로산) 및/또는 비정형 항정신병약물(퀘티아핀, 올란자핀, 아리피프라졸)이 1차 치료 — 항우울제는 사용하지 않음.",
@@ -457,6 +477,12 @@ const DATA = [
   },
   {
     code:"F31.31–F31.5", codes:["F31.31","F31.32","F31.4","F31.5"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형 - 우울 삽화",
+    codeNames:[
+      {code:"F31.31", ko:"양극성장애 제1형, 현재 우울 삽화, 경도", en:"Bipolar I Disorder, Current Episode Depressed, Mild"},
+      {code:"F31.32", ko:"양극성장애 제1형, 현재 우울 삽화, 중등도", en:"Bipolar I Disorder, Current Episode Depressed, Moderate"},
+      {code:"F31.4", ko:"양극성장애 제1형, 현재 우울 삽화, 중증(정신병적 증상 없음)", en:"Bipolar I Disorder, Current Episode Depressed, Severe Without Psychotic Features"},
+      {code:"F31.5", ko:"양극성장애 제1형, 현재 우울 삽화, 중증(정신병적 증상 동반)", en:"Bipolar I Disorder, Current Episode Depressed, Severe With Psychotic Features"}
+    ],
     nameKo:"양극성장애 제1형(우울 삽화)", nameEn:"Bipolar I Disorder, Current/Most Recent Episode Depressed",
     keywords:["양극성우울","우울삽화","무기력","자살사고"],
     meds:"기분안정제 기반 치료(퀘티아핀, 루라시돈, 올란자핀-플루옥세틴 병합 등) — 항우울제 단독 사용은 조증 전환 위험으로 지양.",
@@ -466,6 +492,11 @@ const DATA = [
   },
   {
     code:"F31.6 / F31.7 / F31.9", codes:["F31.6","F31.7","F31.9"], category:"양극성 및 관련 장애", subtype:"양극성장애 제1형 - 혼재성 양상/관해/상세불명",
+    codeNames:[
+      {code:"F31.6", ko:"양극성장애 제1형, 현재 혼재성 삽화", en:"Bipolar I Disorder, Current Episode Mixed"},
+      {code:"F31.7", ko:"양극성장애 제1형, 관해 상태", en:"Bipolar I Disorder, In Remission"},
+      {code:"F31.9", ko:"양극성장애 제1형, 상세불명", en:"Bipolar I Disorder, Unspecified"}
+    ],
     nameKo:"양극성장애 제1형(혼재성 양상·관해·상세불명)", nameEn:"Bipolar I Disorder, Mixed Features / In Remission / Unspecified",
     keywords:["혼재성","기분기복","관해","상세불명양극성"],
     meds:"혼재성 삽화는 자살위험이 높아 적극적 약물치료(기분안정제+항정신병약물) 필요, 관해기는 기존 유지치료 지속.",
@@ -494,6 +525,10 @@ const DATA = [
   // ---------- 우울장애 ----------
   {
     code:"F32.0 / F33.0", codes:["F32.0","F33.0"], category:"우울장애", subtype:"주요우울장애 - 경도",
+    codeNames:[
+      {code:"F32.0", ko:"주요우울장애, 단일 삽화, 경도", en:"Major Depressive Disorder, Single Episode, Mild"},
+      {code:"F33.0", ko:"주요우울장애, 재발성 삽화, 경도", en:"Major Depressive Disorder, Recurrent Episode, Mild"}
+    ],
     nameKo:"주요우울장애(경도)", nameEn:"Major Depressive Disorder, Mild",
     keywords:["우울","무기력","의욕저하","불면","식욕저하","경도우울","가벼운우울"],
     meds:"경도에서는 심리치료 단독을 우선 고려하는 경우가 많으며, 환자 선호나 반응 부족 시 SSRI 등 항우울제 병행.",
@@ -503,6 +538,10 @@ const DATA = [
   },
   {
     code:"F32.1 / F33.1", codes:["F32.1","F33.1"], category:"우울장애", subtype:"주요우울장애 - 중등도",
+    codeNames:[
+      {code:"F32.1", ko:"주요우울장애, 단일 삽화, 중등도", en:"Major Depressive Disorder, Single Episode, Moderate"},
+      {code:"F33.1", ko:"주요우울장애, 재발성 삽화, 중등도", en:"Major Depressive Disorder, Recurrent Episode, Moderate"}
+    ],
     nameKo:"주요우울장애(중등도)", nameEn:"Major Depressive Disorder, Moderate",
     keywords:["우울","무기력","의욕저하","죽고싶다","자살사고","불면","식욕저하","중등도우울"],
     meds:"SSRI(에스시탈로프람, 설트랄린), SNRI(둘록세틴, 벤라팍신) 등이 표준 1차 약물.",
@@ -512,6 +551,10 @@ const DATA = [
   },
   {
     code:"F32.2 / F33.2", codes:["F32.2","F33.2"], category:"우울장애", subtype:"주요우울장애 - 중증(정신병적 증상 없음)",
+    codeNames:[
+      {code:"F32.2", ko:"주요우울장애, 단일 삽화, 중증(정신병적 증상 없음)", en:"Major Depressive Disorder, Single Episode, Severe Without Psychotic Features"},
+      {code:"F33.2", ko:"주요우울장애, 재발성 삽화, 중증(정신병적 증상 없음)", en:"Major Depressive Disorder, Recurrent Episode, Severe Without Psychotic Features"}
+    ],
     nameKo:"주요우울장애(중증, 정신병적 증상 없음)", nameEn:"Major Depressive Disorder, Severe Without Psychotic Features",
     keywords:["중증우울","심한우울","자살위험","기능저하"],
     meds:"항우울제 충분용량이 필요, 반응 불충분 시 리튬·비정형 항정신병약물 등 증강전략 고려.",
@@ -521,6 +564,10 @@ const DATA = [
   },
   {
     code:"F32.3 / F33.3", codes:["F32.3","F33.3"], category:"우울장애", subtype:"주요우울장애 - 중증(정신병적 증상 동반)",
+    codeNames:[
+      {code:"F32.3", ko:"주요우울장애, 단일 삽화, 중증(정신병적 증상 동반)", en:"Major Depressive Disorder, Single Episode, Severe With Psychotic Features"},
+      {code:"F33.3", ko:"주요우울장애, 재발성 삽화, 중증(정신병적 증상 동반)", en:"Major Depressive Disorder, Recurrent Episode, Severe With Psychotic Features"}
+    ],
     nameKo:"주요우울장애(중증, 정신병적 증상 동반)", nameEn:"Major Depressive Disorder, Severe With Psychotic Features",
     keywords:["중증우울","망상","환청","정신병적우울"],
     meds:"항우울제 + 항정신병약물 병용이 표준, 반응 불충분 시 전기경련치료(ECT) 고려.",
@@ -530,6 +577,10 @@ const DATA = [
   },
   {
     code:"F32.4 / F33.41", codes:["F32.4","F33.41"], category:"우울장애", subtype:"주요우울장애 - 부분관해",
+    codeNames:[
+      {code:"F32.4", ko:"주요우울장애, 단일 삽화, 부분관해", en:"Major Depressive Disorder, Single Episode, In Partial Remission"},
+      {code:"F33.41", ko:"주요우울장애, 재발성 삽화, 부분관해", en:"Major Depressive Disorder, Recurrent Episode, In Partial Remission"}
+    ],
     nameKo:"주요우울장애(부분관해)", nameEn:"Major Depressive Disorder, In Partial Remission",
     keywords:["부분관해","잔존증상","우울호전중"],
     meds:"관해 유지를 위한 항우울제 지속 복용(임의 감량·중단 지양).",
@@ -539,6 +590,10 @@ const DATA = [
   },
   {
     code:"F32.5 / F33.42", codes:["F32.5","F33.42"], category:"우울장애", subtype:"주요우울장애 - 완전관해",
+    codeNames:[
+      {code:"F32.5", ko:"주요우울장애, 단일 삽화, 완전관해", en:"Major Depressive Disorder, Single Episode, In Full Remission"},
+      {code:"F33.42", ko:"주요우울장애, 재발성 삽화, 완전관해", en:"Major Depressive Disorder, Recurrent Episode, In Full Remission"}
+    ],
     nameKo:"주요우울장애(완전관해)", nameEn:"Major Depressive Disorder, In Full Remission",
     keywords:["완전관해","우울증회복"],
     meds:"과거 재발 횟수 등을 고려해 유지치료 지속 기간 결정(재발성인 경우 장기 유지 권장).",
@@ -548,6 +603,10 @@ const DATA = [
   },
   {
     code:"F32.9 / F33.9", codes:["F32.9","F33.9"], category:"우울장애", subtype:"주요우울장애 - 상세불명",
+    codeNames:[
+      {code:"F32.9", ko:"주요우울장애, 단일 삽화, 상세불명", en:"Major Depressive Disorder, Single Episode, Unspecified"},
+      {code:"F33.9", ko:"주요우울장애, 재발성 삽화, 상세불명", en:"Major Depressive Disorder, Recurrent Episode, Unspecified"}
+    ],
     nameKo:"주요우울장애(상세불명)", nameEn:"Major Depressive Disorder, Unspecified",
     keywords:["우울","무기력","의욕저하","우울증상세불명"],
     meds:"중증도 확정 전이므로 중등도 우울증에 준해 SSRI/SNRI를 우선 고려하는 경우가 많음.",
@@ -942,16 +1001,26 @@ function render(){
   list.forEach((d, i) => {
     const card = document.createElement('div');
     card.className = 'card';
+    const codeBreakdown = (d.codeNames && d.codeNames.length)
+      ? `<div class="code-breakdown">${d.codeNames.map(cn => `
+          <div class="code-breakdown-row">
+            <span class="code-pill">${cn.code}</span>
+            <span class="code-breakdown-ko">${cn.ko}</span>
+            <span class="code-breakdown-en">(${cn.en})</span>
+          </div>`).join('')}</div>`
+      : '';
+
     card.innerHTML = `
       <div class="card-head">
         <div class="card-titles">
           <div class="code-row">
-            <span class="code-pill">${d.code}</span>
+            ${d.codeNames ? '' : `<span class="code-pill">${d.code}</span>`}
             <span class="cat-pill">${d.category}</span>
           </div>
           <div class="name-ko">${d.nameKo}</div>
-          <div class="name-en">${d.nameEn}</div>
+          ${d.codeNames ? '' : `<div class="name-en">${d.nameEn}</div>`}
           <div class="subtype">하위분류: ${d.subtype}</div>
+          ${codeBreakdown}
         </div>
         <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
