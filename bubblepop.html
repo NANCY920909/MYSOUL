@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>감정 버블 팡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8EC;
+    --bg-soft: #FFF1DD;
+    --surface: #FFFFFF;
+    --ink: #2D4A2F;
+    --ink-soft: #6C7B6A;
+    --pink: #FF9FBB;
+    --pink-deep: #F2748F;
+    --green: #7BC47F;
+    --green-deep: #4F9457;
+    --yellow: #FFD873;
+    --yellow-deep: #E0A928;
+    --line: #ECE3CF;
+    --shadow: rgba(45, 74, 47, 0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16211A; --bg-soft: #1C2A20; --surface: #22301F;
+      --ink: #F0F1E4; --ink-soft: #B7C3AF;
+      --pink: #FF9FBB; --pink-deep: #FFB3C9;
+      --green: #8FD08F; --green-deep: #A9E0A9;
+      --yellow: #FFD873; --yellow-deep: #FFE29E;
+      --line: #35443A; --shadow: rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16211A; --bg-soft: #1C2A20; --surface: #22301F;
+    --ink: #F0F1E4; --ink-soft: #B7C3AF;
+    --pink: #FF9FBB; --pink-deep: #FFB3C9;
+    --green: #8FD08F; --green-deep: #A9E0A9;
+    --yellow: #FFD873; --yellow-deep: #FFE29E;
+    --line: #35443A; --shadow: rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, var(--bg-soft), var(--bg) 40%);
+    color: var(--ink);
+    font-family: "Noto Sans KR", system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 28px 16px 40px;
+  }
+  .page { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 16px; }
+
+  .header { text-align: center; display: flex; flex-direction: column; gap: 2px; }
+  .eyebrow { font-size: 13px; color: var(--ink-soft); letter-spacing: 0.04em; }
+  h1 {
+    font-family: "Jua", "Noto Sans KR", sans-serif;
+    font-weight: 400; font-size: 32px; margin: 0; color: var(--ink);
+  }
+  .sub { font-size: 13.5px; color: var(--ink-soft); margin: 2px 0 0; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    padding: 16px; box-shadow: 0 6px 20px var(--shadow);
+  }
+
+  .diff-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .diff-btn {
+    padding: 12px 6px; border-radius: 14px; border: 1px solid var(--line);
+    background: var(--bg-soft); color: var(--ink); font-family: "Noto Sans KR", sans-serif;
+    font-size: 13.5px; font-weight: 500; cursor: pointer;
+  }
+  .diff-btn.active { background: var(--pink); border-color: var(--pink-deep); color: #fff; }
+
+  .start-btn {
+    width: 100%; margin-top: 12px; padding: 14px; border: none; border-radius: 14px;
+    background: var(--green-deep); color: #fff; font-family: "Jua", sans-serif;
+    font-size: 18px; cursor: pointer;
+  }
+  .start-btn:active { transform: scale(0.98); }
+
+  .hud { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .hud-tile {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 10px 6px; text-align: center;
+  }
+  .hud-value { font-family: "Jua", sans-serif; font-size: 22px; font-variant-numeric: tabular-nums; }
+  .hud-label { font-size: 11px; color: var(--ink-soft); }
+
+  .time-track {
+    height: 8px; border-radius: 999px; background: var(--bg-soft); overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .time-fill { height: 100%; background: var(--yellow-deep); width: 100%; transition: width 0.2s linear; }
+
+  .arena {
+    position: relative; width: 100%; height: 430px; border-radius: 20px; overflow: hidden;
+    background: radial-gradient(circle at 30% 20%, var(--bg-soft), var(--bg) 70%);
+    border: 1px solid var(--line);
+    touch-action: none;
+  }
+  .arena-hint {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 20px; color: var(--ink-soft); font-size: 13.5px;
+  }
+
+  .bubble {
+    position: absolute; bottom: -90px; border-radius: 50%; border: none;
+    width: var(--size); height: var(--size);
+    display: flex; align-items: center; justify-content: center;
+    font-size: calc(var(--size) * 0.46);
+    cursor: pointer; padding: 0;
+    box-shadow: inset -6px -8px 14px rgba(0,0,0,0.08), inset 6px 6px 10px rgba(255,255,255,0.35);
+    transition: transform linear var(--dur), opacity 0.35s ease;
+    will-change: transform;
+  }
+  .bubble.popped {
+    transition: transform 0.28s ease, opacity 0.28s ease;
+    transform: scale(1.5) !important;
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bubble { transition-duration: 0.01s !important; }
+  }
+
+  .particle {
+    position: absolute; width: 8px; height: 8px; border-radius: 50%;
+    pointer-events: none; opacity: 1;
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  }
+
+  .combo-flash {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%) scale(0.8);
+    font-family: "Jua", sans-serif; font-size: 20px; color: var(--pink-deep);
+    background: var(--surface); border: 1px solid var(--line);
+    padding: 6px 16px; border-radius: 999px; opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+  }
+  .combo-flash.show { opacity: 1; transform: translateX(-50%) scale(1); }
+
+  .result {
+    display: none; flex-direction: column; align-items: center; text-align: center; gap: 8px;
+    padding: 8px 4px 4px;
+  }
+  .result.show { display: flex; }
+  .result-score { font-family: "Jua", sans-serif; font-size: 46px; color: var(--ink); }
+  .result-best { font-size: 13px; color: var(--ink-soft); }
+  .result-msg { font-size: 15px; margin: 6px 0 2px; }
+  .again-btn {
+    margin-top: 6px; padding: 12px 24px; border: none; border-radius: 14px;
+    background: var(--pink-deep); color: #fff; font-family: "Jua", sans-serif;
+    font-size: 16px; cursor: pointer;
+  }
+
+  .footer { text-align: center; font-size: 11.5px; color: var(--ink-soft); }
+
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="eyebrow">마음속에 떠오른 감정을</div>
+    <h1>버블 팡!</h1>
+    <p class="sub">둥실 떠오르는 감정 버블을 톡톡 터뜨려 보세요</p>
+  </div>
+
+  <div class="card" id="setupCard">
+    <p class="sub" style="margin:0 0 10px;text-align:center;">난이도를 골라주세요</p>
+    <div class="diff-row" id="diffRow">
+      <button class="diff-btn" data-diff="easy">쉬움</button>
+      <button class="diff-btn active" data-diff="normal">보통</button>
+      <button class="diff-btn" data-diff="hard">빠르게</button>
+    </div>
+    <button class="start-btn" id="startBtn">시작하기</button>
+  </div>
+
+  <div class="hud" id="hud" hidden>
+    <div class="hud-tile">
+      <div class="hud-value" id="scoreVal">0</div>
+      <div class="hud-label">점수</div>
+    </div>
+    <div class="hud-tile">
+      <div class="hud-value" id="comboVal">0</div>
+      <div class="hud-label">콤보</div>
+    </div>
+    <div class="hud-tile">
+      <div class="hud-value" id="timeVal">45</div>
+      <div class="hud-label">남은 시간</div>
+    </div>
+  </div>
+
+  <div class="time-track" id="timeTrack" hidden>
+    <div class="time-fill" id="timeFill"></div>
+  </div>
+
+  <div class="card" id="arenaCard" hidden>
+    <div class="arena" id="arena">
+      <div class="arena-hint" id="arenaHint">버블을 터치해서 팡! 터뜨려요</div>
+      <div class="combo-flash" id="comboFlash"></div>
+    </div>
+  </div>
+
+  <div class="card result" id="resultCard">
+    <p class="sub" style="margin:0;">이번 판 결과</p>
+    <div class="result-score" id="finalScore">0</div>
+    <p class="result-msg" id="resultMsg"></p>
+    <p class="result-best" id="resultBest"></p>
+    <button class="again-btn" id="againBtn">다시하기</button>
+  </div>
+
+  <div class="footer">눈과 손을 편안히 하고, 잠깐 쉬어가는 시간이에요</div>
+</div>
+
+<script>
+(function () {
+  const EMOJIS = ['😊','🥰','😢','😠','😨','😴','🥳','😌','🤔','😆'];
+  const COLORS = ['--pink', '--green', '--yellow'];
+  const DIFFICULTY = {
+    easy:   { spawnMs: 950, minDur: 4.6, maxDur: 6.2, minSize: 58, maxSize: 82 },
+    normal: { spawnMs: 680, minDur: 3.6, maxDur: 5.0, minSize: 50, maxSize: 74 },
+    hard:   { spawnMs: 460, minDur: 2.7, maxDur: 3.8, minSize: 42, maxSize: 62 },
+  };
+  const GAME_SECONDS = 45;
+  const BEST_KEY = 'bubblePopBest_v1';
+
+  const els = {
+    setupCard: document.getElementById('setupCard'),
+    diffRow: document.getElementById('diffRow'),
+    startBtn: document.getElementById('startBtn'),
+    hud: document.getElementById('hud'),
+    scoreVal: document.getElementById('scoreVal'),
+    comboVal: document.getElementById('comboVal'),
+    timeVal: document.getElementById('timeVal'),
+    timeTrack: document.getElementById('timeTrack'),
+    timeFill: document.getElementById('timeFill'),
+    arenaCard: document.getElementById('arenaCard'),
+    arena: document.getElementById('arena'),
+    arenaHint: document.getElementById('arenaHint'),
+    comboFlash: document.getElementById('comboFlash'),
+    resultCard: document.getElementById('resultCard'),
+    finalScore: document.getElementById('finalScore'),
+    resultMsg: document.getElementById('resultMsg'),
+    resultBest: document.getElementById('resultBest'),
+    againBtn: document.getElementById('againBtn'),
+  };
+
+  let diff = 'normal';
+  let score = 0, combo = 0, timeLeft = GAME_SECONDS;
+  let spawnTimer = null, tickTimer = null;
+  let running = false;
+
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  els.diffRow.addEventListener('click', (e) => {
+    const btn = e.target.closest('.diff-btn');
+    if (!btn) return;
+    diff = btn.dataset.diff;
+    [...els.diffRow.children].forEach(b => b.classList.toggle('active', b === btn));
+  });
+
+  els.startBtn.addEventListener('click', startGame);
+  els.againBtn.addEventListener('click', () => {
+    els.resultCard.classList.remove('show');
+    els.setupCard.hidden = false;
+  });
+
+  function startGame() {
+    score = 0; combo = 0; timeLeft = GAME_SECONDS;
+    running = true;
+    els.setupCard.hidden = true;
+    els.resultCard.classList.remove('show');
+    els.hud.hidden = false;
+    els.timeTrack.hidden = false;
+    els.arenaCard.hidden = false;
+    els.arenaHint.style.display = 'none';
+    els.scoreVal.textContent = '0';
+    els.comboVal.textContent = '0';
+    els.timeVal.textContent = String(timeLeft);
+    els.timeFill.style.width = '100%';
+    els.arena.querySelectorAll('.bubble, .particle').forEach(n => n.remove());
+
+    const cfg = DIFFICULTY[diff];
+    spawnBubble(cfg);
+    spawnTimer = setInterval(() => spawnBubble(cfg), cfg.spawnMs);
+    tickTimer = setInterval(tick, 1000);
+  }
+
+  function tick() {
+    timeLeft -= 1;
+    els.timeVal.textContent = String(Math.max(timeLeft, 0));
+    els.timeFill.style.width = Math.max((timeLeft / GAME_SECONDS) * 100, 0) + '%';
+    if (timeLeft <= 0) endGame();
+  }
+
+  function endGame() {
+    running = false;
+    clearInterval(spawnTimer); spawnTimer = null;
+    clearInterval(tickTimer); tickTimer = null;
+    els.arena.querySelectorAll('.bubble').forEach(b => b.remove());
+
+    const best = Math.max(score, Number(localStorage.getItem(BEST_KEY) || 0));
+    localStorage.setItem(BEST_KEY, String(best));
+
+    let msg = '오늘도 시작이 좋아요, 다음엔 더 잘할 수 있어요';
+    if (score >= 450) msg = '버블 팡 마스터! 마음이 뽀득뽀득 개운해졌어요';
+    else if (score >= 250) msg = '우와, 정말 잘했어요! 스트레스가 팡팡 날아갔어요';
+    else if (score >= 120) msg = '마음이 한결 가벼워졌어요';
+
+    els.finalScore.textContent = String(score);
+    els.resultMsg.textContent = msg;
+    els.resultBest.textContent = '최고 기록: ' + best + '점' + (score === best && score > 0 ? ' (신기록!)' : '');
+    els.hud.hidden = true;
+    els.timeTrack.hidden = true;
+    els.arenaCard.hidden = true;
+    els.resultCard.classList.add('show');
+  }
+
+  function spawnBubble(cfg) {
+    if (!running) return;
+    const arenaW = els.arena.clientWidth;
+    const arenaH = els.arena.clientHeight;
+    const size = rand(cfg.minSize, cfg.maxSize);
+    const dur = rand(cfg.minDur, cfg.maxDur);
+
+    const bubble = document.createElement('button');
+    bubble.type = 'button';
+    bubble.className = 'bubble';
+    bubble.setAttribute('aria-label', '감정 버블 터뜨리기');
+    bubble.style.setProperty('--size', size + 'px');
+    bubble.style.setProperty('--dur', dur + 's');
+    bubble.style.left = rand(4, Math.max(arenaW - size - 4, 4)) + 'px';
+    bubble.style.background = 'var(' + pick(COLORS) + ')';
+    bubble.textContent = pick(EMOJIS);
+
+    let popped = false;
+    bubble.addEventListener('pointerdown', () => {
+      if (popped || !running) return;
+      popped = true;
+      popBubble(bubble);
+    }, { passive: true });
+
+    bubble.addEventListener('transitionend', (e) => {
+      if (e.propertyName !== 'transform') return;
+      if (!popped) {
+        combo = 0;
+        els.comboVal.textContent = '0';
+        bubble.remove();
+      }
+    });
+
+    els.arena.appendChild(bubble);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bubble.style.transform = 'translateY(-' + (arenaH + size + 60) + 'px)';
+      });
+    });
+  }
+
+  function popBubble(bubble) {
+    const rect = bubble.getBoundingClientRect();
+    const arenaRect = els.arena.getBoundingClientRect();
+    const cx = rect.left - arenaRect.left + rect.width / 2;
+    const cy = rect.top - arenaRect.top + rect.height / 2;
+
+    bubble.classList.add('popped');
+    setTimeout(() => bubble.remove(), 300);
+
+    burst(cx, cy);
+
+    combo += 1;
+    const bonus = combo % 5 === 0 ? 15 : 0;
+    score += 10 + bonus;
+    els.scoreVal.textContent = String(score);
+    els.comboVal.textContent = String(combo);
+
+    if (bonus) {
+      els.comboFlash.textContent = combo + '콤보! +' + bonus;
+      els.comboFlash.classList.add('show');
+      clearTimeout(popBubble._flashTimer);
+      popBubble._flashTimer = setTimeout(() => els.comboFlash.classList.remove('show'), 700);
+    }
+  }
+
+  function burst(cx, cy) {
+    const count = 8;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('span');
+      p.className = 'particle';
+      p.style.left = cx + 'px';
+      p.style.top = cy + 'px';
+      p.style.background = 'var(' + pick(COLORS.map(c => c + '-deep').concat(COLORS)) + ')';
+      els.arena.appendChild(p);
+      const angle = (Math.PI * 2 * i) / count + rand(-0.2, 0.2);
+      const dist = rand(28, 56);
+      requestAnimationFrame(() => {
+        p.style.transform = 'translate(' + Math.cos(angle) * dist + 'px,' + Math.sin(angle) * dist + 'px)';
+        p.style.opacity = '0';
+      });
+      setTimeout(() => p.remove(), 520);
+    }
+  }
+})();
+</script>
+</body>
+</html>
