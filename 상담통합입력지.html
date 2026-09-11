@@ -1,0 +1,809 @@
+<title>상담 통합 입력지</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#f5f3ee;
+    --surface:#ffffff;
+    --surface-2:#faf8f3;
+    --ink:#202b2a;
+    --muted:#647070;
+    --line:#dad4c6;
+    --line-strong:#c3bca9;
+    --accent:#2e6b63;
+    --accent-ink:#ffffff;
+    --accent-soft:#e2ede9;
+    --seal:#a23e2e;
+    --seal-soft:#f3e0db;
+    --focus:#2e6b63;
+    --shadow: 0 1px 2px rgba(32,43,42,0.06), 0 8px 24px -12px rgba(32,43,42,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#161c1b;
+      --surface:#1e2624;
+      --surface-2:#212b29;
+      --ink:#eae6db;
+      --muted:#9fada9;
+      --line:#37423f;
+      --line-strong:#465350;
+      --accent:#6fbdb0;
+      --accent-ink:#0f1615;
+      --accent-soft:#283634;
+      --seal:#d97b64;
+      --seal-soft:#3a2724;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#161c1b;
+    --surface:#1e2624;
+    --surface-2:#212b29;
+    --ink:#eae6db;
+    --muted:#9fada9;
+    --line:#37423f;
+    --line-strong:#465350;
+    --accent:#6fbdb0;
+    --accent-ink:#0f1615;
+    --accent-soft:#283634;
+    --seal:#d97b64;
+    --seal-soft:#3a2724;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  *{box-sizing:border-box;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .app{
+    max-width:840px;
+    margin:0 auto;
+    padding:28px 20px 64px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+  }
+  .topbar{display:flex; flex-direction:column; gap:6px;}
+  .brand-mark{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:0.14em;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:3px 9px;
+    border-radius:3px;
+    width:fit-content;
+    font-weight:700;
+  }
+  h1{
+    font-family:"Noto Serif KR", serif;
+    font-size:24px;
+    font-weight:700;
+    margin:2px 0 0;
+    text-wrap:balance;
+  }
+  .brand-sub{
+    color:var(--muted);
+    font-size:13.5px;
+    max-width:62ch;
+    margin:0;
+  }
+
+  section.card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    box-shadow:var(--shadow);
+    padding:20px 22px;
+  }
+  h2{
+    font-family:"Noto Serif KR", serif;
+    font-size:16px;
+    font-weight:700;
+    margin:0 0 14px;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  h2 .hint{
+    font-family:"Noto Sans KR", sans-serif;
+    font-weight:400;
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  .field-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px 16px;
+  }
+  @media (max-width:600px){ .field-grid{grid-template-columns:1fr 1fr;} }
+
+  label{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    font-size:12.5px;
+    color:var(--muted);
+    letter-spacing:0.02em;
+  }
+  label.wide{ grid-column:1 / -1; }
+  .req{ color:var(--seal); }
+
+  input, select, textarea{
+    font:inherit;
+    font-size:14.5px;
+    color:var(--ink);
+    background:var(--surface-2);
+    border:1px solid var(--line-strong);
+    border-radius:4px;
+    padding:8px 10px;
+    width:100%;
+  }
+  textarea{ resize:vertical; min-height:88px; line-height:1.55; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible{
+    outline:2px solid var(--focus);
+    outline-offset:1px;
+  }
+  input::placeholder, textarea::placeholder{ color:var(--muted); opacity:0.7; }
+
+  nav.tabs{
+    display:flex;
+    gap:4px;
+    padding:0 4px;
+  }
+  .tab{
+    font:inherit;
+    font-weight:700;
+    font-size:13.5px;
+    color:var(--muted);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-bottom:none;
+    border-radius:6px 6px 0 0;
+    padding:10px 16px 9px;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+  }
+  .tab.active{
+    color:var(--accent);
+    background:var(--surface);
+    border-color:var(--line-strong);
+  }
+  .tab .dot{
+    display:inline-block;
+    width:7px; height:7px;
+    border-radius:50%;
+    margin-right:6px;
+    background:var(--line-strong);
+    vertical-align:middle;
+  }
+  .tab.on .dot{ background:var(--seal); }
+
+  .panels{
+    background:var(--surface);
+    border:1px solid var(--line-strong);
+    border-radius:0 6px 6px 6px;
+    box-shadow:var(--shadow);
+    padding:22px;
+  }
+  .panel{ display:none; flex-direction:column; gap:16px; }
+  .panel.active{ display:flex; }
+
+  .switch-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    background:var(--accent-soft);
+    border-radius:5px;
+  }
+  .switch{
+    position:relative;
+    width:38px; height:22px;
+    flex:none;
+  }
+  .switch input{ position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; }
+  .switch .track{
+    position:absolute; inset:0;
+    background:var(--line-strong);
+    border-radius:999px;
+    transition:background 0.15s ease;
+  }
+  .switch .knob{
+    position:absolute; top:2px; left:2px;
+    width:18px; height:18px;
+    background:var(--surface);
+    border-radius:50%;
+    transition:transform 0.15s ease;
+    box-shadow:0 1px 2px rgba(0,0,0,0.3);
+  }
+  .switch input:checked + .track{ background:var(--seal); }
+  .switch input:checked + .track + .knob{ transform:translateX(16px); }
+  .switch-row .switch-label{ font-weight:700; font-size:14px; }
+  .switch-row .switch-desc{ color:var(--muted); font-size:12.5px; }
+
+  fieldset{
+    border:none;
+    margin:0; padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  fieldset[disabled]{ opacity:0.45; }
+
+  .note{
+    font-size:12px;
+    color:var(--muted);
+    border-top:1px dashed var(--line-strong);
+    padding-top:10px;
+  }
+
+  .panel-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-top:1px solid var(--line);
+    padding-top:16px;
+    margin-top:2px;
+  }
+  .warn{ font-size:12.5px; color:var(--seal); min-height:1em; }
+
+  button.primary{
+    font:inherit;
+    font-weight:700;
+    font-size:14px;
+    color:var(--accent-ink);
+    background:var(--accent);
+    border:none;
+    border-radius:5px;
+    padding:11px 20px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  button.primary:disabled{
+    background:var(--line-strong);
+    color:var(--muted);
+    cursor:not-allowed;
+  }
+  button.primary:hover:not(:disabled){ filter:brightness(1.06); }
+
+  .footbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .footbar button.ghost{
+    font:inherit;
+    color:var(--muted);
+    background:none;
+    border:1px solid var(--line-strong);
+    border-radius:4px;
+    padding:6px 10px;
+    cursor:pointer;
+  }
+  .footbar button.ghost:hover{ color:var(--seal); border-color:var(--seal); }
+
+  .toast{
+    position:fixed;
+    left:50%; bottom:22px;
+    transform:translateX(-50%);
+    background:var(--ink);
+    color:var(--bg);
+    padding:10px 18px;
+    border-radius:5px;
+    font-size:13px;
+    box-shadow:var(--shadow);
+    z-index:50;
+  }
+  .toast[hidden]{ display:none; }
+</style>
+
+<div class="app">
+  <header class="topbar">
+    <span class="brand-mark">상담 · 의뢰 · 바우처</span>
+    <h1>상담 통합 입력지</h1>
+    <p class="brand-sub">공통 정보와 상담 내용은 한 번만 입력하세요. 의뢰서·바우처 추천서는 필요한 것만 체크해 작성하고, 탭별로 워드(.docx) 파일로 내려받을 수 있습니다. 내려받은 파일은 한글 프로그램에서 열어 "다른 이름으로 저장"으로 .hwp로 저장하면 됩니다.</p>
+  </header>
+
+  <section class="card" aria-label="공통 정보">
+    <h2>공통 정보 <span class="hint">— 세 문서에 모두 반영됩니다</span></h2>
+    <div class="field-grid">
+      <label>성명 <span class="req">*</span>
+        <input id="f-name" autocomplete="off" placeholder="홍길동">
+      </label>
+      <label>생년월일
+        <input id="f-dob" autocomplete="off" placeholder="1990.03.14">
+      </label>
+      <label>연락처
+        <input id="f-phone" autocomplete="off" placeholder="010-0000-0000">
+      </label>
+      <label>상담일자 <span class="req">*</span>
+        <input id="f-date" type="date">
+      </label>
+      <label>상담(진료) 의사
+        <input id="f-doctor" autocomplete="off" placeholder="김OO">
+      </label>
+      <label>소속 기관 / 병원명
+        <input id="f-org" autocomplete="off" placeholder="OO병원 정신건강의학과">
+      </label>
+      <label class="wide">주소
+        <input id="f-address" autocomplete="off" placeholder="예: 강원특별자치도 원주시 OO로 00">
+      </label>
+      <label>보호자 성명
+        <input id="f-guardian-name" autocomplete="off" placeholder="홍길순">
+      </label>
+      <label>보호자와의 관계
+        <input id="f-guardian-relation" autocomplete="off" placeholder="예: 부, 모, 배우자">
+      </label>
+      <label>보호자 연락처
+        <input id="f-guardian-phone" autocomplete="off" placeholder="010-0000-0000">
+      </label>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="note" role="tab" aria-selected="true"><span class="dot"></span>① 상담일지</button>
+    <button class="tab" data-tab="referral" role="tab" aria-selected="false" id="tab-referral"><span class="dot"></span>② 의뢰서</button>
+    <button class="tab" data-tab="voucher" role="tab" aria-selected="false" id="tab-voucher"><span class="dot"></span>③ 바우처 추천서</button>
+  </nav>
+
+  <section class="panels">
+    <!-- 상담일지 -->
+    <div class="panel active" data-panel="note">
+      <label>주 호소문제 / 내원 사유
+        <textarea id="n-chief" placeholder="예: 최근 2주간 지속된 불면과 불안감을 주소로 내원함"></textarea>
+      </label>
+      <label>상담 내용
+        <textarea id="n-content" style="min-height:140px" placeholder="상담 중 나눈 내용을 기록하세요"></textarea>
+      </label>
+      <label>관찰 및 평가 소견
+        <textarea id="n-assess" placeholder="정신상태검사, 위험도 평가 등"></textarea>
+      </label>
+      <label>향후 계획
+        <textarea id="n-plan" placeholder="추적 관찰, 치료 계획 등"></textarea>
+      </label>
+      <div class="panel-footer">
+        <span class="warn" id="warn-note"></span>
+        <button class="primary" id="dl-note">상담일지 다운로드 (.docx)</button>
+      </div>
+    </div>
+
+    <!-- 의뢰서 -->
+    <div class="panel" data-panel="referral">
+      <div class="switch-row">
+        <span class="switch">
+          <input type="checkbox" id="r-on">
+          <span class="track"></span>
+          <span class="knob"></span>
+        </span>
+        <div>
+          <div class="switch-label">의뢰서 발급</div>
+          <div class="switch-desc">체크하면 아래 항목을 입력해 의뢰서를 만들 수 있습니다</div>
+        </div>
+      </div>
+      <fieldset id="r-fields" disabled>
+        <label>의뢰 기관 / 담당 전문가 <span class="req">*</span>
+          <input id="r-org" autocomplete="off" placeholder="예: OO정신건강복지센터">
+        </label>
+        <label>의뢰 사유 <span class="req">*</span>
+          <textarea id="r-reason" placeholder="의뢰가 필요한 임상적 이유"></textarea>
+        </label>
+        <label>소견 및 요청사항
+          <textarea id="r-opinion" placeholder="연계 시 참고할 소견, 요청 사항"></textarea>
+        </label>
+        <p class="note">본 서식은 일반적인 항목으로 구성된 초안입니다. 제출 기관의 지정 양식이 있다면 해당 양식의 항목을 확인해 주세요.</p>
+      </fieldset>
+      <div class="panel-footer">
+        <span class="warn" id="warn-referral"></span>
+        <button class="primary" id="dl-referral">의뢰서 다운로드 (.docx)</button>
+      </div>
+    </div>
+
+    <!-- 바우처 -->
+    <div class="panel" data-panel="voucher">
+      <div class="switch-row">
+        <span class="switch">
+          <input type="checkbox" id="v-on">
+          <span class="track"></span>
+          <span class="knob"></span>
+        </span>
+        <div>
+          <div class="switch-label">바우처 추천서 발급</div>
+          <div class="switch-desc">체크하면 아래 항목을 입력해 추천서를 만들 수 있습니다</div>
+        </div>
+      </div>
+      <fieldset id="v-fields" disabled>
+        <label>바우처 종류 <span class="req">*</span>
+          <input id="v-type" autocomplete="off" placeholder="예: 정신건강 심리상담 바우처 / 청년 마음건강 바우처">
+        </label>
+        <label>추천 사유 <span class="req">*</span>
+          <textarea id="v-reason" placeholder="상담 지원이 필요한 이유"></textarea>
+        </label>
+        <label>상담 필요성 소견
+          <textarea id="v-opinion" placeholder="증상, 기능 저하 등 필요성 소견"></textarea>
+        </label>
+        <label>권장 상담 회기 수
+          <input id="v-sessions" autocomplete="off" placeholder="예: 주 1회, 총 10회">
+        </label>
+        <p class="note">본 서식은 일반적인 항목으로 구성된 초안입니다. 신청 기관의 지정 양식이 있다면 해당 양식의 항목을 확인해 주세요.</p>
+      </fieldset>
+      <div class="panel-footer">
+        <span class="warn" id="warn-voucher"></span>
+        <button class="primary" id="dl-voucher">바우처 추천서 다운로드 (.docx)</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="footbar">
+    <span id="save-state">입력 내용은 이 브라우저에만 자동 저장됩니다</span>
+    <button class="ghost" id="reset-all">전체 초기화</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "counsel-form-v1";
+  var fieldIds = ["f-name","f-dob","f-phone","f-date","f-doctor","f-org",
+    "f-address","f-guardian-name","f-guardian-relation","f-guardian-phone",
+    "n-chief","n-content","n-assess","n-plan",
+    "r-on","r-org","r-reason","r-opinion",
+    "v-on","v-type","v-reason","v-opinion","v-sessions"];
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadState(){
+    var data = {};
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) data = JSON.parse(raw);
+    }catch(e){}
+    fieldIds.forEach(function(id){
+      var el = $(id);
+      if(!el) return;
+      if(el.type === "checkbox"){
+        el.checked = !!data[id];
+      } else if(data[id] !== undefined){
+        el.value = data[id];
+      }
+    });
+    if(!$("f-date").value){
+      var d = new Date();
+      var iso = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+      $("f-date").value = iso;
+    }
+  }
+
+  var saveTimer = null;
+  function saveState(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      var data = {};
+      fieldIds.forEach(function(id){
+        var el = $(id);
+        if(!el) return;
+        data[id] = el.type === "checkbox" ? el.checked : el.value;
+      });
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+    }, 250);
+  }
+
+  fieldIds.forEach(function(id){
+    var el = $(id);
+    if(!el) return;
+    el.addEventListener("input", saveState);
+    el.addEventListener("change", saveState);
+  });
+
+  loadState();
+
+  // ---- tabs ----
+  var tabs = document.querySelectorAll(".tab");
+  var panels = document.querySelectorAll(".panel");
+  tabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      tabs.forEach(function(t){ t.classList.remove("active"); t.setAttribute("aria-selected","false"); });
+      panels.forEach(function(p){ p.classList.remove("active"); });
+      tab.classList.add("active");
+      tab.setAttribute("aria-selected","true");
+      document.querySelector('.panel[data-panel="'+tab.dataset.tab+'"]').classList.add("active");
+    });
+  });
+
+  function syncToggle(checkboxId, fieldsetId, tabBtnId){
+    var cb = $(checkboxId), fs = $(fieldsetId), tabBtn = $(tabBtnId);
+    function apply(){
+      fs.disabled = !cb.checked;
+      tabBtn.classList.toggle("on", cb.checked);
+    }
+    cb.addEventListener("change", function(){ apply(); saveState(); });
+    apply();
+  }
+  syncToggle("r-on","r-fields","tab-referral");
+  syncToggle("v-on","v-fields","tab-voucher");
+
+  // ---- toast ----
+  var toastTimer = null;
+  function toast(msg){
+    var el = $("toast");
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.hidden = true; }, 3200);
+  }
+
+  // ---- reset ----
+  $("reset-all").addEventListener("click", function(){
+    if(!confirm("입력한 모든 내용을 지울까요? 이 작업은 되돌릴 수 없습니다.")) return;
+    fieldIds.forEach(function(id){
+      var el = $(id);
+      if(!el) return;
+      if(el.type === "checkbox") el.checked = false; else el.value = "";
+    });
+    $("r-fields").disabled = true;
+    $("v-fields").disabled = true;
+    $("tab-referral").classList.remove("on");
+    $("tab-voucher").classList.remove("on");
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    loadState();
+    toast("초기화되었습니다");
+  });
+
+  // ---- docx generation ----
+  function escapeXml(str){
+    return String(str == null ? "" : str)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&apos;");
+  }
+
+  function paragraphsFromText(text, size){
+    var lines = String(text || "").split(/\r?\n/);
+    var sz = size || 20;
+    return lines.map(function(line){
+      if(line.trim() === ""){
+        return '<w:p/>';
+      }
+      return '<w:p><w:r><w:rPr><w:sz w:val="'+sz+'"/><w:szCs w:val="'+sz+'"/></w:rPr><w:t xml:space="preserve">'+escapeXml(line)+'</w:t></w:r></w:p>';
+    }).join("");
+  }
+
+  function tableXml(rows){
+    var trs = rows.map(function(r){
+      return '<w:tr>'
+        + '<w:tc><w:tcPr><w:tcW w:w="2300" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="F0EDE4"/><w:vAlign w:val="center"/></w:tcPr>'
+        + '<w:p><w:r><w:rPr><w:b/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr><w:t xml:space="preserve">'+escapeXml(r[0])+'</w:t></w:r></w:p></w:tc>'
+        + '<w:tc><w:tcPr><w:tcW w:w="6700" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>'
+        + '<w:p><w:r><w:rPr><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr><w:t xml:space="preserve">'+escapeXml(r[1])+'</w:t></w:r></w:p></w:tc>'
+        + '</w:tr>';
+    }).join("");
+    return '<w:tbl><w:tblPr><w:tblW w:w="9000" w:type="dxa"/><w:tblBorders>'
+      + '<w:top w:val="single" w:sz="4" w:color="999999"/><w:left w:val="single" w:sz="4" w:color="999999"/>'
+      + '<w:bottom w:val="single" w:sz="4" w:color="999999"/><w:right w:val="single" w:sz="4" w:color="999999"/>'
+      + '<w:insideH w:val="single" w:sz="4" w:color="999999"/><w:insideV w:val="single" w:sz="4" w:color="999999"/>'
+      + '</w:tblBorders></w:tblPr>'
+      + '<w:tblGrid><w:gridCol w:w="2300"/><w:gridCol w:w="6700"/></w:tblGrid>'
+      + trs + '</w:tbl>';
+  }
+
+  function sectionXml(heading, text){
+    return '<w:p><w:pPr><w:spacing w:before="200" w:after="80"/><w:pBdr><w:bottom w:val="single" w:sz="4" w:space="2" w:color="999999"/></w:pBdr></w:pPr>'
+      + '<w:r><w:rPr><w:b/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr><w:t xml:space="preserve">'+escapeXml(heading)+'</w:t></w:r></w:p>'
+      + paragraphsFromText(text, 20);
+  }
+
+  var CONTENT_TYPES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+    + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+    + '<Default Extension="xml" ContentType="application/xml"/>'
+    + '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+    + '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
+    + '</Types>';
+
+  var RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+    + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'
+    + '</Relationships>';
+
+  var DOC_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+    + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'
+    + '</Relationships>';
+
+  var STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+    + '<w:docDefaults><w:rPrDefault><w:rPr>'
+    + '<w:rFonts w:ascii="Malgun Gothic" w:eastAsia="Malgun Gothic" w:hAnsi="Malgun Gothic" w:cs="Malgun Gothic"/>'
+    + '<w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:rPrDefault></w:docDefaults>'
+    + '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>'
+    + '</w:styles>';
+
+  function buildDocumentXml(title, commonRows, extraRows, sections){
+    var body = '<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="36"/><w:szCs w:val="36"/></w:rPr>'
+      + '<w:t xml:space="preserve">'+escapeXml(title)+'</w:t></w:r></w:p><w:p/>'
+      + tableXml(commonRows) + '<w:p/>';
+    if(extraRows && extraRows.length){
+      body += tableXml(extraRows) + '<w:p/>';
+    }
+    sections.forEach(function(s){
+      body += sectionXml(s[0], s[1]);
+    });
+    body += '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1417" w:right="1417" w:bottom="1417" w:left="1417" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>';
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      + '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'
+      + body + '</w:body></w:document>';
+  }
+
+  function commonRows(){
+    return [
+      ["성명", $("f-name").value],
+      ["생년월일", $("f-dob").value],
+      ["연락처", $("f-phone").value],
+      ["주소", $("f-address").value],
+      ["상담일자", $("f-date").value],
+      ["상담(진료) 의사", $("f-doctor").value],
+      ["소속 기관/병원", $("f-org").value],
+      ["보호자 성명", $("f-guardian-name").value],
+      ["보호자와의 관계", $("f-guardian-relation").value],
+      ["보호자 연락처", $("f-guardian-phone").value]
+    ];
+  }
+
+  function sanitizeFilename(s){
+    return String(s || "").replace(/[\\/:*?"<>|]/g,"").trim();
+  }
+
+  function buildDocxBlob(title, extraRows, sections){
+    var xml = buildDocumentXml(title, commonRows(), extraRows, sections);
+    var zip = new JSZip();
+    zip.file("[Content_Types].xml", CONTENT_TYPES);
+    zip.folder("_rels").file(".rels", RELS);
+    var wordFolder = zip.folder("word");
+    wordFolder.file("document.xml", xml);
+    wordFolder.file("styles.xml", STYLES);
+    wordFolder.folder("_rels").file("document.xml.rels", DOC_RELS);
+    return zip.generateAsync({
+      type:"blob",
+      mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    });
+  }
+
+  function setBusy(btn, busy, label){
+    btn.disabled = busy;
+    btn.dataset.label = btn.dataset.label || btn.textContent;
+    btn.textContent = busy ? "생성 중..." : btn.dataset.label;
+  }
+
+  function errorMessage(err){
+    var code = err && err.code;
+    switch(code){
+      case "declined": return "저장이 취소되었습니다";
+      case "rate_limited": return "잠시 후 다시 시도해 주세요";
+      case "too_large": return "파일이 너무 큽니다";
+      case "rejected_extension":
+      case "extension_not_enabled": return "이 환경에서는 파일 저장을 사용할 수 없습니다";
+      default: return "파일을 저장하지 못했습니다. 다시 시도해 주세요";
+    }
+  }
+
+  function downloadViaAnchor(filename, blob){
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    toast("다운로드되었습니다");
+  }
+
+  function downloadFile(filename, blob, btn){
+    setBusy(btn, true);
+    // Inside the claude.ai artifact viewer, saves must go through the
+    // sandboxed downloads capability. Opened as a plain local file (no
+    // window.claude), a normal browser download works directly.
+    if(!window.claude){
+      try{ downloadViaAnchor(filename, blob); }
+      catch(e){ toast("다운로드하지 못했습니다"); }
+      setBusy(btn, false);
+      return Promise.resolve();
+    }
+    return window.claude.use("downloads")
+      .then(function(downloads){
+        if(!downloads){
+          toast("이 화면에서는 파일 저장 기능을 사용할 수 없습니다");
+          return;
+        }
+        return downloads.save({ filename: filename, data: blob }).then(function(res){
+          toast(res.status === "saved" ? "다운로드되었습니다" : "전달되었습니다");
+        });
+      })
+      .catch(function(err){
+        toast(errorMessage(err));
+      })
+      .finally(function(){
+        setBusy(btn, false);
+      });
+  }
+
+  function validateCommon(){
+    if(!$("f-name").value.trim()) return "성명을 입력해 주세요";
+    if(!$("f-date").value.trim()) return "상담일자를 입력해 주세요";
+    return "";
+  }
+
+  $("dl-note").addEventListener("click", function(){
+    var err = validateCommon();
+    $("warn-note").textContent = err;
+    if(err) return;
+    var sections = [
+      ["주 호소문제 / 내원 사유", $("n-chief").value],
+      ["상담 내용", $("n-content").value],
+      ["관찰 및 평가 소견", $("n-assess").value],
+      ["향후 계획", $("n-plan").value]
+    ];
+    var name = sanitizeFilename($("f-name").value) || "상담자";
+    var date = sanitizeFilename($("f-date").value) || "";
+    buildDocxBlob("상담일지", null, sections).then(function(blob){
+      return downloadFile(name+"_상담일지_"+date+".docx", blob, $("dl-note"));
+    });
+  });
+
+  $("dl-referral").addEventListener("click", function(){
+    var err = validateCommon();
+    if(!err && !$("r-on").checked) err = "먼저 '의뢰서 발급'을 체크해 주세요";
+    if(!err && !$("r-org").value.trim()) err = "의뢰 기관/전문가를 입력해 주세요";
+    if(!err && !$("r-reason").value.trim()) err = "의뢰 사유를 입력해 주세요";
+    $("warn-referral").textContent = err;
+    if(err) return;
+    var extra = [["의뢰 기관 / 전문가", $("r-org").value]];
+    var sections = [
+      ["의뢰 사유", $("r-reason").value],
+      ["소견 및 요청사항", $("r-opinion").value]
+    ];
+    var name = sanitizeFilename($("f-name").value) || "상담자";
+    var date = sanitizeFilename($("f-date").value) || "";
+    buildDocxBlob("의뢰서", extra, sections).then(function(blob){
+      return downloadFile(name+"_의뢰서_"+date+".docx", blob, $("dl-referral"));
+    });
+  });
+
+  $("dl-voucher").addEventListener("click", function(){
+    var err = validateCommon();
+    if(!err && !$("v-on").checked) err = "먼저 '바우처 추천서 발급'을 체크해 주세요";
+    if(!err && !$("v-type").value.trim()) err = "바우처 종류를 입력해 주세요";
+    if(!err && !$("v-reason").value.trim()) err = "추천 사유를 입력해 주세요";
+    $("warn-voucher").textContent = err;
+    if(err) return;
+    var extra = [
+      ["바우처 종류", $("v-type").value],
+      ["권장 상담 회기 수", $("v-sessions").value]
+    ];
+    var sections = [
+      ["추천 사유", $("v-reason").value],
+      ["상담 필요성 소견", $("v-opinion").value]
+    ];
+    var name = sanitizeFilename($("f-name").value) || "상담자";
+    var date = sanitizeFilename($("f-date").value) || "";
+    buildDocxBlob("정신건강 심리상담 바우처 추천서", extra, sections).then(function(blob){
+      return downloadFile(name+"_바우처추천서_"+date+".docx", blob, $("dl-voucher"));
+    });
+  });
+
+})();
+</script>
