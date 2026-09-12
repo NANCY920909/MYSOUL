@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>업무 센터</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --bg:#EEF3F1;
+    --surface:#FFFFFF;
+    --surface-2:#E4ECE9;
+    --ink:#1B2624;
+    --ink-soft:#4B5C58;
+    --ink-faint:#7C8B87;
+    --line:#D3DEDA;
+    --teal:#0F6E63;
+    --teal-soft:#E3F0EC;
+    --amber:#A3661F;
+    --amber-soft:#F7ECDA;
+    --warn:#A6432E;
+    --warn-soft:#F7E7E1;
+    --violet:#5B4E9C;
+    --violet-soft:#EAE7F5;
+    --blue:#2A5DA8;
+    --blue-soft:#E4ECF7;
+    --on-accent:#FFFFFF;
+    --shadow: 0 1px 2px rgba(15,30,26,.05), 0 8px 20px rgba(15,30,26,.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F1B18; --surface:#16241F; --surface-2:#1C2C27;
+      --ink:#EAF2EF; --ink-soft:#A9BDB7; --ink-faint:#7C948C; --line:#2A3B35;
+      --teal:#5FCDB8; --teal-soft:#1B3630;
+      --amber:#E3A75B; --amber-soft:#332711;
+      --warn:#E38A70; --warn-soft:#3A201A;
+      --violet:#B4A8E8; --violet-soft:#292453;
+      --blue:#8FB6EE; --blue-soft:#1B2B45;
+      --on-accent:#0F1B18;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F1B18; --surface:#16241F; --surface-2:#1C2C27;
+    --ink:#EAF2EF; --ink-soft:#A9BDB7; --ink-faint:#7C948C; --line:#2A3B35;
+    --teal:#5FCDB8; --teal-soft:#1B3630;
+    --amber:#E3A75B; --amber-soft:#332711;
+    --warn:#E38A70; --warn-soft:#3A201A;
+    --violet:#B4A8E8; --violet-soft:#292453;
+    --blue:#8FB6EE; --blue-soft:#1B2B45;
+    --on-accent:#0F1B18;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.35);
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height:1.7; -webkit-text-size-adjust:100%;
+  }
+  .wrap{ max-width:1120px; margin:0 auto; padding:40px 20px 96px; }
+
+  /* ── 헤더 ───────────────────────────────── */
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 6px;
+  }
+  h1{ font-family:'Gowun Batang', serif; font-size:32px; font-weight:700; margin:0 0 8px; letter-spacing:-.01em; }
+  .lede{ margin:0; color:var(--ink-soft); font-size:14px; max-width:60ch; }
+
+  .toolbar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:22px 0 18px; }
+  .searchbox{ position:relative; flex:1 1 260px; min-width:0; }
+  .searchbox svg{ position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--ink-faint); }
+  input[type=search], input[type=text], input[type=url], select, textarea{
+    width:100%; font:inherit; font-size:14px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:9px 12px; outline:none;
+  }
+  .searchbox input{ padding-left:36px; padding-right:52px; }
+  .kbd{
+    position:absolute; right:10px; top:50%; transform:translateY(-50%);
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:5px; padding:1px 6px; background:var(--surface-2);
+  }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible{
+    outline:2px solid var(--teal); outline-offset:2px;
+  }
+
+  .btn{
+    font:inherit; font-size:13px; font-weight:600; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:9px 14px; cursor:pointer; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn:hover{ border-color:var(--ink-faint); color:var(--ink); }
+  .btn.on{ background:var(--teal); border-color:var(--teal); color:var(--on-accent); }
+  .btn.pri{ background:var(--teal); border-color:var(--teal); color:var(--on-accent); }
+  .btn.ghost{ background:transparent; }
+  .btn.sm{ padding:5px 9px; font-size:12px; border-radius:8px; }
+  .btn.danger{ color:var(--warn); border-color:var(--line); }
+  .btn.danger:hover{ border-color:var(--warn); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn:disabled:hover{ border-color:var(--line); color:var(--ink-soft); }
+  .btn.danger:disabled:hover{ color:var(--warn); }
+
+  /* ── 탭 ─────────────────────────────────── */
+  .tabs{
+    display:flex; gap:6px; overflow-x:auto; padding:4px 0 10px;
+    border-bottom:1px solid var(--line); margin-bottom:6px; scrollbar-width:thin;
+  }
+  .tab{
+    font:inherit; font-size:14px; font-weight:600; color:var(--ink-soft);
+    background:transparent; border:1px solid transparent; border-radius:999px;
+    padding:7px 14px; cursor:pointer; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:7px;
+  }
+  .tab:hover{ background:var(--surface-2); }
+  .tab .dot{ width:8px; height:8px; border-radius:50%; background:var(--acc,var(--ink-faint)); flex:none; }
+  .tab .n{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-faint); }
+  .tab.on{ background:var(--surface); border-color:var(--line); color:var(--ink); box-shadow:var(--shadow); }
+  .tab.on .n{ color:var(--ink-soft); }
+
+  .tabhint{ font-size:13px; color:var(--ink-faint); margin:14px 0 18px; min-height:22px; }
+
+  /* ── 최근 사용 ──────────────────────────── */
+  .recent{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 22px; }
+  .recent .lbl{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin-right:2px;
+  }
+  .chip{
+    display:inline-flex; align-items:center; gap:6px; text-decoration:none;
+    font-size:13px; color:var(--ink); background:var(--surface);
+    border:1px solid var(--line); border-radius:999px; padding:5px 12px;
+  }
+  .chip:hover{ border-color:var(--ink-faint); }
+  .chip .dot{ width:7px; height:7px; border-radius:50%; background:var(--acc,var(--ink-faint)); }
+  .chip time{ color:var(--ink-faint); font-size:11px; }
+
+  /* ── 섹션 / 그리드 ──────────────────────── */
+  .sec{ margin:0 0 30px; }
+  .sechead{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; margin:0 0 12px; }
+  .sechead h2{
+    font-size:14px; font-weight:700; margin:0; letter-spacing:.02em;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .sechead h2 .dot{ width:9px; height:9px; border-radius:50%; background:var(--acc,var(--ink-faint)); }
+  .sechead .hint{ font-size:12px; color:var(--ink-faint); }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(252px,1fr)); gap:12px; }
+
+  .card{
+    position:relative; background:var(--surface); border:1px solid var(--line);
+    border-radius:14px; padding:16px 16px 14px; display:flex; flex-direction:column; gap:8px;
+    transition:border-color .15s, transform .15s, box-shadow .15s;
+  }
+  .card:hover{ border-color:var(--acc,var(--ink-faint)); box-shadow:var(--shadow); transform:translateY(-1px); }
+  .card::before{
+    content:''; position:absolute; left:16px; right:16px; top:0; height:3px;
+    background:var(--acc,var(--line)); border-radius:0 0 3px 3px; opacity:.85;
+  }
+  .card .cat{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:600;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--acc,var(--ink-faint));
+    background:var(--acc-soft,var(--surface-2)); border-radius:5px; padding:2px 7px;
+    align-self:flex-start;
+  }
+  .card h3{ font-size:16px; font-weight:600; margin:0; letter-spacing:-.005em; padding-right:26px; }
+  .card h3 a{ color:inherit; text-decoration:none; }
+  .card h3 a::after{ content:''; position:absolute; inset:0; border-radius:14px; }
+  .card p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.65; flex:1; }
+  .tags{ display:flex; flex-wrap:wrap; gap:5px; }
+  .tag{ font-size:11px; color:var(--ink-faint); background:var(--surface-2); border-radius:5px; padding:1px 7px; }
+  .cardfoot{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    border-top:1px solid var(--line); padding-top:9px; margin-top:2px;
+    font-size:11px; color:var(--ink-faint); font-family:'IBM Plex Mono', monospace;
+  }
+  .star{
+    position:absolute; top:12px; right:10px; z-index:2;
+    background:none; border:0; cursor:pointer; font-size:15px; line-height:1;
+    color:var(--ink-faint); padding:4px; border-radius:6px;
+  }
+  .star:hover{ background:var(--surface-2); color:var(--amber); }
+  .star.on{ color:var(--amber); }
+  .cardacts{ position:relative; z-index:2; display:flex; flex-wrap:wrap; gap:5px; padding-top:8px; border-top:1px dashed var(--line); }
+
+  .addcard{
+    border:1px dashed var(--line); border-radius:14px; background:transparent;
+    color:var(--ink-faint); font:inherit; font-size:14px; font-weight:600; cursor:pointer;
+    min-height:120px; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .addcard:hover{ border-color:var(--teal); color:var(--teal); background:var(--surface); }
+
+  .empty{
+    border:1px dashed var(--line); border-radius:14px; padding:34px 20px; text-align:center;
+    color:var(--ink-faint); font-size:14px;
+  }
+
+  /* ── 탭 관리 패널 ───────────────────────── */
+  .panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:16px; margin:0 0 24px;
+  }
+  .panel h2{ font-size:14px; font-weight:700; margin:0 0 4px; }
+  .panel .hint{ font-size:12px; color:var(--ink-faint); margin:0 0 14px; }
+  .catrow{
+    display:grid; grid-template-columns:1fr 1.4fr auto auto; gap:8px; align-items:center;
+    padding:8px 0; border-top:1px solid var(--line);
+  }
+  .catrow select{ width:auto; min-width:92px; }
+  .catrow .acts{ display:flex; gap:4px; }
+
+  /* ── 모달 ───────────────────────────────── */
+  dialog{
+    border:1px solid var(--line); border-radius:16px; background:var(--surface); color:var(--ink);
+    padding:0; width:min(520px, calc(100vw - 32px)); box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  dialog::backdrop{ background:rgba(10,20,18,.45); }
+  .dlg-in{ padding:22px; }
+  dialog h2{ font-family:'Gowun Batang', serif; font-size:20px; margin:0 0 16px; }
+  .field{ margin:0 0 12px; }
+  .field label{ display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin:0 0 5px; }
+  .field .note{ font-size:11px; color:var(--ink-faint); margin:4px 0 0; }
+  .field textarea{ resize:vertical; min-height:64px; }
+  .dlg-foot{ display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
+  .err{ color:var(--warn); font-size:12px; margin:0 0 10px; min-height:18px; }
+
+  footer.foot{
+    margin-top:40px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:12px; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center;
+  }
+  .sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+  @media (max-width:560px){
+    .wrap{ padding:28px 16px 72px; }
+    h1{ font-size:26px; }
+    .grid{ grid-template-columns:1fr; }
+    .catrow{ grid-template-columns:1fr 1fr; }
+    .kbd{ display:none; }
+  }
+  @media print{
+    .toolbar, .tabs, .cardacts, .star, .addcard, .panel, footer.foot{ display:none !important; }
+    .card{ break-inside:avoid; }
+  }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">MYSOUL WORKBENCH</p>
+  <h1>업무 센터</h1>
+  <p class="lede">흩어져 있는 실무 도구를 업무 영역별로 모았습니다. 탭과 카드는 <strong>편집</strong> 버튼으로 직접 추가·수정·정렬할 수 있고, 구성은 이 브라우저에 저장됩니다.</p>
+
+  <div class="toolbar">
+    <div class="searchbox">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" id="q" placeholder="도구 이름·설명·태그 검색" aria-label="도구 검색" autocomplete="off">
+      <span class="kbd">/</span>
+    </div>
+    <button class="btn" id="editBtn" aria-pressed="false">✎ 편집</button>
+    <button class="btn ghost" id="themeBtn" title="밝게/어둡게 전환">◐ 테마</button>
+  </div>
+
+  <nav class="tabs" id="tabs" aria-label="업무 영역"></nav>
+  <p class="tabhint" id="tabhint"></p>
+
+  <div id="editTools" hidden>
+    <div class="panel">
+      <h2>탭(업무 영역) 관리</h2>
+      <p class="hint">이름과 설명, 색을 바꾸고 순서를 조정합니다. 도구가 남아 있는 탭은 삭제할 수 없습니다.</p>
+      <div id="catList"></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+        <button class="btn" id="addCatBtn">＋ 탭 추가</button>
+        <button class="btn" id="exportBtn">↓ 구성 내보내기</button>
+        <button class="btn" id="importBtn">↑ 구성 가져오기</button>
+        <button class="btn danger" id="resetBtn">기본 구성으로 되돌리기</button>
+        <input type="file" id="importFile" accept="application/json,.json" class="sr" tabindex="-1">
+      </div>
+    </div>
+  </div>
+
+  <div id="recent"></div>
+  <main id="board"></main>
+
+  <footer class="foot">
+    <span id="stat"></span>
+    <span>구성은 이 브라우저에만 저장됩니다 · 다른 PC에서 쓰려면 편집 → 내보내기/가져오기</span>
+  </footer>
+</div>
+
+<dialog id="itemDlg">
+  <form method="dialog" class="dlg-in" id="itemForm">
+    <h2 id="dlgTitle">도구 추가</h2>
+    <p class="err" id="dlgErr"></p>
+    <div class="field">
+      <label for="f-name">이름</label>
+      <input type="text" id="f-name" required maxlength="60" placeholder="예: 프로그램 예산표">
+    </div>
+    <div class="field">
+      <label for="f-url">링크</label>
+      <input type="text" id="f-url" required maxlength="500" placeholder="pgbudget.html 또는 https://...">
+      <p class="note">같은 폴더의 파일이면 파일명만, 외부 사이트면 전체 주소를 넣으세요.</p>
+    </div>
+    <div class="field">
+      <label for="f-desc">설명</label>
+      <textarea id="f-desc" maxlength="200" placeholder="언제 쓰는 도구인지 한 줄로"></textarea>
+    </div>
+    <div class="field">
+      <label for="f-cat">탭(업무 영역)</label>
+      <select id="f-cat"></select>
+    </div>
+    <div class="field">
+      <label for="f-tags">태그</label>
+      <input type="text" id="f-tags" maxlength="120" placeholder="쉼표로 구분 · 예: 예산, 정산">
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn" id="dlgCancel">취소</button>
+      <button type="submit" class="btn pri">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function(){
+  "use strict";
+
+  var KEY = 'mysoul-center-v1';
+  var THEME_KEY = 'mysoul-center-theme';
+
+  var DEFAULT_CATS = [
+    { id:'admin',   name:'회계·행정',   hint:'예산 편성부터 집행·정산, 회의 기록까지 행정 처리에 쓰는 도구',   accent:'amber'  },
+    { id:'info',    name:'정신건강정보', hint:'진단 코드·입원 유형·제도 안내 등 현장에서 바로 확인할 자료',   accent:'teal'   },
+    { id:'counsel', name:'상담',        hint:'접수·기록·사례 관리와 상담 중 함께 쓰는 보조 도구',            accent:'violet' },
+    { id:'program', name:'사업',        hint:'프로그램 기획, 진행 일정, 운영 관리에 쓰는 도구',              accent:'warn'   }
+  ];
+
+  var DEFAULT_ITEMS = [
+    { id:'budget-use',  name:'예산 사용 현황',        url:'BUDGET.html',                      cat:'admin',   tags:['예산','집행','잔액'],       desc:'항목별 예산 대비 집행액과 잔액을 한눈에 확인합니다.' },
+    { id:'budget-calc', name:'예산 산출 계산기',      url:'TEST.html',                        cat:'admin',   tags:['산출내역','단가'],          desc:'단가 × 인원 × 횟수로 세목별 산출내역과 금액을 계산합니다.' },
+    { id:'pg-budget',   name:'프로그램 예산표',        url:'pgbudget.html',                    cat:'admin',   tags:['계획서','예산표'],          desc:'계획서에 붙일 세목별 예산표를 만들고 총계를 정리합니다.' },
+    { id:'attend',      name:'회의 출석부',           url:'chulcheck.html',                   cat:'admin',   tags:['회의','출석','증빙'],       desc:'회의·위원회 참석자를 기록하고 출석부로 정리합니다.' },
+    { id:'dx-lookup',   name:'정신과 진단코드 검색기', url:'psychiatric-diagnosis-lookup.html', cat:'info',    tags:['ICD-10','진단명','코드'],   desc:'진단명이나 코드로 ICD-10 정신과 진단을 찾아봅니다.' },
+    { id:'admission',   name:'입원유형 판단 안내표',   url:'admissionguide.html',              cat:'info',    tags:['입원','정신건강복지법'],    desc:'동의·보호·행정입원 등 입원 유형별 요건을 단계로 확인합니다.' },
+    { id:'schoolout',   name:'학교 밖 나침반',        url:'schoolrefusal-guide.html',         cat:'info',    tags:['학업중단','청소년','자원'], desc:'학교를 떠난 청소년이 이용할 수 있는 자원과 절차 안내.' },
+    { id:'intake',      name:'상담 통합 입력지',      url:'whatplan.html',                    cat:'counsel', tags:['접수','기록지'],           desc:'상담 내용을 항목별로 입력해 기록지 형태로 정리합니다.' },
+    { id:'focus',       name:'집중력 킵',            url:'focustap_tracker.html',            cat:'counsel', tags:['집중력','측정','아동'],     desc:'집중 유지 시간을 측정·기록하는 상담 보조 트래커.' },
+    { id:'social-pg',   name:'사회성 프로그램 기획',   url:'HEY1.html',                        cat:'program', tags:['기획','신체활동','사회성'], desc:'신체활동을 접목한 사회성 향상 프로그램을 설계합니다.' },
+    { id:'gantt',       name:'진행절차 일정표 생성기', url:'gant.html',                        cat:'program', tags:['일정','간트','운영'],       desc:'사업 진행절차와 일정을 표로 만들어 계획서에 넣습니다.' }
+  ];
+
+  var ACCENTS = [
+    { id:'teal', name:'청록' }, { id:'amber', name:'황토' }, { id:'violet', name:'보라' },
+    { id:'warn', name:'주홍' }, { id:'blue', name:'청색' }
+  ];
+
+  /* ── 상태 ──────────────────────────────── */
+  var state = load();
+  var view = 'all';     // 'all' | 'fav' | 카테고리 id
+  var query = '';
+  var editing = false;
+  var dlgMode = null;   // {mode:'add'|'edit', id}
+
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+
+  function fresh(){
+    return { v:1, cats:clone(DEFAULT_CATS), items:clone(DEFAULT_ITEMS), removed:[], usage:{} };
+  }
+
+  function load(){
+    var s = null;
+    try{ s = JSON.parse(localStorage.getItem(KEY) || 'null'); }catch(e){ s = null; }
+    if(!s || !Array.isArray(s.items) || !Array.isArray(s.cats) || !s.cats.length) return fresh();
+    s.removed = Array.isArray(s.removed) ? s.removed : [];
+    s.usage = (s.usage && typeof s.usage === 'object') ? s.usage : {};
+    // 저장소에 새로 추가된 기본 도구는 사용자가 지우지 않은 경우에만 자동 반영
+    DEFAULT_ITEMS.forEach(function(d){
+      var has = s.items.some(function(i){ return i.id === d.id; });
+      var removed = s.removed.indexOf(d.id) >= 0;
+      var catOk = s.cats.some(function(c){ return c.id === d.cat; });
+      if(!has && !removed && catOk) s.items.push(clone(d));
+    });
+    // 없어진 탭에 묶인 도구는 첫 탭으로
+    s.items.forEach(function(i){
+      if(!s.cats.some(function(c){ return c.id === i.cat; })) i.cat = s.cats[0].id;
+      if(!Array.isArray(i.tags)) i.tags = [];
+    });
+    return s;
+  }
+
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch(e){ /* 저장 불가(사생활 보호 모드 등) — 화면 동작은 유지 */ }
+  }
+
+  /* ── 유틸 ──────────────────────────────── */
+  function esc(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function safeUrl(u){
+    var v = String(u || '').trim();
+    if(!v) return '';
+    if(/^\s*(javascript|data|vbscript):/i.test(v)) return '';
+    return v;
+  }
+  function cat(id){
+    for(var i=0;i<state.cats.length;i++) if(state.cats[i].id === id) return state.cats[i];
+    return null;
+  }
+  function item(id){
+    for(var i=0;i<state.items.length;i++) if(state.items[i].id === id) return state.items[i];
+    return null;
+  }
+  function uid(p){ return p + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+  function accVars(c){
+    var a = (c && c.accent) || 'teal';
+    return '--acc:var(--' + a + '); --acc-soft:var(--' + a + '-soft);';
+  }
+  function relTime(ts){
+    if(!ts) return '';
+    var d = Date.now() - ts;
+    if(d < 60*60*1000) return '방금';
+    if(d < 24*60*60*1000) return Math.floor(d/(60*60*1000)) + '시간 전';
+    var days = Math.floor(d/(24*60*60*1000));
+    if(days < 30) return days + '일 전';
+    return Math.floor(days/30) + '개월 전';
+  }
+  function matches(it){
+    if(!query) return true;
+    var c = cat(it.cat);
+    var hay = [it.name, it.desc, (it.tags||[]).join(' '), c ? c.name : '', it.url].join(' ').toLowerCase();
+    return query.split(/\s+/).every(function(t){ return !t || hay.indexOf(t) >= 0; });
+  }
+  function itemsOf(catId){
+    return state.items.filter(function(i){ return i.cat === catId && matches(i); });
+  }
+
+  /* ── 렌더 ──────────────────────────────── */
+  var tabsEl = document.getElementById('tabs');
+  var hintEl = document.getElementById('tabhint');
+  var boardEl = document.getElementById('board');
+  var recentEl = document.getElementById('recent');
+  var statEl = document.getElementById('stat');
+  var catListEl = document.getElementById('catList');
+
+  function renderTabs(){
+    var total = state.items.filter(matches).length;
+    var favN = state.items.filter(function(i){ return i.fav && matches(i); }).length;
+    var html = '';
+    html += tabBtn('all', '전체', total, '');
+    state.cats.forEach(function(c){
+      html += tabBtn(c.id, c.name, itemsOf(c.id).length, accVars(c));
+    });
+    html += tabBtn('fav', '★ 즐겨찾기', favN, '--acc:var(--amber);');
+    tabsEl.innerHTML = html;
+
+    var c = cat(view);
+    hintEl.textContent = query ? ('"' + query + '" 검색 결과 ' + total + '건')
+      : c ? c.hint
+      : view === 'fav' ? '자주 쓰는 도구만 모아 봅니다. 카드 오른쪽 위 별을 눌러 추가하세요.'
+      : '모든 업무 영역의 도구입니다. 탭을 눌러 좁혀 보세요.';
+  }
+  function tabBtn(id, label, n, vars){
+    return '<button class="tab' + (view === id ? ' on' : '') + '" data-tab="' + esc(id) + '" style="' + vars + '"' +
+           (view === id ? ' aria-current="true"' : '') + '>' +
+           (vars ? '<span class="dot"></span>' : '') + esc(label) +
+           ' <span class="n">' + n + '</span></button>';
+  }
+
+  function renderRecent(){
+    if(editing || query || view !== 'all'){ recentEl.innerHTML = ''; return; }
+    var used = state.items
+      .filter(function(i){ return state.usage[i.id] && state.usage[i.id].last; })
+      .sort(function(a,b){ return state.usage[b.id].last - state.usage[a.id].last; })
+      .slice(0,5);
+    if(!used.length){ recentEl.innerHTML = ''; return; }
+    recentEl.innerHTML = '<div class="recent"><span class="lbl">최근 사용</span>' +
+      used.map(function(i){
+        var c = cat(i.cat);
+        return '<a class="chip" style="' + accVars(c) + '" href="' + esc(safeUrl(i.url)) + '" target="_blank" rel="noopener" data-open="' + esc(i.id) + '">' +
+               '<span class="dot"></span>' + esc(i.name) +
+               ' <time>' + esc(relTime(state.usage[i.id].last)) + '</time></a>';
+      }).join('') + '</div>';
+  }
+
+  function cardHtml(it){
+    var c = cat(it.cat);
+    var u = safeUrl(it.url);
+    var use = state.usage[it.id];
+    var foot = [];
+    if(use && use.count) foot.push(use.count + '회 · ' + relTime(use.last));
+    var acts = '';
+    if(editing){
+      var sibs = state.items.filter(function(x){ return x.cat === it.cat; });
+      var pos = sibs.indexOf(it);
+      acts = '<div class="cardacts">' +
+        '<button class="btn sm" data-act="edit" data-id="' + esc(it.id) + '">편집</button>' +
+        '<button class="btn sm" data-act="up" data-id="' + esc(it.id) + '" title="앞으로"' + (pos === 0 ? ' disabled' : '') + '>↑</button>' +
+        '<button class="btn sm" data-act="down" data-id="' + esc(it.id) + '" title="뒤로"' + (pos === sibs.length-1 ? ' disabled' : '') + '>↓</button>' +
+        '<button class="btn sm danger" data-act="del" data-id="' + esc(it.id) + '">삭제</button>' +
+        '</div>';
+    }
+    return '<article class="card" style="' + accVars(c) + '">' +
+      '<button class="star' + (it.fav ? ' on' : '') + '" data-act="fav" data-id="' + esc(it.id) + '" ' +
+        'aria-pressed="' + (it.fav ? 'true' : 'false') + '" aria-label="' + esc(it.name) + ' 즐겨찾기">' +
+        (it.fav ? '★' : '☆') + '</button>' +
+      '<span class="cat">' + esc(c ? c.name : '기타') + '</span>' +
+      '<h3>' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener" data-open="' + esc(it.id) + '">' + esc(it.name) + '</a>' : esc(it.name)) + '</h3>' +
+      '<p>' + esc(it.desc || '') + '</p>' +
+      ((it.tags && it.tags.length) ? '<div class="tags">' + it.tags.map(function(t){ return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div>' : '') +
+      (foot.length ? '<div class="cardfoot"><span>' + esc(foot.join('')) + '</span></div>' : '') +
+      acts +
+    '</article>';
+  }
+
+  function sectionHtml(c, list){
+    var add = editing ? '<button class="addcard" data-act="add" data-cat="' + esc(c.id) + '">＋ 도구 추가</button>' : '';
+    var body = (list.length || editing)
+      ? '<div class="grid">' + list.map(cardHtml).join('') + add + '</div>'
+      : '<div class="empty">이 영역에 표시할 도구가 없습니다.</div>';
+    return '<section class="sec" style="' + accVars(c) + '">' +
+      '<div class="sechead"><h2><span class="dot"></span>' + esc(c.name) + '</h2>' +
+      '<span class="hint">' + esc(c.hint || '') + '</span></div>' + body + '</section>';
+  }
+
+  function renderBoard(){
+    var html = '';
+    if(view === 'fav'){
+      var favs = state.items.filter(function(i){ return i.fav && matches(i); });
+      html = favs.length
+        ? '<div class="grid">' + favs.map(cardHtml).join('') + '</div>'
+        : '<div class="empty">아직 즐겨찾기가 없습니다. 카드 오른쪽 위의 ☆ 를 눌러 자주 쓰는 도구를 고정하세요.</div>';
+    } else if(view === 'all' || query){
+      var any = false;
+      state.cats.forEach(function(c){
+        var list = itemsOf(c.id);
+        if(!list.length && (query || !editing)) return;
+        any = true;
+        html += sectionHtml(c, list);
+      });
+      if(!any) html = '<div class="empty">검색 결과가 없습니다. 다른 말로 찾아보세요.</div>';
+    } else {
+      var c2 = cat(view);
+      if(!c2){ view = 'all'; return renderBoard(); }
+      var list2 = itemsOf(c2.id);
+      var add = editing ? '<button class="addcard" data-act="add" data-cat="' + esc(c2.id) + '">＋ 도구 추가</button>' : '';
+      html = (list2.length || editing)
+        ? '<div class="grid">' + list2.map(cardHtml).join('') + add + '</div>'
+        : '<div class="empty">이 영역에 표시할 도구가 없습니다. 편집을 켜고 추가해 보세요.</div>';
+    }
+    boardEl.innerHTML = html;
+  }
+
+  function renderCatPanel(){
+    if(!editing) return;
+    catListEl.innerHTML = state.cats.map(function(c, idx){
+      var n = state.items.filter(function(i){ return i.cat === c.id; }).length;
+      return '<div class="catrow" style="' + accVars(c) + '">' +
+        '<input type="text" value="' + esc(c.name) + '" data-cf="name" data-id="' + esc(c.id) + '" aria-label="탭 이름" maxlength="20">' +
+        '<input type="text" value="' + esc(c.hint || '') + '" data-cf="hint" data-id="' + esc(c.id) + '" aria-label="탭 설명" maxlength="80">' +
+        '<select data-cf="accent" data-id="' + esc(c.id) + '" aria-label="탭 색">' +
+          ACCENTS.map(function(a){ return '<option value="' + a.id + '"' + (c.accent === a.id ? ' selected' : '') + '>' + a.name + '</option>'; }).join('') +
+        '</select>' +
+        '<span class="acts">' +
+          '<button class="btn sm" data-cact="up" data-id="' + esc(c.id) + '"' + (idx === 0 ? ' disabled' : '') + ' title="왼쪽으로">←</button>' +
+          '<button class="btn sm" data-cact="down" data-id="' + esc(c.id) + '"' + (idx === state.cats.length-1 ? ' disabled' : '') + ' title="오른쪽으로">→</button>' +
+          '<button class="btn sm danger" data-cact="del" data-id="' + esc(c.id) + '"' + (n ? ' disabled title="도구 ' + n + '개가 남아 있습니다"' : '') + '>삭제</button>' +
+        '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderStat(){
+    statEl.textContent = '도구 ' + state.items.length + '개 · 탭 ' + state.cats.length + '개';
+  }
+
+  function render(){
+    renderTabs(); renderRecent(); renderBoard(); renderCatPanel(); renderStat();
+  }
+
+  /* ── 이벤트 ────────────────────────────── */
+  tabsEl.addEventListener('click', function(e){
+    var b = e.target.closest('[data-tab]');
+    if(!b) return;
+    view = b.getAttribute('data-tab');
+    render();
+  });
+
+  document.getElementById('q').addEventListener('input', function(e){
+    query = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
+      e.preventDefault();
+      document.getElementById('q').focus();
+    }
+    if(e.key === 'Escape' && document.activeElement.id === 'q'){
+      document.getElementById('q').value = ''; query = ''; render();
+    }
+  });
+
+  document.getElementById('editBtn').addEventListener('click', function(){
+    editing = !editing;
+    this.classList.toggle('on', editing);
+    this.setAttribute('aria-pressed', editing ? 'true' : 'false');
+    this.textContent = editing ? '✓ 편집 마침' : '✎ 편집';
+    document.getElementById('editTools').hidden = !editing;
+    render();
+  });
+
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme');
+    var dark = cur ? cur === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
+  });
+
+  // 카드 / 최근 사용 클릭
+  document.addEventListener('click', function(e){
+    var open = e.target.closest('[data-open]');
+    if(open){
+      var oid = open.getAttribute('data-open');
+      var u = state.usage[oid] || { count:0, last:0 };
+      u.count++; u.last = Date.now();
+      state.usage[oid] = u; save();
+      return; // 링크는 그대로 열리게 둔다
+    }
+    var b = e.target.closest('[data-act]');
+    if(b){ e.preventDefault(); handleAct(b.getAttribute('data-act'), b); return; }
+    var cb = e.target.closest('[data-cact]');
+    if(cb){ e.preventDefault(); handleCatAct(cb.getAttribute('data-cact'), cb.getAttribute('data-id')); }
+  });
+
+  function handleAct(act, btn){
+    var id = btn.getAttribute('data-id');
+    if(act === 'add'){ openDlg('add', null, btn.getAttribute('data-cat')); return; }
+    var it = item(id);
+    if(!it) return;
+    if(act === 'fav'){ it.fav = !it.fav; save(); render(); return; }
+    if(act === 'edit'){ openDlg('edit', it); return; }
+    if(act === 'del'){
+      if(!confirm('"' + it.name + '" 카드를 삭제할까요?')) return;
+      state.items = state.items.filter(function(x){ return x.id !== id; });
+      if(state.removed.indexOf(id) < 0) state.removed.push(id);
+      save(); render(); return;
+    }
+    if(act === 'up' || act === 'down'){
+      var sibs = state.items.filter(function(x){ return x.cat === it.cat; });
+      var pos = sibs.indexOf(it);
+      var swap = sibs[act === 'up' ? pos-1 : pos+1];
+      if(!swap) return;
+      var a = state.items.indexOf(it), b2 = state.items.indexOf(swap);
+      state.items[a] = swap; state.items[b2] = it;
+      save(); render();
+    }
+  }
+
+  function handleCatAct(act, id){
+    var idx = state.cats.findIndex(function(c){ return c.id === id; });
+    if(idx < 0) return;
+    if(act === 'del'){
+      if(state.items.some(function(i){ return i.cat === id; })) return;
+      if(state.cats.length <= 1){ alert('탭은 최소 1개가 필요합니다.'); return; }
+      if(!confirm('"' + state.cats[idx].name + '" 탭을 삭제할까요?')) return;
+      state.cats.splice(idx,1);
+      if(view === id) view = 'all';
+    } else {
+      var to = act === 'up' ? idx-1 : idx+1;
+      if(to < 0 || to >= state.cats.length) return;
+      var t = state.cats[idx]; state.cats[idx] = state.cats[to]; state.cats[to] = t;
+    }
+    save(); render();
+  }
+
+  // 탭 이름·설명·색 인라인 편집
+  catListEl.addEventListener('input', function(e){
+    var f = e.target.getAttribute('data-cf');
+    if(!f) return;
+    var c = cat(e.target.getAttribute('data-id'));
+    if(!c) return;
+    c[f] = e.target.value;
+    save(); renderTabs(); renderBoard(); renderStat();
+  });
+  catListEl.addEventListener('change', function(e){
+    if(e.target.getAttribute('data-cf') === 'accent'){ renderCatPanel(); }
+  });
+
+  document.getElementById('addCatBtn').addEventListener('click', function(){
+    var used = state.cats.map(function(c){ return c.accent; });
+    var free = ACCENTS.filter(function(a){ return used.indexOf(a.id) < 0; })[0] || ACCENTS[0];
+    state.cats.push({ id:uid('cat'), name:'새 탭', hint:'설명을 입력하세요', accent:free.id });
+    save(); render();
+    var rows = catListEl.querySelectorAll('[data-cf="name"]');
+    if(rows.length) rows[rows.length-1].select();
+  });
+
+  /* ── 도구 추가/편집 모달 ───────────────── */
+  var dlg = document.getElementById('itemDlg');
+  var fName = document.getElementById('f-name'), fUrl = document.getElementById('f-url'),
+      fDesc = document.getElementById('f-desc'), fCat = document.getElementById('f-cat'),
+      fTags = document.getElementById('f-tags'), dlgErr = document.getElementById('dlgErr');
+
+  function openDlg(mode, it, presetCat){
+    dlgMode = { mode:mode, id: it ? it.id : null };
+    document.getElementById('dlgTitle').textContent = mode === 'add' ? '도구 추가' : '도구 편집';
+    dlgErr.textContent = '';
+    fCat.innerHTML = state.cats.map(function(c){ return '<option value="' + esc(c.id) + '">' + esc(c.name) + '</option>'; }).join('');
+    fName.value = it ? it.name : '';
+    fUrl.value  = it ? it.url : '';
+    fDesc.value = it ? (it.desc || '') : '';
+    fTags.value = it ? (it.tags || []).join(', ') : '';
+    fCat.value  = it ? it.cat : (presetCat || (cat(view) ? view : state.cats[0].id));
+    if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','');
+    fName.focus();
+  }
+  document.getElementById('dlgCancel').addEventListener('click', function(){ dlg.close(); });
+
+  document.getElementById('itemForm').addEventListener('submit', function(e){
+    var name = fName.value.trim();
+    var url = safeUrl(fUrl.value);
+    if(!name || !url){
+      e.preventDefault();
+      dlgErr.textContent = !name ? '이름을 입력하세요.' : '링크가 비었거나 사용할 수 없는 주소입니다.';
+      return;
+    }
+    var tags = fTags.value.split(',').map(function(t){ return t.trim(); }).filter(Boolean).slice(0,6);
+    if(dlgMode.mode === 'add'){
+      state.items.push({ id:uid('tool'), name:name, url:url, desc:fDesc.value.trim(), cat:fCat.value, tags:tags, fav:false });
+    } else {
+      var it = item(dlgMode.id);
+      if(it){ it.name=name; it.url=url; it.desc=fDesc.value.trim(); it.cat=fCat.value; it.tags=tags; }
+    }
+    save();
+    setTimeout(render, 0);   // dialog가 닫힌 뒤 다시 그린다
+  });
+
+  /* ── 내보내기 / 가져오기 / 초기화 ──────── */
+  document.getElementById('exportBtn').addEventListener('click', function(){
+    var blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'mysoul-center-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  });
+
+  document.getElementById('importBtn').addEventListener('click', function(){
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change', function(e){
+    var f = e.target.files && e.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var s = JSON.parse(r.result);
+        if(!s || !Array.isArray(s.items) || !Array.isArray(s.cats) || !s.cats.length) throw new Error('형식 오류');
+        state = s;
+        state.removed = Array.isArray(state.removed) ? state.removed : [];
+        state.usage = state.usage || {};
+        state.items.forEach(function(i){
+          if(!state.cats.some(function(c){ return c.id === i.cat; })) i.cat = state.cats[0].id;
+          if(!Array.isArray(i.tags)) i.tags = [];
+        });
+        view = 'all'; save(); render();
+        alert('구성을 불러왔습니다.');
+      }catch(err){ alert('불러오지 못했습니다. 내보내기로 만든 JSON 파일인지 확인하세요.'); }
+    };
+    r.readAsText(f);
+    e.target.value = '';
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if(!confirm('직접 추가·수정한 내용이 모두 사라지고 기본 구성으로 돌아갑니다. 계속할까요?')) return;
+    var usage = state.usage;
+    state = fresh(); state.usage = usage;
+    view = 'all'; save(); render();
+  });
+
+  /* ── 시작 ──────────────────────────────── */
+  try{
+    var t = localStorage.getItem(THEME_KEY);
+    if(t) document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+
+  render();
+})();
+</script>
