@@ -402,6 +402,7 @@
       </div>
       <div class="results" id="adminResultsBody"></div>
       <div class="controls">
+        <button class="btn-ghost" id="btnDownload" type="button" hidden>결과 내려받기 (CSV)</button>
         <button class="btn-ghost" id="btnClose" type="button">투표 마감</button>
         <button class="btn-ghost" id="btnReveal" type="button">전체에 결과 공개</button>
         <button class="btn-ghost danger" id="btnReset" type="button">전체 초기화</button>
@@ -449,6 +450,8 @@
   var isAdmin = false;
   var adminView = false;
   var booted = false;   // db 연결 시도가 끝났는지
+  var downloads = null; // 파일 저장 기능 (사용 불가하면 null)
+  var downloadsAsked = false;
 
   /* ---------- 안전한 로컬 저장 ---------- */
   function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
@@ -677,6 +680,87 @@
     }, function () { /* 구독 종료: 기존 집계 유지 */ });
   }
 
+  function csvCell(v) {
+    var t = String(v);
+    return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  }
+
+  function stamp() {
+    var d = new Date(), z = function (n) { return ("0" + n).slice(-2); };
+    return {
+      file: "" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "_" + z(d.getHours()) + z(d.getMinutes()),
+      human: d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()) + " " + z(d.getHours()) + ":" + z(d.getMinutes())
+    };
+  }
+
+  function buildCsv() {
+    var counts = tally || new Array(CANDIDATES.length).fill(0);
+    var total = counts.reduce(function (a, b) { return a + b; }, 0);
+    var max = Math.max.apply(null, counts);
+    var rows = CANDIDATES.map(function (name, i) {
+      return { name: name, no: i + 1, count: counts[i] };
+    }).sort(function (a, b) { return b.count - a.count || a.no - b.no; });
+
+    var lines = [];
+    lines.push(["2027년 개소 20주년 기념행사 프로그램명 사전투표"].map(csvCell).join(","));
+    lines.push(["집계 시각", stamp().human].map(csvCell).join(","));
+    lines.push(["참여 인원", turnout + " / " + TOTAL_VOTERS + "명"].map(csvCell).join(","));
+    lines.push(["유효 투표", total + "표"].map(csvCell).join(","));
+    lines.push(["투표 상태", state.closed ? "마감" : "진행 중"].map(csvCell).join(","));
+    lines.push("");
+    lines.push(["순위", "후보번호", "프로그램명", "득표수", "득표율(%)", "비고"].map(csvCell).join(","));
+
+    var rank = 0, prev = null;
+    rows.forEach(function (r, idx) {
+      if (r.count !== prev) { rank = idx + 1; prev = r.count; }
+      var pct = total ? (r.count / total) * 100 : 0;
+      var lead = total > 0 && r.count === max && r.count > 0;
+      lines.push([rank, r.no, r.name, r.count, pct.toFixed(1), lead ? "1위" : ""].map(csvCell).join(","));
+    });
+    // Excel이 UTF-8로 열도록 BOM을 붙입니다.
+    return "\uFEFF" + lines.join("\r\n") + "\r\n";
+  }
+
+  function downloadResults() {
+    if (!downloads) return;
+    var btn = el("btnDownload");
+    var label = "결과 내려받기 (CSV)";
+    btn.disabled = true;
+    btn.textContent = "준비 중…";
+    downloads.save({
+      filename: "마음숲_20주년_프로그램명_투표결과_" + stamp().file + ".csv",
+      data: buildCsv()
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = "내려받았습니다";
+      window.setTimeout(function () { btn.textContent = label; }, 2400);
+    }).catch(function (e) {
+      btn.disabled = false;
+      btn.textContent = label;
+      var code = e && e.code;
+      if (code === "declined") return;                       // 사용자가 취소함
+      if (code === "rate_limited") {
+        window.alert("저장 창이 이미 열려 있습니다. 잠시 후 다시 눌러 주세요.");
+      } else if (code === "unavailable" || code === "not_granted" ||
+                 code === "capability_disabled" || code === "capability_removed" ||
+                 code === "extension_not_enabled") {
+        btn.hidden = true;
+        window.alert("이 화면에서는 파일 저장을 사용할 수 없습니다. 결과는 화면에서 확인해 주세요.");
+      } else {
+        window.alert("파일을 만들지 못했습니다. 다시 시도해 주세요.");
+      }
+    });
+  }
+
+  function enableDownloads() {
+    if (downloadsAsked || !(window.claude && window.claude.use)) return;
+    downloadsAsked = true;
+    window.claude.use("downloads").then(function (ns) {
+      downloads = ns;
+      el("btnDownload").hidden = !ns;
+    }).catch(function () {});
+  }
+
   function setConfig(patch) {
     if (!db) return Promise.resolve();
     var next = { closed: state.closed, revealed: state.revealed };
@@ -721,7 +805,7 @@
 
     el("toggleAdmin").addEventListener("click", function () {
       adminView = !adminView;
-      if (adminView && isAdmin) openAdminStreams();
+      if (adminView && isAdmin) { openAdminStreams(); enableDownloads(); }
       renderView();
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
@@ -735,6 +819,7 @@
         el("gateErr").hidden = true;
         el("gateInput").value = "";
         openAdminStreams();
+        enableDownloads();
         renderView();
       } else {
         el("gateErr").hidden = false;
@@ -748,6 +833,7 @@
       setConfig({ revealed: !state.revealed });
     });
     el("btnReset").addEventListener("click", resetAll);
+    el("btnDownload").addEventListener("click", downloadResults);
   }
 
   /* ---------- 시작 ---------- */
@@ -755,6 +841,7 @@
   buildOptions();
   wire();
   isAdmin = lsGet(LS.admin) === "1";
+  if (isAdmin) enableDownloads();
   renderView();
 
   var connect = (window.claude && window.claude.use)
