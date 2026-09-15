@@ -1,0 +1,787 @@
+<title>마음숲 20주년 프로그램명 투표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#edf1ec;
+    --surface:#f8fbf7;
+    --surface-2:#e4ebe3;
+    --ink:#16261f;
+    --ink-2:#3e5148;
+    --muted:#6b7f74;
+    --line:#d2dcd3;
+    --line-soft:#e0e8df;
+    --accent:#1e6e52;
+    --accent-soft:#cfe4d8;
+    --spark:#6c4fa3;
+    --spark-soft:#e2d9f2;
+    --glow:#d8a43c;
+    --danger:#a33b31;
+    --on-accent:#f8fbf7;
+    --shadow:0 1px 2px rgba(22,38,31,.06), 0 8px 24px rgba(22,38,31,.06);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0e1613;
+      --surface:#16211d;
+      --surface-2:#1f2c27;
+      --ink:#e7efe9;
+      --ink-2:#c2d2c8;
+      --muted:#93a89c;
+      --line:#2a3832;
+      --line-soft:#23302b;
+      --accent:#5fd0a0;
+      --accent-soft:#1f3d33;
+      --spark:#b197e8;
+      --spark-soft:#2e2745;
+      --glow:#e0b45c;
+      --danger:#e08a80;
+      --on-accent:#0e1613;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0e1613;
+    --surface:#16211d;
+    --surface-2:#1f2c27;
+    --ink:#e7efe9;
+    --ink-2:#c2d2c8;
+    --muted:#93a89c;
+    --line:#2a3832;
+    --line-soft:#23302b;
+    --accent:#5fd0a0;
+    --accent-soft:#1f3d33;
+    --spark:#b197e8;
+    --spark-soft:#2e2745;
+    --glow:#e0b45c;
+    --danger:#e08a80;
+    --on-accent:#0e1613;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    width:100%;
+    max-width:680px;
+    margin:0 auto;
+    padding:0 20px 140px;
+    padding-block-start:0;
+  }
+
+  /* ---------- header ---------- */
+  header.top{padding:38px 0 22px;border-bottom:1px solid var(--line-soft)}
+  .eyebrow{
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;margin:0 0 12px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--accent);flex:none}
+  h1{
+    font-family:"Gowun Batang","Apple SD Gothic Neo",serif;
+    font-weight:700;
+    font-size:clamp(25px,6.4vw,34px);
+    line-height:1.32;
+    letter-spacing:-.01em;
+    margin:0 0 10px;
+    text-wrap:balance;
+  }
+  .lede{margin:0;color:var(--ink-2);font-size:15px;max-width:34em}
+
+  /* ---------- turnout ---------- */
+  .turnout{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:16px 0 18px;border-bottom:1px solid var(--line-soft);
+  }
+  .lights{display:flex;gap:6px;flex-wrap:wrap}
+  .light{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    transition:background .45s ease, box-shadow .45s ease, border-color .45s ease;
+  }
+  .light.on{
+    background:var(--glow);
+    border-color:var(--glow);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--glow) 18%, transparent);
+  }
+  .turnout-text{font-size:13.5px;color:var(--muted)}
+  .turnout-text b{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;
+    font-size:15px;color:var(--ink);font-weight:500;
+  }
+
+  /* ---------- notices ---------- */
+  .notice{
+    margin:18px 0 0;padding:12px 14px;border-radius:10px;
+    background:var(--surface);border:1px solid var(--line);
+    font-size:13.5px;color:var(--ink-2);
+  }
+  .notice.warn{border-color:var(--glow);background:color-mix(in srgb, var(--glow) 9%, var(--surface))}
+
+  /* ---------- ballot ---------- */
+  .section-label{
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;margin:26px 0 12px;
+  }
+  .options{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .opt{display:block}
+  .opt input{position:absolute;opacity:0;width:0;height:0}
+  .opt label{
+    display:flex;align-items:center;gap:14px;
+    padding:16px 18px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    cursor:pointer;
+    transition:border-color .18s ease, background .18s ease, transform .18s ease;
+  }
+  .opt label:hover{border-color:var(--accent)}
+  .opt .num{
+    flex:none;width:28px;height:28px;border-radius:50%;
+    display:grid;place-items:center;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12.5px;font-weight:500;
+    background:var(--surface-2);color:var(--muted);
+    border:1px solid var(--line-soft);
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  .opt .name{
+    font-family:"Gowun Batang","Apple SD Gothic Neo",serif;
+    font-size:clamp(16px,4.3vw,18.5px);
+    line-height:1.45;font-weight:400;
+    text-wrap:balance;
+  }
+  .opt input:checked + label{
+    border-color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 7%, var(--surface));
+    box-shadow:inset 0 0 0 1px var(--accent);
+  }
+  .opt input:checked + label .num{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+  .opt input:focus-visible + label{outline:2px solid var(--spark);outline-offset:2px}
+  .opt input:disabled + label{cursor:not-allowed;opacity:.55}
+
+  /* ---------- submit bar ---------- */
+  .submitbar{
+    position:fixed;left:0;right:0;bottom:0;
+    padding:14px 20px calc(14px + env(safe-area-inset-bottom, 0px));
+    background:color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    z-index:20;
+  }
+  .submitbar-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:14px}
+  .picked{flex:1;min-width:0;font-size:13px;color:var(--muted)}
+  .picked b{color:var(--ink);font-weight:500}
+  button{font-family:inherit}
+  .btn{
+    flex:none;
+    padding:13px 30px;border-radius:999px;border:1px solid var(--accent);
+    background:var(--accent);color:var(--on-accent);
+    font-size:15px;font-weight:600;letter-spacing:.02em;
+    cursor:pointer;transition:opacity .18s ease, transform .12s ease;
+  }
+  .btn:hover{opacity:.9}
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn-ghost{
+    background:transparent;color:var(--ink-2);border:1px solid var(--line);
+    padding:9px 16px;font-size:13px;font-weight:500;border-radius:999px;cursor:pointer;
+  }
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-ghost.danger:hover{border-color:var(--danger);color:var(--danger)}
+
+  /* ---------- done ---------- */
+  .done{
+    margin:34px 0 0;padding:34px 26px;border-radius:18px;
+    background:var(--surface);border:1px solid var(--line);
+    box-shadow:var(--shadow);text-align:center;
+  }
+  .done .mark{
+    width:52px;height:52px;margin:0 auto 16px;border-radius:50%;
+    display:grid;place-items:center;
+    background:color-mix(in srgb, var(--accent) 12%, var(--surface));
+    border:1px solid var(--accent-soft);
+  }
+  .done h2{
+    font-family:"Gowun Batang",serif;font-weight:700;
+    font-size:22px;margin:0 0 8px;
+  }
+  .done p{margin:0;color:var(--muted);font-size:14px}
+  .done .chosen{
+    margin:20px auto 0;max-width:420px;padding:14px 18px;border-radius:12px;
+    background:var(--surface-2);border:1px solid var(--line-soft);
+    font-family:"Gowun Batang",serif;font-size:16px;line-height:1.5;
+  }
+  .done .chosen span{
+    display:block;font-family:"IBM Plex Sans KR",sans-serif;
+    font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:5px;
+  }
+
+  /* ---------- results ---------- */
+  .results{margin-top:8px}
+  .tiles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+  .tile{
+    flex:1 1 130px;padding:14px 16px;border-radius:12px;
+    background:var(--surface);border:1px solid var(--line);
+  }
+  .tile .k{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .tile .v{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;
+    font-size:24px;font-weight:500;line-height:1.3;margin-top:2px;
+  }
+  .tile .v small{font-size:13px;color:var(--muted);font-weight:400}
+
+  .bars{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  .bar-row{padding:13px 14px;border-radius:10px;transition:background .18s ease}
+  .bar-row:hover{background:var(--surface)}
+  .bar-row.lead{background:color-mix(in srgb, var(--spark) 8%, var(--surface))}
+  .bar-head{display:flex;align-items:baseline;gap:10px;margin-bottom:9px}
+  .bar-rank{
+    flex:none;font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;font-weight:500;color:var(--muted);width:2.2em;
+  }
+  .bar-row.lead .bar-rank{color:var(--spark)}
+  .bar-name{
+    flex:1;min-width:0;
+    font-family:"Gowun Batang",serif;font-size:15.5px;line-height:1.45;
+  }
+  .bar-val{
+    flex:none;font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink-2);
+  }
+  .bar-track{
+    position:relative;height:9px;border-radius:5px;
+    background:var(--surface-2);overflow:hidden;
+    margin-left:calc(2.2em + 10px);
+  }
+  .bar-track::after{
+    content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;
+    background:var(--line);opacity:.8;
+  }
+  .bar-fill{
+    position:relative;height:100%;border-radius:5px;
+    background:var(--accent);
+    width:0;transition:width .6s cubic-bezier(.22,.7,.3,1);
+  }
+  .bar-row.lead .bar-fill{background:var(--spark)}
+  .lead-tag{
+    display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;
+    background:var(--spark-soft);color:var(--spark);
+    font-size:10.5px;font-weight:600;letter-spacing:.08em;vertical-align:1px;
+  }
+  .scale-note{
+    margin:10px 0 0;padding-left:calc(2.2em + 24px);
+    font-size:11.5px;color:var(--muted);
+  }
+
+  /* ---------- admin ---------- */
+  .panel{
+    margin-top:26px;padding:22px;border-radius:16px;
+    background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);
+  }
+  .panel h2{
+    font-family:"Gowun Batang",serif;font-size:19px;font-weight:700;margin:0 0 4px;
+  }
+  .panel .sub{margin:0 0 18px;font-size:13px;color:var(--muted)}
+  .field{display:flex;gap:9px;flex-wrap:wrap}
+  input[type="password"], input[type="text"]{
+    flex:1;min-width:0;padding:11px 14px;border-radius:10px;
+    border:1px solid var(--line);background:var(--ground);color:var(--ink);
+    font-family:inherit;font-size:15px;
+  }
+  input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px;padding-top:18px;border-top:1px solid var(--line-soft)}
+  .err{margin:10px 0 0;font-size:13px;color:var(--danger)}
+  .state-line{
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    font-size:12.5px;color:var(--muted);margin-bottom:18px;
+  }
+  .chip{
+    padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:500;
+    border:1px solid var(--line);background:var(--ground);
+  }
+  .chip.open{border-color:var(--accent);color:var(--accent)}
+  .chip.closed{border-color:var(--glow);color:var(--glow)}
+  .chip.shown{border-color:var(--spark);color:var(--spark)}
+
+  footer{
+    margin-top:38px;padding-top:18px;border-top:1px solid var(--line-soft);
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    font-size:12px;color:var(--muted);
+  }
+  .linkish{
+    background:none;border:none;padding:0;color:var(--muted);
+    font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+  }
+  .linkish:hover{color:var(--accent)}
+
+  @media (max-width:420px){
+    .submitbar-inner{gap:10px}
+    .btn{padding:13px 22px}
+    .picked{font-size:12px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;animation:none !important}
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">마음숲 · 익명 사전투표</p>
+    <h1>2027년 개소 20주년 기념행사<br>프로그램명 사전투표</h1>
+    <p class="lede">가장 적합하다고 생각하는 프로그램명 1개를 선택해 주세요. 투표는 익명으로 집계됩니다.</p>
+  </header>
+
+  <div class="turnout">
+    <div class="lights" id="lights" aria-hidden="true"></div>
+    <p class="turnout-text" id="turnoutText">총 <b>16</b>명 중 <b id="turnoutCount">0</b>명 투표</p>
+  </div>
+
+  <div id="statusNotice" hidden></div>
+
+  <!-- 투표 화면 -->
+  <section id="viewVote">
+    <p class="section-label">후보 7개 중 1개 선택</p>
+    <ul class="options" id="options"></ul>
+  </section>
+
+  <!-- 완료 화면 -->
+  <section id="viewDone" hidden>
+    <div class="done">
+      <div class="mark" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+      </div>
+      <h2>투표가 완료되었습니다.</h2>
+      <p>소중한 의견 감사합니다. 결과는 회의에서 함께 확인합니다.</p>
+      <div class="chosen" id="chosenBox" hidden><span>내가 선택한 프로그램명</span><em id="chosenName" style="font-style:normal"></em></div>
+    </div>
+    <div id="publicResults" hidden>
+      <p class="section-label">공개된 투표 결과</p>
+      <div class="results" id="publicResultsBody"></div>
+    </div>
+  </section>
+
+  <!-- 관리자 화면 -->
+  <section id="viewAdmin" hidden>
+    <div class="panel" id="adminGate">
+      <h2>관리자 확인</h2>
+      <p class="sub">결과는 관리자만 확인할 수 있습니다. 관리자 코드를 입력해 주세요.</p>
+      <form class="field" id="gateForm">
+        <input type="password" id="gateInput" placeholder="관리자 코드" autocomplete="off" aria-label="관리자 코드">
+        <button class="btn" type="submit" style="padding:11px 22px;font-size:14px">확인</button>
+      </form>
+      <p class="err" id="gateErr" hidden>코드가 일치하지 않습니다. 다시 입력해 주세요.</p>
+    </div>
+
+    <div id="adminPanel" hidden>
+      <p class="section-label">관리자 · 실시간 집계</p>
+      <div class="state-line">
+        <span class="chip" id="chipOpen">투표 진행 중</span>
+        <span class="chip" id="chipReveal">결과 비공개</span>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="k">참여</div><div class="v"><span id="tileTurnout">0</span><small> / 16명</small></div></div>
+        <div class="tile"><div class="k">유효 투표</div><div class="v"><span id="tileBallots">0</span><small> 표</small></div></div>
+        <div class="tile"><div class="k">미투표</div><div class="v"><span id="tileRemain">16</span><small> 명</small></div></div>
+      </div>
+      <div class="results" id="adminResultsBody"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnClose" type="button">투표 마감</button>
+        <button class="btn-ghost" id="btnReveal" type="button">전체에 결과 공개</button>
+        <button class="btn-ghost danger" id="btnReset" type="button">전체 초기화</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>마음숲 · 20주년 기념행사 준비</span>
+    <button class="linkish" id="toggleAdmin" type="button">관리자</button>
+  </footer>
+</div>
+
+<div class="submitbar" id="submitBar">
+  <div class="submitbar-inner">
+    <p class="picked" id="pickedText">선택된 프로그램명이 없습니다.</p>
+    <button class="btn" id="btnSubmit" type="button" disabled>투표하기</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var CANDIDATES = [
+    "마음숲에 피어난 마술 같은 하루",
+    "마음숲, 매직데이",
+    "마음으로 거니는 매직 포레스트",
+    "마음과 마음이 만나는 매직 포레스트",
+    "신비로운 마음숲으로의 초대",
+    "마음을 밝히는 숲속 마법",
+    "마음숲에 찾아온 희망의 마법"
+  ];
+  var TOTAL_VOTERS = 16;
+  var ADMIN_CODE = "mysoul2027";
+  var LS = { token: "msvote20:token", voted: "msvote20:voted", choice: "msvote20:choice", admin: "msvote20:admin" };
+
+  var el = function (id) { return document.getElementById(id); };
+  var db = null;
+  var state = { closed: false, revealed: false };
+  var turnout = 0;
+  var tally = null;          // 관리자/공개 시점에만 채워짐
+  var selected = null;
+  var submitting = false;
+  var isAdmin = false;
+  var adminView = false;
+  var booted = false;   // db 연결 시도가 끝났는지
+
+  /* ---------- 안전한 로컬 저장 ---------- */
+  function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+  function lsDel(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+
+  function randomId() {
+    var bytes = new Uint8Array(12);
+    (window.crypto || window.msCrypto).getRandomValues(bytes);
+    return Array.prototype.map.call(bytes, function (b) {
+      return ("0" + b.toString(16)).slice(-2);
+    }).join("");
+  }
+  function voterToken() {
+    var t = lsGet(LS.token);
+    if (!t) { t = randomId(); lsSet(LS.token, t); }
+    return t;
+  }
+
+  /* ---------- 화면 구성 ---------- */
+  function buildOptions() {
+    var frag = document.createDocumentFragment();
+    CANDIDATES.forEach(function (name, i) {
+      var n = i + 1;
+      var li = document.createElement("li");
+      li.className = "opt";
+      var input = document.createElement("input");
+      input.type = "radio"; input.name = "candidate"; input.id = "cand" + n; input.value = String(n);
+      var label = document.createElement("label");
+      label.setAttribute("for", "cand" + n);
+      var num = document.createElement("span");
+      num.className = "num"; num.textContent = String(n);
+      var nm = document.createElement("span");
+      nm.className = "name"; nm.textContent = name;
+      label.appendChild(num); label.appendChild(nm);
+      li.appendChild(input); li.appendChild(label);
+      input.addEventListener("change", function () {
+        selected = Number(this.value);
+        el("pickedText").innerHTML = "선택: <b>" + escapeHtml(CANDIDATES[selected - 1]) + "</b>";
+        el("btnSubmit").disabled = false;
+      });
+      frag.appendChild(li);
+    });
+    el("options").appendChild(frag);
+  }
+
+  function buildLights() {
+    var box = el("lights");
+    for (var i = 0; i < TOTAL_VOTERS; i++) {
+      var d = document.createElement("span");
+      d.className = "light";
+      box.appendChild(d);
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  /* ---------- 렌더 ---------- */
+  function renderTurnout() {
+    var shown = Math.min(turnout, TOTAL_VOTERS);
+    var dots = el("lights").children;
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].className = i < shown ? "light on" : "light";
+    }
+    el("turnoutCount").textContent = String(turnout);
+  }
+
+  function renderNotice() {
+    var box = el("statusNotice");
+    if (booted && !db) {
+      box.hidden = false;
+      box.className = "notice warn";
+      box.textContent = "실시간 집계에 연결하지 못했습니다. 이 화면에서는 투표가 저장되지 않습니다.";
+      return;
+    }
+    if (state.closed && !hasVoted()) {
+      box.hidden = false;
+      box.className = "notice warn";
+      box.textContent = "투표가 마감되었습니다. 더 이상 투표할 수 없습니다.";
+      return;
+    }
+    box.hidden = true;
+  }
+
+  function hasVoted() { return lsGet(LS.voted) === "1"; }
+
+  function renderView() {
+    var voted = hasVoted();
+    el("viewAdmin").hidden = !adminView;
+    el("viewVote").hidden = adminView || voted;
+    el("viewDone").hidden = adminView || !voted;
+    el("submitBar").hidden = adminView || voted;
+    el("toggleAdmin").textContent = adminView ? "투표 화면으로" : "관리자";
+
+    if (voted) {
+      var c = Number(lsGet(LS.choice));
+      if (c >= 1 && c <= CANDIDATES.length) {
+        el("chosenBox").hidden = false;
+        el("chosenName").textContent = CANDIDATES[c - 1];
+      }
+      var pub = el("publicResults");
+      pub.hidden = !state.revealed;
+      if (state.revealed && tally) drawResults(el("publicResultsBody"));
+    }
+
+    if (adminView) {
+      el("adminGate").hidden = isAdmin;
+      el("adminPanel").hidden = !isAdmin;
+      if (isAdmin) renderAdmin();
+    }
+
+    // 마감 시 선택 잠금
+    var inputs = el("options").querySelectorAll("input");
+    var locked = state.closed || (booted && !db);
+    for (var i = 0; i < inputs.length; i++) inputs[i].disabled = locked;
+    el("btnSubmit").disabled = locked || selected === null || submitting;
+    renderNotice();
+  }
+
+  function renderAdmin() {
+    var counts = tally || new Array(CANDIDATES.length).fill(0);
+    var ballots = counts.reduce(function (a, b) { return a + b; }, 0);
+    el("tileTurnout").textContent = String(turnout);
+    el("tileBallots").textContent = String(ballots);
+    el("tileRemain").textContent = String(Math.max(0, TOTAL_VOTERS - turnout));
+
+    var co = el("chipOpen");
+    co.textContent = state.closed ? "투표 마감됨" : "투표 진행 중";
+    co.className = "chip " + (state.closed ? "closed" : "open");
+    var cr = el("chipReveal");
+    cr.textContent = state.revealed ? "전체 공개 중" : "결과 비공개";
+    cr.className = "chip " + (state.revealed ? "shown" : "");
+
+    el("btnClose").textContent = state.closed ? "투표 재개" : "투표 마감";
+    el("btnReveal").textContent = state.revealed ? "결과 공개 중지" : "전체에 결과 공개";
+    drawResults(el("adminResultsBody"));
+  }
+
+  function drawResults(container) {
+    var counts = tally || new Array(CANDIDATES.length).fill(0);
+    var total = counts.reduce(function (a, b) { return a + b; }, 0);
+    var max = Math.max.apply(null, counts);
+
+    var rows = CANDIDATES.map(function (name, i) {
+      return { name: name, no: i + 1, count: counts[i] };
+    }).sort(function (a, b) {
+      return b.count - a.count || a.no - b.no;
+    });
+
+    var html = '<ol class="bars">';
+    var rank = 0, prev = null;
+    rows.forEach(function (r, idx) {
+      if (r.count !== prev) { rank = idx + 1; prev = r.count; }
+      var pct = total ? (r.count / total) * 100 : 0;
+      var lead = total > 0 && r.count === max && r.count > 0;
+      html += '<li class="bar-row' + (lead ? " lead" : "") + '">' +
+        '<div class="bar-head">' +
+          '<span class="bar-rank">' + rank + '위</span>' +
+          '<span class="bar-name">' + escapeHtml(r.name) +
+            (lead ? '<span class="lead-tag">1위</span>' : "") + '</span>' +
+          '<span class="bar-val">' + r.count + '표 · ' + pct.toFixed(1) + '%</span>' +
+        '</div>' +
+        '<div class="bar-track" title="' + escapeHtml(r.name) + ' — ' + r.count + '표, ' + pct.toFixed(1) + '%">' +
+          '<span class="bar-fill" style="width:' + pct.toFixed(2) + '%"></span>' +
+        '</div>' +
+      '</li>';
+    });
+    html += "</ol>";
+    html += '<p class="scale-note">막대는 전체 유효표(' + total + '표) 대비 득표율이며, 가운데 가는 선이 50%입니다.</p>';
+    container.innerHTML = html;
+  }
+
+  /* ---------- 투표 제출 ---------- */
+  function submitVote() {
+    if (!db || selected === null || submitting || state.closed || hasVoted()) return;
+    submitting = true;
+    var btn = el("btnSubmit");
+    btn.disabled = true;
+    btn.textContent = "제출 중…";
+
+    var choice = selected;
+    // 표(선택 내용)와 참여 기록은 서로 다른 임의 ID로 저장되어 연결되지 않습니다.
+    db.collection("ballots").doc(randomId()).set({ choice: choice, ts: Date.now() })
+      .then(function () {
+        return db.collection("turnout").doc(voterToken()).set({ ts: Date.now() });
+      })
+      .then(function () {
+        lsSet(LS.voted, "1");
+        lsSet(LS.choice, String(choice));
+        submitting = false;
+        btn.textContent = "투표하기";
+        renderView();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      })
+      .catch(function (e) {
+        submitting = false;
+        btn.disabled = false;
+        btn.textContent = "투표하기";
+        var box = el("statusNotice");
+        box.hidden = false;
+        box.className = "notice warn";
+        box.textContent = e && e.code === "quota_exceeded"
+          ? "저장 공간이 가득 찼습니다. 담당자에게 알려 주세요."
+          : "투표를 저장하지 못했습니다. 잠시 후 다시 눌러 주세요.";
+      });
+  }
+
+  /* ---------- 관리자 ---------- */
+  function openAdminStreams() {
+    if (!db || openAdminStreams.done) return;
+    openAdminStreams.done = true;
+    db.collection("ballots").onSnapshot(function (snap) {
+      var counts = new Array(CANDIDATES.length).fill(0);
+      snap.docs.forEach(function (d) {
+        var v = d.data() || {};
+        var c = Number(v.choice);
+        if (c >= 1 && c <= CANDIDATES.length) counts[c - 1] += 1;
+      });
+      tally = counts;
+      if (adminView && isAdmin) renderAdmin();
+      if (state.revealed && hasVoted() && !adminView) drawResults(el("publicResultsBody"));
+    }, function () { /* 구독 종료: 기존 집계 유지 */ });
+  }
+
+  function setConfig(patch) {
+    if (!db) return Promise.resolve();
+    var next = { closed: state.closed, revealed: state.revealed };
+    Object.keys(patch).forEach(function (k) { next[k] = patch[k]; });
+    return db.doc("config/state").set(next);
+  }
+
+  function resetAll() {
+    if (!db) return;
+    if (!window.confirm("모든 투표 기록을 삭제합니다. 되돌릴 수 없습니다. 계속할까요?")) return;
+    var btn = el("btnReset");
+    btn.disabled = true;
+    btn.textContent = "초기화 중…";
+    Promise.all([
+      db.collection("ballots").get(),
+      db.collection("turnout").get()
+    ]).then(function (snaps) {
+      var jobs = [];
+      snaps.forEach(function (s, idx) {
+        var col = idx === 0 ? "ballots" : "turnout";
+        s.docs.forEach(function (d) { jobs.push(db.collection(col).doc(d.id).delete()); });
+      });
+      return Promise.all(jobs);
+    }).then(function () {
+      return setConfig({ closed: false, revealed: false });
+    }).then(function () {
+      lsDel(LS.voted); lsDel(LS.choice);
+      btn.disabled = false;
+      btn.textContent = "전체 초기화";
+      tally = new Array(CANDIDATES.length).fill(0);
+      renderAdmin();
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = "전체 초기화";
+      window.alert("초기화에 실패했습니다. 다시 시도해 주세요.");
+    });
+  }
+
+  /* ---------- 이벤트 ---------- */
+  function wire() {
+    el("btnSubmit").addEventListener("click", submitVote);
+
+    el("toggleAdmin").addEventListener("click", function () {
+      adminView = !adminView;
+      if (adminView && isAdmin) openAdminStreams();
+      renderView();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    el("gateForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var v = el("gateInput").value.trim();
+      if (v === ADMIN_CODE) {
+        isAdmin = true;
+        lsSet(LS.admin, "1");
+        el("gateErr").hidden = true;
+        el("gateInput").value = "";
+        openAdminStreams();
+        renderView();
+      } else {
+        el("gateErr").hidden = false;
+      }
+    });
+
+    el("btnClose").addEventListener("click", function () {
+      setConfig({ closed: !state.closed });
+    });
+    el("btnReveal").addEventListener("click", function () {
+      setConfig({ revealed: !state.revealed });
+    });
+    el("btnReset").addEventListener("click", resetAll);
+  }
+
+  /* ---------- 시작 ---------- */
+  buildLights();
+  buildOptions();
+  wire();
+  isAdmin = lsGet(LS.admin) === "1";
+  renderView();
+
+  var connect = (window.claude && window.claude.use)
+    ? window.claude.use("db")
+    : Promise.resolve(null);
+
+  connect.then(function (store) {
+    db = store;
+    booted = true;
+    if (!db) { renderView(); return; }
+
+    db.doc("config/state").onSnapshot(function (snap) {
+      var v = snap.exists ? (snap.data() || {}) : {};
+      state.closed = !!v.closed;
+      state.revealed = !!v.revealed;
+      if (state.revealed) openAdminStreams();
+      renderView();
+    }, function () {});
+
+    db.collection("turnout").onSnapshot(function (snap) {
+      turnout = snap.size;
+      renderTurnout();
+      if (adminView && isAdmin) renderAdmin();
+    }, function () {});
+
+    if (isAdmin) openAdminStreams();
+    renderView();
+  });
+})();
+</script>
