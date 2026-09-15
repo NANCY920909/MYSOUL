@@ -122,6 +122,18 @@
     font-size:15px;color:var(--ink);font-weight:500;
   }
 
+  .sync{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11.5px;color:var(--muted);letter-spacing:.02em;
+  }
+  .sync .dot{
+    width:6px;height:6px;border-radius:50%;background:var(--muted);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  .sync.live .dot{background:var(--accent)}
+  .sync.off .dot{background:var(--glow);animation:none}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
   /* ---------- notices ---------- */
   .notice{
     margin:18px 0 0;padding:12px 14px;border-radius:10px;
@@ -349,6 +361,7 @@
   <div class="turnout">
     <div class="lights" id="lights" aria-hidden="true"></div>
     <p class="turnout-text" id="turnoutText">총 <b>16</b>명 중 <b id="turnoutCount">0</b>명 투표</p>
+    <span class="sync" id="sync"><i class="dot" aria-hidden="true"></i><span id="syncText">연결 중…</span></span>
   </div>
 
   <div id="statusNotice" hidden></div>
@@ -402,6 +415,7 @@
       </div>
       <div class="results" id="adminResultsBody"></div>
       <div class="controls">
+        <button class="btn-ghost" id="btnRefresh" type="button">지금 새로고침</button>
         <button class="btn-ghost" id="btnDownload" type="button" hidden>결과 내려받기 (CSV)</button>
         <button class="btn-ghost" id="btnClose" type="button">투표 마감</button>
         <button class="btn-ghost" id="btnReveal" type="button">전체에 결과 공개</button>
@@ -452,6 +466,10 @@
   var booted = false;   // db 연결 시도가 끝났는지
   var downloads = null; // 파일 저장 기능 (사용 불가하면 null)
   var downloadsAsked = false;
+  var refreshing = false;
+  var lastSync = 0;
+  var pollTimer = null;
+  var POLL_MS = 6000;
 
   /* ---------- 안전한 로컬 저장 ---------- */
   function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
@@ -521,6 +539,60 @@
       dots[i].className = i < shown ? "light on" : "light";
     }
     el("turnoutCount").textContent = String(turnout);
+    renderSync();
+  }
+
+  function renderSync() {
+    var box = el("sync"), txt = el("syncText");
+    if (booted && !db) { box.className = "sync off"; txt.textContent = "연결 끊김"; return; }
+    if (!lastSync) { box.className = "sync"; txt.textContent = "연결 중…"; return; }
+    var ago = Math.round((Date.now() - lastSync) / 1000);
+    box.className = "sync live";
+    txt.textContent = ago < 10 ? "실시간 갱신 중" : "갱신 " + ago + "초 전";
+  }
+
+  function countFrom(snap) {
+    var counts = new Array(CANDIDATES.length).fill(0);
+    snap.docs.forEach(function (d) {
+      var c = Number((d.data() || {}).choice);
+      if (c >= 1 && c <= CANDIDATES.length) counts[c - 1] += 1;
+    });
+    return counts;
+  }
+
+  function paintLive() {
+    renderTurnout();
+    if (adminView && isAdmin) renderAdmin();
+    if (state.revealed && hasVoted() && !adminView && tally) drawResults(el("publicResultsBody"));
+  }
+
+  // 구독이 늦어질 때를 대비해 짧은 주기로 직접 다시 읽습니다.
+  function refreshNow() {
+    if (!db || refreshing) return;
+    refreshing = true;
+    var wantBallots = !!openAdminStreams.done;
+    var jobs = [db.collection("turnout").get()];
+    if (wantBallots) jobs.push(db.collection("ballots").get());
+    Promise.all(jobs).then(function (res) {
+      turnout = res[0].size;
+      if (res[1]) tally = countFrom(res[1]);
+      lastSync = Date.now();
+      refreshing = false;
+      paintLive();
+    }).catch(function () {
+      refreshing = false;
+    });
+  }
+
+  function startPolling() {
+    if (pollTimer) return;
+    pollTimer = window.setInterval(function () {
+      if (document.visibilityState === "visible") refreshNow();
+      else renderSync();
+    }, POLL_MS);
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") refreshNow();
+    });
   }
 
   function renderNotice() {
@@ -589,6 +661,7 @@
     cr.textContent = state.revealed ? "전체 공개 중" : "결과 비공개";
     cr.className = "chip " + (state.revealed ? "shown" : "");
 
+    renderSync();
     el("btnClose").textContent = state.closed ? "투표 재개" : "투표 마감";
     el("btnReveal").textContent = state.revealed ? "결과 공개 중지" : "전체에 결과 공개";
     drawResults(el("adminResultsBody"));
@@ -648,6 +721,7 @@
         submitting = false;
         btn.textContent = "투표하기";
         renderView();
+        refreshNow();
         window.scrollTo({ top: 0, behavior: "smooth" });
       })
       .catch(function (e) {
@@ -668,16 +742,11 @@
     if (!db || openAdminStreams.done) return;
     openAdminStreams.done = true;
     db.collection("ballots").onSnapshot(function (snap) {
-      var counts = new Array(CANDIDATES.length).fill(0);
-      snap.docs.forEach(function (d) {
-        var v = d.data() || {};
-        var c = Number(v.choice);
-        if (c >= 1 && c <= CANDIDATES.length) counts[c - 1] += 1;
-      });
-      tally = counts;
-      if (adminView && isAdmin) renderAdmin();
-      if (state.revealed && hasVoted() && !adminView) drawResults(el("publicResultsBody"));
-    }, function () { /* 구독 종료: 기존 집계 유지 */ });
+      tally = countFrom(snap);
+      lastSync = Date.now();
+      paintLive();
+    }, function () { /* 구독이 끊겨도 아래 주기 재조회가 이어받습니다. */ });
+    refreshNow();
   }
 
   function csvCell(v) {
@@ -834,6 +903,12 @@
     });
     el("btnReset").addEventListener("click", resetAll);
     el("btnDownload").addEventListener("click", downloadResults);
+    el("btnRefresh").addEventListener("click", function () {
+      var b = el("btnRefresh");
+      b.textContent = "새로고침 중…";
+      refreshNow();
+      window.setTimeout(function () { b.textContent = "지금 새로고침"; }, 800);
+    });
   }
 
   /* ---------- 시작 ---------- */
@@ -851,7 +926,7 @@
   connect.then(function (store) {
     db = store;
     booted = true;
-    if (!db) { renderView(); return; }
+    if (!db) { renderView(); renderSync(); return; }
 
     db.doc("config/state").onSnapshot(function (snap) {
       var v = snap.exists ? (snap.data() || {}) : {};
@@ -863,9 +938,12 @@
 
     db.collection("turnout").onSnapshot(function (snap) {
       turnout = snap.size;
-      renderTurnout();
-      if (adminView && isAdmin) renderAdmin();
+      lastSync = Date.now();
+      paintLive();
     }, function () {});
+
+    startPolling();
+    refreshNow();
 
     if (isAdmin) openAdminStreams();
     renderView();
